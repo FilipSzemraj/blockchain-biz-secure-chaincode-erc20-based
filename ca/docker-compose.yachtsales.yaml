@@ -1,0 +1,57 @@
+services:
+  initializer_yachtsales:
+    build:
+      context: ./Yacht_Sales
+      dockerfile: Dockerfile
+    image: fabric/yachtsales-ca:latest
+    container_name: container-initializer-yachtsales-ca
+    ports:
+      - "7056:7056"
+    volumes:
+      - ./Yacht_Sales/crypto/:/etc/hyperledger/
+    environment:
+      - FABRIC_CA_SERVER_HOME=/etc/hyperledger/server/tls-ca
+      - FABRIC_CA_SERVER_TLS_CLIENTAUTH_TYPE=NoClientCert
+    command: >
+      bash -c "
+      echo 'Starting Fabric TLS CA server...';
+      fabric-ca-server start -b tlsadmin:tlsadminpw & 
+      sleep 3;
+      echo 'Running enroll-tls.sh...';
+      ./enroll-tls-new.sh;
+      echo 'Initializer completed.'"
+    restart: "no" # Ensure this container exits after completing its task
+
+  yachtsales-ca:
+    build:
+      context: ./Yacht_Sales
+      dockerfile: Dockerfile
+    image: fabric/yachtsales-ca:latest
+    container_name: container-yachtsales-ca
+    hostname: yachtsales
+    ports:
+      - "7056:7056"
+    volumes:
+      - ./Yacht_Sales/crypto/:/etc/hyperledger/
+      - ./_shared_certs/:/etc/hyperledger/_shared_certs/
+      - ./_env/:/etc/hyperledger/_env/
+    depends_on:
+      initializer_yachtsales:
+        condition: service_completed_successfully
+    environment:
+      - FABRIC_CA_SERVER_HOME=/etc/hyperledger/server/ca
+      - FABRIC_CA_SERVER_TLS_CLIENTAUTH_TYPE=RequireAndVerifyClientCert
+    command: >
+      bash -c "
+      echo 'Starting Fabric ORG CA server...';
+      fabric-ca-server start -b admin:adminpw &
+      sleep 3;
+      echo 'Running enroll-ca.sh...';
+      ./enroll-ca-new.sh;
+      wait;
+      if [ -f ./_env/env ]; then
+        source ./_env/env && fabric-ca-server start;
+      else
+        echo 'Env file not found!';
+        exit 1;
+      fi"

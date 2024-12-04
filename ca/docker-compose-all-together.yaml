@@ -1,0 +1,145 @@
+services:
+  initializer_furnituresmakers:
+    build:
+      context: ./Furnitures_Makers
+      dockerfile: Dockerfile
+    image: fabric/furnituresmakers-ca:latest
+    container_name: container-initializer-furnituresmakers-ca
+    ports:
+      - "7054:7054"
+    volumes:
+      - ./Furnitures_Makers/crypto/:/etc/hyperledger/
+    environment:
+      - FABRIC_CA_SERVER_HOME=/etc/hyperledger/server/tls-ca
+      - FABRIC_CA_SERVER_TLS_CLIENTAUTH_TYPE=NoClientCert
+    command: >
+      bash -c "
+      echo 'Starting Fabric TLS CA server...';
+      fabric-ca-server start -b tlsadmin:tlsadminpw & 
+      sleep 3;
+      echo 'Running enroll-tls.sh...';
+      ./enroll-tls-new.sh;
+      echo 'Initializer completed.'"
+    restart: "no" # Ensure this container exits after completing its task
+
+  furnituresmakers-ca:
+    build:
+      context: ./Furnitures_Makers
+      dockerfile: Dockerfile
+    image: fabric/furnituresmakers-ca:latest
+    container_name: container-furnituresmakers-ca
+    ports:
+      - "7054:7054"
+    volumes:
+      - ./Furnitures_Makers/crypto/:/etc/hyperledger/
+    depends_on:
+      initializer_furnituresmakers:
+        condition: service_completed_successfully
+    environment:
+      - FABRIC_CA_SERVER_HOME=/etc/hyperledger/server/ca
+      - FABRIC_CA_SERVER_TLS_CLIENTAUTH_TYPE=RequireAndVerifyClientCert
+    command: >
+      bash -c "
+      echo 'Starting Fabric ORG CA server...';
+      fabric-ca-server start -b admin:adminpw &
+      sleep 3;
+      echo 'Running enroll-ca.sh...';
+      ./enroll-ca-new.sh;
+      wait;"
+
+  initializer_woodsupply:
+    build:
+      context: ./Wood_Supply
+      dockerfile: Dockerfile
+    image: fabric/woodsupply-ca:latest
+    container_name: container-initializer-woodsupply-ca
+    ports:
+      - "7055:7055"
+    volumes:
+      - ./Wood_Supply/crypto/:/etc/hyperledger/
+    environment:
+      - FABRIC_CA_SERVER_HOME=/etc/hyperledger/server/tls-ca
+      - FABRIC_CA_SERVER_TLS_CLIENTAUTH_TYPE=NoClientCert
+    command: >
+      bash -c "
+      echo 'Starting Fabric TLS CA server...';
+      fabric-ca-server start -b tlsadmin:tlsadminpw & 
+      sleep 3;
+      echo 'Running enroll-tls.sh...';
+      ./enroll-tls-new.sh;
+      echo 'Initializer completed.'"
+    restart: "no" # Ensure this container exits after completing its task
+
+  woodsupply-ca:
+    build:
+      context: ./Wood_Supply
+      dockerfile: Dockerfile
+    image: fabric/woodsupply-ca:latest
+    container_name: container-woodsupply-ca
+    ports:
+      - "7055:7055"
+    volumes:
+      - ./Wood_Supply/crypto/:/etc/hyperledger/
+    depends_on:
+      initializer_woodsupply:
+        condition: service_completed_successfully
+    environment:
+      - FABRIC_CA_SERVER_HOME=/etc/hyperledger/server/ca
+      - FABRIC_CA_SERVER_TLS_CLIENTAUTH_TYPE=RequireAndVerifyClientCert
+    command: >
+      bash -c "
+      echo 'Starting Fabric ORG CA server...';
+      fabric-ca-server start -b admin:adminpw &
+      sleep 3;
+      echo 'Running enroll-ca.sh...';
+      ./enroll-ca-new.sh;
+      wait;"
+
+  initializer_yachtsales:
+    build:
+      context: ./Yacht_Sales
+      dockerfile: Dockerfile
+    image: fabric/yachtsales-ca:latest
+    container_name: container-initializer-yachtsales-ca
+    ports:
+      - "7056:7056"
+    volumes:
+      - ./Yacht_Sales/crypto/:/etc/hyperledger/
+    environment:
+      - FABRIC_CA_SERVER_HOME=/etc/hyperledger/server/tls-ca
+      - FABRIC_CA_SERVER_TLS_CLIENTAUTH_TYPE=NoClientCert
+    command: >
+      bash -c "
+      echo 'Starting Fabric TLS CA server...';
+      fabric-ca-server start -b tlsadmin:tlsadminpw & 
+      sleep 3;
+      echo 'Running enroll-tls.sh...';
+      ./enroll-tls-new.sh;
+      echo 'Initializer completed.'"
+    restart: "no" # Ensure this container exits after completing its task
+
+  yachtsales-ca:
+    build:
+      context: ./Yacht_Sales
+      dockerfile: Dockerfile
+    image: fabric/yachtsales-ca:latest
+    container_name: container-yachtsales-ca
+    ports:
+      - "7056:7056"
+    volumes:
+      - ./Yachts_Sales/crypto/:/etc/hyperledger/
+    depends_on:
+      initializer_yachtsales:
+        condition: service_completed_successfully
+    environment:
+      - FABRIC_CA_SERVER_HOME=/etc/hyperledger/server/ca
+      - FABRIC_CA_SERVER_TLS_CLIENTAUTH_TYPE=RequireAndVerifyClientCert
+    command: >
+      bash -c "
+      echo 'Starting Fabric ORG CA server...';
+      fabric-ca-server start -b admin:adminpw &
+      sleep 3;
+      echo 'Running enroll-ca.sh...';
+      ./enroll-ca-new.sh;
+      wait;"
+    #command: fabric-ca-server start -b tlsadmin:tlsadminpw --cafiles /etc/hyperledger/server/ca/fabric-ca-server-config.yaml

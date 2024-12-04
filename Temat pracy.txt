@@ -1,0 +1,6 @@
+Projekt i implementacja systemu informatycznego zwiększającego bezpieczeństwo transakcji biznesowych, 
+przez wykorzystanie smart kontraktów Blockchain
+
+Celem pracy jest zaprojektowanie i zaimplementowanie systemu informatycznego zwiększającego
+bezpieczeństwo transakcji między dużymi przedsiębiorstwami poprzez zastosowanie smart kontraktów
+znanych z technologii Blockchain. Technologie wykonania są w gestii Dyplomanta.
