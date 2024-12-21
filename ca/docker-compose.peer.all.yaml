@@ -1,0 +1,227 @@
+networks:
+  fabric-network:
+    driver: bridge
+    name: fabric-network
+
+services:
+  peer0.furnituresmakers.com:
+    networks:
+      - fabric-network
+    build:
+      context: ./_config_files/peer
+      dockerfile: Dockerfile
+    #image: yfw-peer:latest
+    hostname: peer0.furnituresmakers.com
+    container_name: peer0.furnituresmakers.com
+    environment:
+      - CA_FILE=/etc/hyperledger/msp/tls/tlscacerts/tls-ca-cert.pem
+      - CERT_FILE=/etc/hyperledger/msp/tls/signcerts/cert.pem
+      - KEY_FILE=/etc/hyperledger/msp/tls/keystore/key.pem
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp
+
+      - CORE_PEER_ID=peer0.furnituresmakers.com
+      - CORE_PEER_NETWORKID=peer0.furnituresmakers.com
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:7051
+      - CORE_PEER_ADDRESS=peer0.furnituresmakers.com:7051
+      - CORE_PEER_CHAINCODELISTENADDRESS=peer0.furnituresmakers.com:7052
+      - CORE_PEER_LOCALMSPID=FurnituresMakers
+
+      #- CORE_PEER_GOSSIP_BOOTSTRAP=${CORE_PEER_GOSSIP_BOOTSTRAP}
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.furnituresmakers.com:7051 peer2.furnituresmakers.com:7051
+
+      - CORE_PEER_GOSSIP_ENDPOINT=peer0.furnituresmakers.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.furnituresmakers.com:7051
+
+      - CORE_OPERATIONS_LISTENADDRESS=peer0.furnituresmakers.com:9443
+
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=fabric-network
+
+      - PREFIX_PORT=70
+      - ORG_QUICK_NAME=furnituresmakers
+
+      - FABRIC_CFG_PATH=/etc/hyperledger/config
+
+      - FIRST_ORG_SOURCE=/etc/hyperledger/_shared_certs/woodsupply-msp/cacerts/ca-cert.pem
+      - FIRST_ORG_DEST=/etc/hyperledger/msp/cacerts/woodsupply-cert.pem
+
+      - SECOND_ORG_SOURCE=/etc/hyperledger/_shared_certs/yachtsales-msp/cacerts/ca-cert.pem
+      - SECOND_ORG_DEST=/etc/hyperledger/msp/cacerts/yachtsales-cert.pem
+    ports:
+      - "7051:7051"
+      - "7052:7052"
+    volumes:
+      - ./Furnitures_Makers/crypto/client/ca/peer0/msp:/etc/hyperledger/msp
+      - ./_shared_certs:/etc/hyperledger/_shared_certs
+      - ./_config_files/chaincode/:/etc/hyperledger/chaincode/
+      - /mnt/wsl/docker-desktop/shared-sockets/guest-services/docker.sock:/var/run/docker.sock
+
+      #- ./_config_files/peer/:/etc/hyperledger/config
+
+
+    command: >
+      bash -c "
+      CLIENT_ROOT_CAs=$$(find /etc/hyperledger/_shared_certs -type f -name '*.pem' -path '*/tlscacerts/*' ! -path '*furnituresmakers*' | paste -sd ',' -);
+      echo 'Found CA certificates:';
+      echo \"$$CLIENT_ROOT_CAs\";
+      export CORE_TLS_CLIENTROOTCAS_FILES=\"$$CLIENT_ROOT_CAs\";
+      
+      
+      echo 'Starting peer - peer0.furnituresmakers.com:7051';
+      ./start-peer.sh;
+      find /etc/hyperledger/msp/ -type f -print | sed \"s|^\./||\";
+      echo 'CACERTS';
+      find /etc/hyperledger/_shared_certs/ -type f -print | sed \"s|^\./||\";
+
+      peer node start &
+      sleep 2;
+      ./add-anchor-peers.sh;
+      tail -f /dev/null
+      "
+
+  peer0.woodsupply.com:
+    networks:
+      - fabric-network
+    build:
+      context: ./_config_files/peer
+      dockerfile: Dockerfile
+    #image: yfw-peer:latest
+    hostname: peer0.woodsupply.com
+    container_name: peer0.woodsupply.com
+    environment:
+      - CA_FILE=/etc/hyperledger/msp/tls/tlscacerts/tls-ca-cert.pem
+      - CERT_FILE=/etc/hyperledger/msp/tls/signcerts/cert.pem
+      - KEY_FILE=/etc/hyperledger/msp/tls/keystore/key.pem
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp
+
+      - CORE_PEER_ID=peer0.woodsupply.com
+      - CORE_PEER_NETWORKID=peer0.woodsupply.com
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:8051
+      - CORE_PEER_ADDRESS=peer0.woodsupply.com:8051
+      - CORE_PEER_CHAINCODELISTENADDRESS=peer0.woodsupply.com:8052
+      - CORE_PEER_LOCALMSPID=WoodSupply
+
+      #- CORE_PEER_GOSSIP_BOOTSTRAP=${CORE_PEER_GOSSIP_BOOTSTRAP}
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.woodsupply.com:8051 peer2.woodsupply.com:8051
+
+      - CORE_PEER_GOSSIP_ENDPOINT=peer0.woodsupply.com:8051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.woodsupply.com:8051
+
+      - CORE_OPERATIONS_LISTENADDRESS=peer0.woodsupply.com:9443
+
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=fabric-network
+
+      - PREFIX_PORT=80
+      - ORG_QUICK_NAME=woodsupply
+
+      - FABRIC_CFG_PATH=/etc/hyperledger/config
+
+      - FIRST_ORG_SOURCE=/etc/hyperledger/_shared_certs/furnituresmakers-msp/cacerts/ca-cert.pem
+      - FIRST_ORG_DEST=/etc/hyperledger/msp/cacerts/furnituresmakers-cert.pem
+
+      - SECOND_ORG_SOURCE=/etc/hyperledger/_shared_certs/yachtsales-msp/cacerts/ca-cert.pem
+      - SECOND_ORG_DEST=/etc/hyperledger/msp/cacerts/yachtsales-cert.pem
+    ports:
+      - "8051:8051"
+      - "8052:8052"
+    volumes:
+      - ./Wood_Supply/crypto/client/ca/peer0/msp:/etc/hyperledger/msp
+      - ./_shared_certs:/etc/hyperledger/_shared_certs
+      - ./_config_files/chaincode/:/etc/hyperledger/chaincode/
+      - /mnt/wsl/docker-desktop/shared-sockets/guest-services/docker.sock:/var/run/docker.sock
+
+      #- ./_config_files/peer/:/etc/hyperledger/config
+
+
+    command: >
+      bash -c "
+      CLIENT_ROOT_CAs=$$(find /etc/hyperledger/_shared_certs -type f -name '*.pem' -path '*/tlscacerts/*' ! -path '*woodsupply*' | paste -sd ',' -);
+      echo 'Found CA certificates:';
+      echo \"$$CLIENT_ROOT_CAs\";
+      export CORE_TLS_CLIENTROOTCAS_FILES=\"$$CLIENT_ROOT_CAs\";
+
+
+      echo 'Starting peer - peer0.woodsupply.com:8051';
+      ./start-peer.sh;
+      find /etc/hyperledger/msp/ -type f -print | sed \"s|^\./||\";
+      echo 'CACERTS';
+      find /etc/hyperledger/_shared_certs/ -type f -print | sed \"s|^\./||\";
+
+      peer node start &
+      sleep 2;
+      ./add-anchor-peers.sh;
+      tail -f /dev/null;
+      "
+
+  peer0.yachtsales.com:
+    networks:
+      - fabric-network
+    build:
+      context: ./_config_files/peer
+      dockerfile: Dockerfile
+    #image: yfw-peer:latest
+    hostname: peer0.yachtsales.com
+    container_name: peer0.yachtsales.com
+    environment:
+      - CA_FILE=/etc/hyperledger/msp/tls/tlscacerts/tls-ca-cert.pem
+      - CERT_FILE=/etc/hyperledger/msp/tls/signcerts/cert.pem
+      - KEY_FILE=/etc/hyperledger/msp/tls/keystore/key.pem
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp
+
+      - CORE_PEER_ID=peer0.yachtsales.com
+      - CORE_PEER_NETWORKID=peer0.yachtsales.com
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:9051
+      - CORE_PEER_ADDRESS=peer0.yachtsales.com:9051
+      - CORE_PEER_CHAINCODELISTENADDRESS=peer0.yachtsales.com:9052
+      - CORE_PEER_LOCALMSPID=YachtSales
+
+      #- CORE_PEER_GOSSIP_BOOTSTRAP=${CORE_PEER_GOSSIP_BOOTSTRAP}
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.yachtsales.com:9051 peer2.yachtsales.com:9051
+      - CORE_PEER_GOSSIP_ENDPOINT=peer0.yachtsales.com:9051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.yachtsales.com:9051
+
+      - CORE_OPERATIONS_LISTENADDRESS=peer0.yachtsales.com:9443
+
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=fabric-network
+      - PREFIX_PORT=90
+
+      - ORG_QUICK_NAME=yachtsales
+
+      - FABRIC_CFG_PATH=/etc/hyperledger/config
+
+      - FIRST_ORG_SOURCE=/etc/hyperledger/_shared_certs/woodsupply-msp/cacerts/ca-cert.pem
+      - FIRST_ORG_DEST=/etc/hyperledger/msp/cacerts/woodsupply-cert.pem
+
+      - SECOND_ORG_SOURCE=/etc/hyperledger/_shared_certs/furnituresmakers-msp/cacerts/ca-cert.pem
+      - SECOND_ORG_DEST=/etc/hyperledger/msp/cacerts/furnituresmakers-cert.pem
+    ports:
+      - "9051:9051"
+      - "9052:9052"
+    volumes:
+      - ./Yacht_Sales/crypto/client/ca/peer0/msp:/etc/hyperledger/msp
+      - ./_shared_certs:/etc/hyperledger/_shared_certs
+      - ./_config_files/chaincode/:/etc/hyperledger/chaincode/
+      - /mnt/wsl/docker-desktop/shared-sockets/guest-services/docker.sock:/var/run/docker.sock
+
+      #- ./_config_files/peer/:/etc/hyperledger/config
+
+
+    command: >
+      bash -c "
+      CLIENT_ROOT_CAs=$$(find /etc/hyperledger/_shared_certs -type f -name '*.pem' -path '*/tlscacerts/*' ! -path '*yachtsales*' | paste -sd ',' -);
+      echo 'Found CA certificates:';
+      echo \"$$CLIENT_ROOT_CAs\";
+      export CORE_TLS_CLIENTROOTCAS_FILES=\"$$CLIENT_ROOT_CAs\";
+
+
+      echo 'Starting peer - peer0.yachtsales.com:9052';
+      ./start-peer.sh;
+      find /etc/hyperledger/msp/ -type f -print | sed \"s|^\./||\";
+      echo 'CACERTS';
+      find /etc/hyperledger/_shared_certs/ -type f -print | sed \"s|^\./||\";
+
+      peer node start &
+      sleep 2;
+      ./add-anchor-peers.sh;
+      tail -f /dev/null;
+      "
+

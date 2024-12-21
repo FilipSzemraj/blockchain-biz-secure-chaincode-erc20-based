@@ -1,0 +1,268 @@
+port: 7054
+debug: false
+crlsizelimit: 512000
+#############################################################################
+#  The CA section contains information related to the Certificate Authority
+#############################################################################
+ca:
+  name: Furnitures_Makers_CA
+  keyfile:
+  certfile:
+  chainfile:
+#############################################################################
+# Affiliations are hierarchical in nature. 
+#############################################################################
+affiliations:
+   Furnitures_Makers:
+      - production
+      - logistics
+      - sales
+      - orderer
+      - network
+#############################################################################
+#  Used for ID registry setup
+#############################################################################
+registry:
+  # Default - Maximum number of times a password/secret can be reused for enrollment
+  maxenrollments: -1
+
+  # Contains identity information which is used when LDAP is disabled
+  identities:
+  # Admin for network management
+  - name: admin
+    pass: adminpw
+    type: client
+    affiliation: "Furnitures_Makers"
+    attrs:
+      hf.EnrollmentID: admin:ecert
+      hf.Type: client:ecert
+      hf.Affiliation: Furnitures_Makers:ecert
+      hf.Registrar.Roles: "*"
+      hf.Registrar.DelegateRoles: "*"
+      hf.Revoker: true:ecert
+      hf.IntermediateCA: true
+      hf.GenCRL: true
+      hf.Registrar.Attributes: "*"
+      hf.AffiliationMgr: true
+
+  # Infrastructure identities
+  - name: peer0
+    pass: peer0pw
+    type: peer
+    affiliation: "Furnitures_Makers.network"
+    attrs:
+      hf.EnrollmentID: peer0:ecert
+      hf.Type: peer:ecert
+      hf.Affiliation: Furnitures_Makers.network:ecert
+
+  # Internal peers - for redundancy and load balancing
+  - name: peer1
+    pass: peer1pw
+    type: peer
+    affiliation: "Furnitures_Makers.network"
+    attrs:
+      hf.EnrollmentID: peer1:ecert
+      hf.Type: peer:ecert
+      hf.Affiliation: Furnitures_Makers.network:ecert
+
+  - name: peer2
+    pass: peer2pw
+    type: peer
+    affiliation: "Furnitures_Makers.network"
+    attrs:
+      hf.EnrollmentID: peer2:ecert
+      hf.Type: peer:ecert
+      hf.Affiliation: Furnitures_Makers.network:ecert
+
+  - name: orderer0
+    pass: ordererpw
+    type: orderer
+    affiliation: "Furnitures_Makers.orderer"
+    attrs:
+      hf.EnrollmentID: orderer0:ecert
+      hf.Type: orderer:ecert
+      hf.Affiliation: Furnitures_Makers.orderer:ecert
+
+  # Department-specific API identities
+  - name: production_api
+    pass: productionapipw
+    type: client
+    affiliation: "Furnitures_Makers.production"
+    attrs:
+      hf.EnrollmentID: production_api:ecert
+      hf.Type: client:ecert
+      hf.Affiliation: Furnitures_Makers.production:ecert
+
+  - name: logistics_api
+    pass: logisticsapipw
+    type: client
+    affiliation: "Furnitures_Makers.logistics"
+    attrs:
+      hf.EnrollmentID: logistics_api:ecert
+      hf.Type: client:ecert
+      hf.Affiliation: Furnitures_Makers.logistics:ecert
+
+  - name: sales_api
+    pass: salesapipw
+    type: client
+    affiliation: "Furnitures_Makers.sales"
+    attrs:
+      hf.EnrollmentID: sales_api:ecert
+      hf.Type: client:ecert
+      hf.Affiliation: Furnitures_Makers.sales:ecert
+
+      
+            
+###########################################################################
+#  Certificate Signing Request (CSR) section.
+#  This controls the creation of the root CA certificate.
+###########################################################################
+csr:
+   cn: furnituresmakers-ca
+   names:
+      - C: "PL"
+        ST: "Swietokrzyskie"
+        L: "Kielce" 
+        O: "Furniture Makers"
+        OU: "Network"
+   hosts:
+     - ca.furnituresmakers.com
+     - localhost
+   ca:
+      expiry: 131400h
+      
+#      pathlength: 1
+#############################################################################
+#  Signing section - default config used for signing ECerts
+#  Profile-ca used for signing ICA certs, Profile-tls used for sign TLS certs
+#############################################################################
+signing:
+    default:
+      usage:
+        - digital signature
+      expiry: 8760h
+    profiles:
+      ca:
+         usage:
+           - cert sign
+           - crl sign
+         expiry: 43800h
+         caconstraint:
+           isca: true
+           maxpathlen: 0
+#      tls:
+#         usage:
+#            - signing
+#            - key encipherment
+#            - server auth
+#            - client auth
+#            - key agreement
+#         expiry: 8760h
+#############################################################################
+#  TLS section for the server's listening port
+#############################################################################
+tls:
+  # Enable TLS (default: false)
+  enabled: true
+  # TLS for the server's listening port
+  certfile: /etc/hyperledger/server/tls-msp/signcerts/cert.pem
+  keyfile: /etc/hyperledger/server/tls-msp/keystore/key.pem
+  clientauth:
+    type: NoClientCert
+    certfiles:
+
+
+
+#############################################################################
+# This section contains configuration options that are used
+# during gencrl request processing.
+#############################################################################
+crl:
+  # Specifies expiration for the generated CRL. 
+  expiry: 24h
+
+
+
+#############################################################################
+#  Database section - Supported types are: "sqlite3", "postgres", and "mysql".
+#############################################################################
+db:
+  type: sqlite3
+  datasource: fabric-ca-server.db
+  tls:
+      enabled: false
+      certfiles:
+      client:
+        certfile:
+        keyfile:
+
+#############################################################################
+#  LDAP section
+#############################################################################
+ldap:
+   # Enables/disables LDAP client, if true Registry section ignored
+   enabled: false
+   # The URL of the LDAP server
+   url: ldap://<adminDN>:<adminPassword>@<host>:<port>/<base>
+   # TLS configuration for the client connection to the LDAP server
+   tls:
+      certfiles:
+      client:
+         certfile:
+         keyfile:
+   # Attribute related configuration for mapping from LDAP entries to Fabric CA attributes
+   attribute:
+      # 'names' is an array of strings containing the LDAP attribute names which are
+      # requested from the LDAP server for an LDAP identity's entry
+      names: ['uid','member']
+      # Config for converting LDAP attributes to CA/Fabric attributes
+      converters:
+         - name:
+           value:
+      # The 'maps' section contains named maps which may be referenced by the 'map'
+      # function in the 'converters' section to map LDAP responses to arbitrary values.
+      maps:
+         groups:
+            - name:
+              value:
+
+
+#############################################################################
+# Multi CA section - setup multiple CA in a single Server process
+#############################################################################
+
+cacount:
+
+cafiles:
+
+#############################################################################
+# Intermediate CA section - for setting up an ICA
+#############################################################################
+intermediate:
+  parentserver:
+    url:
+    caname:
+
+  enrollment:
+    hosts:
+    profile:
+    label:
+
+  tls:
+    certfiles:
+    client:
+      certfile:
+      keyfile:
+
+#############################################################################
+# BCCSP (BlockChain Crypto Service Provider) section is used to select which
+# crypto library implementation to use
+#############################################################################
+bccsp:
+    default: SW
+    sw:
+        hash: SHA2
+        security: 256
+        filekeystore:
+            # The directory used for the software file-based keystore
+            keystore: msp/keystore

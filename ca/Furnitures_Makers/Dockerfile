@@ -1,6 +1,6 @@
 FROM hyperledger/fabric-ca:latest
 
-WORKDIR /etc/hyperledger
+WORKDIR /etc/scripts
 
 #RUN mkdir -p server client
 

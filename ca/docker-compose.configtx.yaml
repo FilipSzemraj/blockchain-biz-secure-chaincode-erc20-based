@@ -1,0 +1,34 @@
+networks:
+  fabric-network:
+    driver: bridge
+    name: fabric-network
+
+services:
+  -com:
+    networks:
+      - fabric-network
+    image: yfw-configtx # Wybierz wersję obrazu
+    container_name: $CONTAINER_NAME
+    build:
+      context: ./_config_files/configtx
+      dockerfile: Dockerfile
+    stdin_open: true
+    tty: true
+    environment:
+      - CONTAINER_NAME=${CONTAINER_NAME}
+      - ORG_NAME=${ORG_NAME}
+      - OSN_TLS_CA_ROOT_CERT=${OSN_TLS_CA_ROOT_CERT}
+      - ADMIN_TLS_SIGN_CERT=${ADMIN_TLS_SIGN_CERT}
+      - ADMIN_TLS_PRIVATE_KEY=${ADMIN_TLS_PRIVATE_KEY}
+    volumes:
+      - ./_config_files/configtx/output:/etc/hyperledger/output/
+      - ./_shared_certs/:/etc/hyperledger/_shared_certs/
+    working_dir: /etc/hyperledger/scripts
+    command: >
+      bash -c "
+      echo 'starting container with fabric-tools, for creating channel.';
+      ls -l /etc/hyperledger/scripts/creating-channel.sh || (echo 'File creating-channel.sh not found!' && exit 1);
+      pwd;
+      ./creating-channel.sh &
+      exec bash;
+      "

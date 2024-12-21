@@ -19,7 +19,7 @@ export FABRIC_CA_CLIENT_HOME=/etc/hyperledger/client/ca/admin
 export FABRIC_CA_CLIENT_CSR_CN=admin
 export FABRIC_CA_CLIENT_CSR_HOSTS="admin,localhost"
 
-export FABRIC_CA_CLIENT_CANAME=furnituresmakers-ca
+export FABRIC_CA_CLIENT_CANAME=$HOSTNAME-ca
 
 
 fabric-ca-client enroll -u https://admin:adminpw@localhost:7054 \

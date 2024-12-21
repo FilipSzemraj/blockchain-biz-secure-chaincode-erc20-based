@@ -1,0 +1,282 @@
+#   CAPABILITIES
+Capabilities:
+  Application: &ApplicationCapabilities
+    V2_0: true
+  Orderer: &OrdererCapabilities
+    V2_0: true
+  Channel: &ChannelCapabilities
+    V2_0: true
+
+# ORGANIZATIONS
+Organizations:
+  - &FurnituresMakers
+    Name: FurnituresMakers
+    SkipAsForeign: false
+    ID: FurnituresMakers
+    MSPDir: /etc/hyperledger/_shared_certs/furnituresmakers-msp
+    Policies: &FurnituresMakersPolicies
+      Readers:
+          Type: Signature
+          Rule: "OR('FurnituresMakers.admin', 'FurnituresMakers.client', 'FurnituresMakers.peer')"
+      Writers:
+          Type: Signature
+        # Rule: "OR('FurnituresMakers.client')"
+          Rule: "OR('FurnituresMakers.admin', 'FurnituresMakers.peer', 'FurnituresMakers.orderer', 'FurnituresMakers.client')"
+      Admins:
+          Type: Signature
+          Rule: "OR('FurnituresMakers.admin')"
+      Endorsement:
+          Type: Signature
+          Rule: "OR('FurnituresMakers.peer')"
+    AnchorPeers:
+      - Host: peer0.furnituresmakers.com
+        Port: 7051
+    OrdererEndpoints:
+      - "orderer0.furnituresmakers.com:7050"
+
+  - &WoodSupply
+    Name: WoodSupply
+    ID: WoodSupply
+    MSPDir: /etc/hyperledger/_shared_certs/woodsupply-msp
+    Policies: &WoodSupplyPolicies
+      Readers:
+          Type: Signature
+          Rule: "OR('WoodSupply.admin', 'WoodSupply.peer', 'WoodSupply.client')"
+      Writers:
+          Type: Signature
+          Rule: "OR('WoodSupply.admin', 'WoodSupply.peer', 'WoodSupply.orderer', 'WoodSupply.client')"
+      Admins:
+          Type: Signature
+          Rule: "OR('WoodSupply.admin')"
+      Endorsement:
+          Type: Signature
+          Rule: "OR('WoodSupply.peer')"
+    AnchorPeers:
+      - Host: peer0.woodsupply.com
+        Port: 8051
+    OrdererEndpoints:
+      - "orderer0.woodsupply.com:8050"
+
+  - &YachtSales
+    Name: YachtSales
+    ID: YachtSales
+    MSPDir: /etc/hyperledger/_shared_certs/yachtsales-msp
+    Policies: &YachtSalesPolicies
+      Readers:
+          Type: Signature
+          Rule: "OR('YachtSales.admin', 'YachtSales.peer', 'YachtSales.client')"
+      Writers:
+          Type: Signature
+          Rule: "OR('YachtSales.admin', 'YachtSales.peer', 'YachtSales.orderer', 'YachtSales.client')"
+      Admins:
+          Type: Signature
+          Rule: "OR('YachtSales.admin')"
+      Endorsement:
+          Type: Signature
+          Rule: "OR('YachtSales.peer')"
+    AnchorPeers:
+      - Host: peer0.yachtsales.com
+        Port: 9051
+    OrdererEndpoints:
+      - "orderer0.yachtsales.com:9050"
+
+
+#   ORDERER
+Orderer: &OrdererDefaults
+
+  OrdererType: etcdraft
+
+  Addresses:
+    - orderer0.furnituresmakers.com:7050
+    - orderer0.woodsupply.com:8050
+    - orderer0.yachtsales.com:9050
+  # Policies for Orderer
+  Policies:
+    Readers:
+        Type: ImplicitMeta
+        Rule: "ANY Readers"
+    Writers:
+        Type: ImplicitMeta
+        Rule: "ANY Writers"
+    Admins:
+        Type: ImplicitMeta
+        Rule: "MAJORITY Admins"
+
+    # BlockValidation specifies what signatures must be included in the block
+    # from the orderer for the peer to validate it.
+    BlockValidation:
+        Type: ImplicitMeta
+        Rule: "ANY Writers" #MAJORITY
+
+  EtcdRaft:
+    Consenters:
+        - Host: orderer0.furnituresmakers.com
+          Port: 7050
+          ClientTLSCert: /etc/hyperledger/_shared_certs/furnituresmakers-msp/orderer/orderer0/msp/tls/signcerts/cert.pem
+          ServerTLSCert: /etc/hyperledger/_shared_certs/furnituresmakers-msp/orderer/orderer0/msp/tls/signcerts/cert.pem
+        - Host: orderer0.woodsupply.com
+          Port: 8050
+          ClientTLSCert: /etc/hyperledger/_shared_certs/woodsupply-msp/orderer/orderer0/msp/tls/signcerts/cert.pem
+          ServerTLSCert: /etc/hyperledger/_shared_certs/woodsupply-msp/orderer/orderer0/msp/tls/signcerts/cert.pem
+        - Host: orderer0.yachtsales.com
+          Port: 9050
+          ClientTLSCert: /etc/hyperledger/_shared_certs/yachtsales-msp/orderer/orderer0/msp/tls/signcerts/cert.pem
+          ServerTLSCert: /etc/hyperledger/_shared_certs/yachtsales-msp/orderer/orderer0/msp/tls/signcerts/cert.pem
+
+    # Options to be specified for all the etcd/raft nodes. The values here
+    # are the defaults for all new channels and can be modified on a
+    # per-channel basis via configuration updates.
+    Options:
+      # TickInterval is the time interval between two Node.Tick invocations.
+      TickInterval: 500ms
+
+      # ElectionTick is the number of Node.Tick invocations that must pass
+      # between elections. That is, if a follower does not receive any
+      # message from the leader of current term before ElectionTick has
+      # elapsed, it will become candidate and start an election.
+      # ElectionTick must be greater than HeartbeatTick.
+      ElectionTick: 10
+
+      # HeartbeatTick is the number of Node.Tick invocations that must
+      # pass between heartbeats. That is, a leader sends heartbeat
+      # messages to maintain its leadership every HeartbeatTick ticks.
+      HeartbeatTick: 1
+
+      # MaxInflightBlocks limits the max number of in-flight append messages
+      # during optimistic replication phase.
+      MaxInflightBlocks: 5
+
+      # SnapshotIntervalSize defines number of bytes per which a snapshot is taken
+      SnapshotIntervalSize: 20 MB
+
+  # Batch Timeout: The amount of time to wait before creating a batch
+  BatchTimeout: 2s
+
+  # Batch Size: Controls the number of messages batched into a block
+  BatchSize:
+    MaxMessageCount: 10
+    AbsoluteMaxBytes: 98 MB
+    PreferredMaxBytes: 512 KB
+
+  Capabilities:
+    <<: *OrdererCapabilities
+
+
+Application: &ApplicationDefaults
+
+
+  # Default policies
+  Policies: &ApplicationDefaultPolicies
+
+    # approveformyorg
+    LifecycleEndorsement:
+        Type: ImplicitMeta
+        # Rule: "MAJORITY Endorsement"
+        Rule: "ANY Endorsement"
+
+    # --channel-config-policy
+    Endorsement:
+        Type: ImplicitMeta
+        Rule: "MAJORITY Endorsement"
+    Readers:
+        Type: ImplicitMeta
+        Rule: "ANY Readers"
+    Writers:
+        Type: ImplicitMeta
+        Rule: "ANY Writers"
+    Admins:
+        Type: ImplicitMeta
+        Rule: "MAJORITY Admins"
+
+  Capabilities:
+    <<: *ApplicationCapabilities
+
+  Organizations:
+
+
+#   CHANNEL
+Channel: &ChannelDefaults
+  Policies:
+    Endorsement:
+        Type: ImplicitMeta
+        Rule: "MAJORITY Endorsement"
+    Readers:
+        Type: ImplicitMeta
+        Rule: "ANY Readers"
+    Writers:
+        Type: ImplicitMeta
+        Rule: "ANY Writers"
+    Admins:
+        Type: ImplicitMeta
+        Rule: "MAJORITY Admins"
+
+  Capabilities:
+    <<: *ChannelCapabilities
+
+#   PROFILES
+Profiles:
+
+  YFW:
+    <<: *ChannelDefaults
+    Orderer:
+      <<: *OrdererDefaults
+      Organizations:
+        - <<: *FurnituresMakers
+          Policies:
+            <<: *FurnituresMakersPolicies
+            #Admins:
+            #  Type: Signature
+            #  Rule: "OR('FurnituresMakers.admin', 'FurnituresMakers.orderer')"
+          OrdererEndpoints:
+            - "orderer0.furnituresmakers.com:7050"
+        - <<: *WoodSupply
+          Policies:
+            <<: *WoodSupplyPolicies
+            #Admins:
+            #  Type: Signature
+            #  Rule: "OR('WoodSupply.admin', 'WoodSupply.orderer')"
+          OrdererEndpoints:
+            - "orderer0.woodsupply.com:8050"
+        - <<: *YachtSales
+          Policies:
+            <<: *YachtSalesPolicies
+            #Admins:
+            #  Type: Signature
+            #  Rule: "OR('YachtSales.admin', 'YachtSales.orderer')"
+          OrdererEndpoints:
+            - "orderer0.yachtsales.com:9050"
+      #Policies:
+      #  Readers:
+      #    Type: ImplicitMeta
+      #    Rule: "ANY Readers"
+      #  Writers:
+      #    Type: ImplicitMeta
+      #    Rule: "ANY Writers"
+      #  Admins:
+      #    Type: ImplicitMeta
+      #    Rule: "MAJORITY Admins"
+    #Consortiums:
+    #  YFW:
+    #    Organizations:
+    #      - <<: *FurnituresMakers
+    #      - <<: *WoodSupply
+    #      - <<: *YachtSales
+    Application:
+      <<: *ApplicationDefaults
+      Organizations:
+        - <<: *FurnituresMakers
+        - <<: *WoodSupply
+        - <<: *YachtSales
+      Policies:
+        Endorsement:
+          Type: ImplicitMeta
+          Rule: "MAJORITY Endorsement"
+        Readers:
+          Type: ImplicitMeta
+          Rule: "ANY Readers"
+        Writers:
+          Type: ImplicitMeta
+          Rule: "ANY Writers"
+        Admins:
+          Type: ImplicitMeta
+          Rule: "MAJORITY Admins"

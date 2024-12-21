@@ -1,15 +1,17 @@
 #!/bin/bash
 
 # Deklaracja tablicy z użytkownikami i ich hasłami (login:hasło)
-USERS=("furnituresmakers-ca:capw"
-       "admin:adminpw"
-       "peer0:peer0pw"
-       "peer1:peer1pw"
-       "peer2:peer2pw"
-       "orderer0:orderer0pw"
-       "production_api:productionapipw"
-       "sales_api:salesapipw"
-       "logistics_api:logisticsapipw")
+#USERS=("$HOSTNAME-ca:capw"
+#       "admin:adminpw"
+#       "peer0:peer0pw"
+#       "peer1:peer1pw"
+#       "peer2:peer2pw"
+#       "orderer0:orderer0pw"
+#       "production_api:productionapipw"
+#       "sales_api:salesapipw"
+#       "logistics_api:logisticsapipw")
+
+source ./users_array.sh "$HOSTNAME"
 
 
 mkdir -p /etc/hyperledger/client/tls_root_cert
@@ -21,28 +23,34 @@ echo $FABRIC_CA_CLIENT_HOME
 
 TLS_CA_CERT="/etc/hyperledger/client/tls_root_cert/tls-ca-cert.pem"
 
-fabric-ca-client enroll -d -u https://tlsadmin:tlsadminpw@localhost:7054 --tls.certfiles $TLS_CA_CERT --mspdir tls-ca/tlsadmin/msp --csr.hosts "tlsadmin,localhost"
+fabric-ca-client enroll -d -u https://tlsadmin:tlsadminpw@localhost:$FABRIC_CA_SERVER_PORT --caname tls-ca --tls.certfiles $TLS_CA_CERT --mspdir tls-ca/tlsadmin/msp --csr.hosts "tlsadmin.$HOSTNAME.com,localhost,tlsadmin-$HOSTNAME-com" --csr.cn tlsadmin --csr.names "C=PL,ST=Swietokrzyskie,L=Kielce,O=${ORG_NAME}"
+
+# --csr.names "C=PL,ST=Swietokrzyskie,L=Kielce,O=${ORG_NAME}"
+
 
 #fabric-ca-client enroll -d -u https://furnituresmakers-ca:capw@localhost:7054 --tls.certfiles $TLS_CA_CERT --enrollment.profile tls --csr.hosts "furnituresmakers-ca,localhost" --mspdir tls-ca/admin/msp
 
 # Iteracja przez użytkowników
 for USER in "${USERS[@]}"; do
   # Rozdzielenie loginu i hasła
-  IFS=":" read -r USERNAME PASSWORD <<< "$USER"
+  IFS=":" read -r USERNAME PASSWORD ROLE <<< "$USER"
 
   # Ścieżka MSP dla użytkownika
   MSP_DIR="tls-ca/$USERNAME/msp"
 
   # CSR hosts
-  HOSTS="$USERNAME,localhost"
+  HOSTS="$USERNAME.$HOSTNAME.com,localhost,$USERNAME-$HOSTNAME-com"
 
   # Wywołanie komendy enroll
   fabric-ca-client enroll --enrollment.profile tls \
-    -u https://$USERNAME:$PASSWORD@localhost:7054 \
+    -u https://$USERNAME:$PASSWORD@localhost:$FABRIC_CA_SERVER_PORT \
     --caname tls-ca \
     --tls.certfiles "$TLS_CA_CERT" \
     --csr.hosts "$HOSTS" \
-    --mspdir "$MSP_DIR"
+    --mspdir "$MSP_DIR" \
+    --csr.cn "$USERNAME" \
+    --csr.names "C=PL,ST=Swietokrzyskie,L=Kielce,O=${ORG_NAME}"
+    #--csr.names "C=PL,ST=Swietokrzyskie,L=Kielce,O=${ORG_NAME},OU=${ROLE}"
 
 
   # Zmiana nazwy klucza
@@ -64,8 +72,8 @@ done
 
 mkdir -p /etc/hyperledger/server/ca/tls/
 
-cp -r /etc/hyperledger/client/tls-ca/furnituresmakers-ca/msp/signcerts/cert.pem /etc/hyperledger/server/ca/tls/cert.pem
-cp -r /etc/hyperledger/client/tls-ca/furnituresmakers-ca/msp/keystore/* /etc/hyperledger/server/ca/tls/key.pem
+cp /etc/hyperledger/client/tls-ca/$HOSTNAME-ca/msp/signcerts/cert.pem /etc/hyperledger/server/ca/tls/cert.pem
+cp /etc/hyperledger/client/tls-ca/$HOSTNAME-ca/msp/keystore/* /etc/hyperledger/server/ca/tls/key.pem
 
 #mv /etc/hyperledger/client/tls-ca/admin/msp/keystore/* /etc/hyperledger/client/tls-ca/admin/msp/keystore/key.pem
 

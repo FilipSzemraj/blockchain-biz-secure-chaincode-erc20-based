@@ -1,12 +1,12 @@
 FROM hyperledger/fabric-ca:latest
 
-WORKDIR /etc/hyperledger
+WORKDIR /etc/scripts
 
 #RUN mkdir -p server client
 
 #COPY fabric-ca-server-config.yaml /etc/hyperledger/server/
 
 
-EXPOSE 7056
+EXPOSE 9054
 
 #CMD ["sh", "-c", "fabric-ca-server start -b admin:adminpw -d"]

@@ -1,3 +1,0 @@
-FABRIC_CA_SERVER_TLS_CLIENTAUTH_CERTFILES=/etc/hyperledger/_shared_certs/ca-woodsupply,/etc/hyperledger/_shared_certs/ca-yachtsales,/etc/hyperledger/_shared_certs/tls-woodsupply,/etc/hyperledger/_shared_certs/tls-yachtsales
-FABRIC_CA_SERVER_HOME=/etc/hyperledger/server/ca
-FABRIC_CA_SERVER_TLS_CLIENTAUTH_TYPE=RequireAndVerifyClientCert

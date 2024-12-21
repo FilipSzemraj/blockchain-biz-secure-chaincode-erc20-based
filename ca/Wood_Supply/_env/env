@@ -1,0 +1,3 @@
+FABRIC_CA_SERVER_TLS_CLIENTAUTH_CERTFILES=/etc/_shared_certs/furnituresmakers-msp/admin/admin/msp/tls/tlscacerts/tls-ca-cert.pem,/etc/_shared_certs/furnituresmakers-msp/orderer/orderer0/msp/tls/tlscacerts/tls-ca-cert.pem,/etc/_shared_certs/furnituresmakers-msp/tlscacerts/tls-ca-cert.pem,/etc/_shared_certs/yachtsales-msp/admin/admin/msp/tls/tlscacerts/tls-ca-cert.pem,/etc/_shared_certs/yachtsales-msp/orderer/orderer0/msp/tls/tlscacerts/tls-ca-cert.pem,/etc/_shared_certs/yachtsales-msp/tlscacerts/tls-ca-cert.pem
+FABRIC_CA_SERVER_HOME=/etc/hyperledger/server/ca
+FABRIC_CA_SERVER_TLS_CLIENTAUTH_TYPE=RequireAndVerifyClientCert

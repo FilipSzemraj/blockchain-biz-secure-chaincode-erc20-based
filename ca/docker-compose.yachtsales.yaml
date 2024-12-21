@@ -1,15 +1,25 @@
+networks:
+  fabric-network:
+    driver: bridge
+    name: fabric-network
+
 services:
   initializer_yachtsales:
+    networks:
+      - fabric-network
     build:
       context: ./Yacht_Sales
       dockerfile: Dockerfile
-    image: fabric/yachtsales-ca:latest
+    image: yfw-yachtsales-ca:latest
     container_name: container-initializer-yachtsales-ca
+    hostname: yachtsales
     ports:
-      - "7056:7056"
+      - "9054:9054"
     volumes:
       - ./Yacht_Sales/crypto/:/etc/hyperledger/
+      - ./_scripts/:/etc/scripts/
     environment:
+      - FABRIC_CA_SERVER_PORT=9054
       - FABRIC_CA_SERVER_HOME=/etc/hyperledger/server/tls-ca
       - FABRIC_CA_SERVER_TLS_CLIENTAUTH_TYPE=NoClientCert
     command: >
@@ -23,22 +33,27 @@ services:
     restart: "no" # Ensure this container exits after completing its task
 
   yachtsales-ca:
+    networks:
+      - fabric-network
     build:
       context: ./Yacht_Sales
       dockerfile: Dockerfile
-    image: fabric/yachtsales-ca:latest
-    container_name: container-yachtsales-ca
+    image: yfw-yachtsales-ca:latest
+    container_name: yachtsales-ca
     hostname: yachtsales
     ports:
-      - "7056:7056"
+      - "9054:9054"
     volumes:
       - ./Yacht_Sales/crypto/:/etc/hyperledger/
-      - ./_shared_certs/:/etc/hyperledger/_shared_certs/
-      - ./_env/:/etc/hyperledger/_env/
+      - ./_scripts/:/etc/scripts/
+      - ./_shared_certs/:/etc/_shared_certs/
+      - ./Yacht_Sales/_env/:/etc/_env/
+
     depends_on:
       initializer_yachtsales:
         condition: service_completed_successfully
     environment:
+      - FABRIC_CA_SERVER_PORT=9054
       - FABRIC_CA_SERVER_HOME=/etc/hyperledger/server/ca
       - FABRIC_CA_SERVER_TLS_CLIENTAUTH_TYPE=RequireAndVerifyClientCert
     command: >
@@ -49,8 +64,8 @@ services:
       echo 'Running enroll-ca.sh...';
       ./enroll-ca-new.sh;
       wait;
-      if [ -f ./_env/env ]; then
-        source ./_env/env && fabric-ca-server start;
+      if [ -f /etc/_env/env ]; then
+        source /etc/_env/env && fabric-ca-server start;
       else
         echo 'Env file not found!';
         exit 1;

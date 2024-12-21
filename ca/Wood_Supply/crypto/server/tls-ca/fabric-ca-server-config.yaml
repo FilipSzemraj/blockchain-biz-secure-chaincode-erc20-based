@@ -1,0 +1,319 @@
+port: 7055
+debug: false
+crlsizelimit: 512000
+#############################################################################
+#  The CA section contains information related to the Certificate Authority
+#############################################################################
+ca:
+  name: tls-ca
+  keyfile: /etc/hyperledger/server/tls-ca/msp/keystore/ca-key.pem
+  certfile: /etc/hyperledger/server/tls-ca/msp/cacerts/ca-cert.pem
+  chainfile:
+
+#############################################################################
+# Affiliations are hierarchical in nature. 
+#############################################################################
+affiliations:
+   WoodSupply:
+      - production
+      - logistics
+      - sales
+      - network
+#############################################################################
+#  Used for ID registry setup
+#############################################################################
+registry:
+  # Default - Maximum number of times a password/secret can be reused for enrollment
+  maxenrollments: -1
+
+  # Contains identity information which is used when LDAP is disabled
+  identities:
+  # Admin for network management
+  - name: tlsadmin
+    pass: tlsadminpw
+    type: admin
+    affiliation: "WoodSupply"
+    attrs:
+      hf.EnrollmentID: tlsadmin:ecert
+      hf.Type: admin:ecert
+      hf.Affiliation: WoodSupply:ecert
+      hf.Registrar.Roles: "*"
+      hf.Registrar.DelegateRoles: "*"
+      hf.Revoker: true
+      hf.IntermediateCA: true
+      hf.GenCRL: true
+      hf.Registrar.Attributes: "*"
+      hf.AffiliationMgr: true
+
+  - name: woodsupply-ca
+    pass: capw
+    type: admin
+    affiliation: "WoodSupply"
+    attrs:
+      hf.EnrollmentID: woodsupply-ca:ecert
+      hf.Type: admin:ecert
+      hf.Affiliation: WoodSupply:ecert
+      hf.Registrar.Roles: "*"
+      hf.Registrar.DelegateRoles: "*"
+      hf.Revoker: true:ecert
+      hf.IntermediateCA: false
+      hf.GenCRL: true
+      hf.Registrar.Attributes: "*"
+      hf.AffiliationMgr: true
+
+  - name: admin
+    pass: adminpw
+    type: admin
+    affiliation: "WoodSupply"
+    attrs:
+      hf.EnrollmentID: admin:ecert
+      hf.Type: admin:ecert
+      hf.Affiliation: WoodSupply:ecert
+      hf.Registrar.Roles: "*"
+      hf.Registrar.DelegateRoles: "*"
+      hf.Revoker: true:ecert
+      hf.IntermediateCA: true
+      hf.GenCRL: true
+      hf.Registrar.Attributes: "*"
+      hf.AffiliationMgr: true
+
+  # Infrastructure identities
+  - name: peer0
+    pass: peer0pw
+    type: peer
+    affiliation: "WoodSupply.network"
+    attrs:
+      hf.EnrollmentID: peer0:ecert
+      hf.Type: peer:ecert
+      hf.Affiliation: WoodSupply.network:ecert
+
+  # Internal peers - for redundancy and load balancing
+  - name: peer1
+    pass: peer1pw
+    type: peer
+    affiliation: "WoodSupply.network"
+    attrs:
+      hf.EnrollmentID: peer1:ecert
+      hf.Type: peer:ecert
+      hf.Affiliation: WoodSupply.network:ecert
+
+  - name: peer2
+    pass: peer2pw
+    type: peer
+    affiliation: "WoodSupply.network"
+    attrs:
+      hf.EnrollmentID: peer2:ecert
+      hf.Type: peer:ecert
+      hf.Affiliation: WoodSupply.network:ecert
+
+  - name: orderer0
+    pass: orderer0pw
+    type: orderer
+    affiliation: "WoodSupply.network"
+    attrs:
+      hf.EnrollmentID: orderer0:ecert
+      hf.Type: orderer:ecert
+      hf.Affiliation: WoodSupply.network:ecert
+
+  # Department-specific API identities
+  - name: production_api
+    pass: productionapipw
+    type: client
+    affiliation: "WoodSupply.production"
+    attrs:
+      hf.EnrollmentID: production_api:ecert
+      hf.Type: client:ecert
+      hf.Affiliation: WoodSupply.production:ecert
+
+  - name: logistics_api
+    pass: logisticsapipw
+    type: client
+    affiliation: "WoodSupply.logistics"
+    attrs:
+      hf.EnrollmentID: logistics_api:ecert
+      hf.Type: client:ecert
+      hf.Affiliation: WoodSupply.logistics:ecert
+
+  - name: sales_api
+    pass: salesapipw
+    type: client
+    affiliation: "WoodSupply.sales"
+    attrs:
+      hf.EnrollmentID: sales_api:ecert
+      hf.Type: client:ecert
+      hf.Affiliation: WoodSupply.sales:ecert
+
+      
+            
+###########################################################################
+#  Certificate Signing Request (CSR) section.
+#  This controls the creation of the root CA certificate.
+###########################################################################
+csr:
+   cn:
+   names:
+      - C: "PL"
+        ST: "Swietokrzyskie"
+        L: "Kielce" 
+        O: "WoodSupply"
+        OU: "TLS CA"
+   hosts:
+     - woodsupply-ca
+     - tlsadmin.woodsupply.com
+     - tlsadmin-woodsupply-com
+     - admin.woodsupply.com
+     - admin-woodsupply-com
+     - localhost
+     - peer0.woodsupply.com
+     - peer0-woodsupply-com
+     - peer1.woodsupply.com
+     - peer1-woodsupply-com
+     - peer2.woodsupply.com
+     - peer2-woodsupply-com
+     - orderer0.woodsupply.com
+     - orderer0-woodsupply-com
+     - production_api.woodsupply.com
+     - production_api-woodsupply-com
+     - sales_api.woodsupply.com
+     - sales_api-woodsupply-com
+     - logistics_api.woodsupply.com
+     - logistics_api-woodsupply-com
+   ca:
+      expiry: 131400h
+      
+#      pathlength: 1
+#############################################################################
+#  Signing section - default config used for signing ECerts
+#  Profile-ca used for signing ICA certs, Profile-tls used for sign TLS certs
+#############################################################################
+signing:
+    default:
+      usage:
+        - digital signature
+      expiry: 8760h
+    profiles:
+#      ca:
+#         usage:
+#           - cert sign
+#           - crl sign
+#         expiry: 43800h
+#         caconstraint:
+#           isca: true
+#           maxpathlen: 0
+      tls:
+         usage:
+            - signing
+            - key encipherment
+            - server auth
+            - client auth
+            - key agreement
+         expiry: 8760h
+#############################################################################
+#  TLS section for the server's listening port
+#############################################################################
+tls:
+  enabled: true
+  #certfile: /etc/hyperledger/server/tls-ca/ca-cert.pem
+  #keyfile:  /etc/hyperledger/server/tls-ca/ca-key.pem
+  clientauth:
+    type: NoClientCert
+    certfiles:
+      
+
+
+#############################################################################
+# This section contains configuration options that are used
+# during gencrl request processing.
+#############################################################################
+crl:
+  # Specifies expiration for the generated CRL. 
+  expiry: 24h
+
+
+
+#############################################################################
+#  Database section - Supported types are: "sqlite3", "postgres", and "mysql".
+#############################################################################
+db:
+  type: sqlite3
+  datasource: fabric-ca-server.db
+  tls:
+      enabled: false
+      certfiles:
+      client:
+        certfile:
+        keyfile:
+
+#############################################################################
+#  LDAP section
+#############################################################################
+ldap:
+   # Enables/disables LDAP client, if true Registry section ignored
+   enabled: false
+   # The URL of the LDAP server
+   url: ldap://<adminDN>:<adminPassword>@<host>:<port>/<base>
+   # TLS configuration for the client connection to the LDAP server
+   tls:
+      certfiles:
+      client:
+         certfile:
+         keyfile:
+   # Attribute related configuration for mapping from LDAP entries to Fabric CA attributes
+   attribute:
+      # 'names' is an array of strings containing the LDAP attribute names which are
+      # requested from the LDAP server for an LDAP identity's entry
+      names: ['uid','member']
+      # Config for converting LDAP attributes to CA/Fabric attributes
+      converters:
+         - name:
+           value:
+      # The 'maps' section contains named maps which may be referenced by the 'map'
+      # function in the 'converters' section to map LDAP responses to arbitrary values.
+      maps:
+         groups:
+            - name:
+              value:
+
+
+#############################################################################
+# Multi CA section - setup multiple CA in a single Server process
+#############################################################################
+
+cacount:
+
+cafiles:
+
+#############################################################################
+# Intermediate CA section - for setting up an ICA
+#############################################################################
+intermediate:
+  parentserver:
+    url:
+    caname:
+
+  enrollment:
+    hosts:
+    profile:
+    label:
+
+  tls:
+    certfiles:
+    client:
+      certfile:
+      keyfile:
+
+cfg:
+  identities:
+    allowRegistrarEnrollment: true
+#############################################################################
+# BCCSP (BlockChain Crypto Service Provider) section is used to select which
+# crypto library implementation to use
+#############################################################################
+bccsp:
+    default: SW
+    sw:
+        hash: SHA2
+        security: 256
+        filekeystore:
+            # The directory used for the software file-based keystore
+            keystore: msp/keystore

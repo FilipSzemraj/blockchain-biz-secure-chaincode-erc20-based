@@ -1,0 +1,64 @@
+networks:
+  fabric-network:
+    driver: bridge
+    name: fabric-network
+
+services:
+  -com:
+    networks:
+      - fabric-network
+    build:
+      context: ./_config_files/peer
+      dockerfile: Dockerfile
+    image: yfw-peer:latest
+    hostname: $CORE_PEER_ID
+    container_name: $CORE_PEER_ID
+    environment:
+      - CA_FILE=/etc/hyperledger/msp/tls/tlscacerts/tls-ca-cert.pem
+      - CERT_FILE=/etc/hyperledger/msp/tls/signcerts/cert.pem
+      - KEY_FILE=/etc/hyperledger/msp/tls/keystore/key.pem
+
+      - CORE_PEER_ID=${CORE_PEER_ID}
+      - CORE_PEER_NETWORKID=${CORE_PEER_NETWORKID}
+      - CORE_PEER_LISTENADDRESS=${CORE_PEER_LISTENADDRESS}
+      - CORE_PEER_ADDRESS=${CORE_PEER_ADDRESS}
+      - CORE_PEER_CHAINCODELISTENADDRESS=${CORE_PEER_CHAINCODELISTENADDRESS}
+      - CORE_PEER_LOCALMSPID=${CORE_PEER_LOCALMSPID}
+
+      - CORE_PEER_GOSSIP_BOOTSTRAP=${CORE_PEER_GOSSIP_BOOTSTRAP}
+      - CORE_PEER_GOSSIP_ENDPOINT=${CORE_PEER_GOSSIP_ENDPOINT}
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=${CORE_PEER_GOSSIP_EXTERNALENDPOINT}
+
+      - CORE_OPERATIONS_LISTENADDRESS=${CORE_OPERATIONS_LISTENADDRESS}
+
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=YFW
+
+      - ORG_QUICK_NAME=${ORG_QUICK_NAME}
+
+      - FABRIC_CFG_PATH=/etc/hyperledger/config
+    ports:
+      - "${PEER_PORT}:${PEER_PORT}"
+      - "${NEXT_PORT}:${NEXT_PORT}"
+    volumes:
+      - ./${PEER_ORG}/crypto/client/ca/${PEER_NAME}/msp:/etc/hyperledger/msp
+      - ./_shared_certs:/etc/hyperledger/_shared_certs
+      #- ./_config_files/peer/:/etc/hyperledger/config
+
+
+    command: >
+      bash -c "
+      CLIENT_ROOT_CAs=$$(find /etc/hyperledger/_shared_certs -type f -name '*.pem' -path '*/tlscacerts/*' ! -path '*${ORG_QUICK_NAME}*' | paste -sd ',' -);
+      echo 'Found CA certificates:';
+      echo \"$$CLIENT_ROOT_CAs\";
+      export CORE_TLS_CLIENTROOTCAS_FILES=\"$$CLIENT_ROOT_CAs\";
+      
+      
+      echo 'Starting peer - ${CORE_PEER_ID}';
+      ./start-peer.sh;
+      find /etc/hyperledger/msp/ -type f -print | sed \"s|^\./||\";
+      echo 'CACERTS';
+      find /etc/hyperledger/_shared_certs/ -type f -print | sed \"s|^\./||\";
+
+      peer node start
+      "
+

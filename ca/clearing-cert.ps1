@@ -8,13 +8,23 @@ $ORGANIZATIONS = @(
 
 # Delete all `msp` folders inside `/client/<any_name>/`
 #Get-ChildItem -Path "$BASE_DIR" -Recurse -Directory | Where-Object { $_.Name -in @("msp", "tls-msp") } | Remove-Item -Recurse -Force
-$ENV_GLOBAL="$BASE_DIR\_env"
+#$ENV_GLOBAL="$BASE_DIR\_env"
+$GENESIS_BLOCK="$BASE_DIR\_config_files\configtx\output\genesis_block_YFW.pb"
+echo 'Path to genesis block:'
+echo $GENESIS_BLOCK
 $SHARED_CERTS_GLOBAL="$BASE_DIR\_shared_certs"
-if (Test-Path $ENV_GLOBAL){
-    Remove-Item "$ENV_GLOBAL\*" -Recurse -Force
-}
+echo 'Path to _shared_certs:'
+echo $SHARED_CERTS_GLOBAL
+#if (Test-Path $ENV_GLOBAL){
+#    Remove-Item "$ENV_GLOBAL\*" -Recurse -Force
+#}
 if(Test-Path $SHARED_CERTS_GLOBAL){
     Remove-Item "$SHARED_CERTS_GLOBAL\*" -Recurse -Force
+    echo 'SHARED CERTS FOLDER CLEARED'
+}
+if(Test-Path $GENESIS_BLOCK){
+    Remove-Item "$GENESIS_BLOCK" -Recurse -Force
+    echo 'GENESIS BLOCK CLEARED'
 }
 
 
@@ -26,7 +36,7 @@ foreach ($ORG in $ORGANIZATIONS) {
     if (Test-Path $CLIENT_DIR) {
         Write-Host "Cleaning $CLIENT_DIR"
         Get-ChildItem -Path $CLIENT_DIR -Recurse | Where-Object {
-            $_.Name -ne "ca" -and $_.Name -ne "tls-ca" -and $_.Name -ne "tls_root_cert" -and $_.Name -ne "tls-ca"
+            $_.Name -ne "ca" -and $_.Name -ne "tls-ca" -and $_.Name -ne "tls_root_cert"
         } | Remove-Item -Recurse -Force
     }
 

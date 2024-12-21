@@ -1,0 +1,279 @@
+port: 7054
+debug: false
+crlsizelimit: 512000
+#############################################################################
+#  The CA section contains information related to the Certificate Authority
+#############################################################################
+ca:
+  name: furnituresmakers-ca
+  keyfile: /etc/hyperledger/server/ca/msp/keystore/ca-key.pem
+  certfile: /etc/hyperledger/server/ca/msp/cacerts/ca-cert.pem
+  chainfile:
+#############################################################################
+# Affiliations are hierarchical in nature. 
+#############################################################################
+affiliations:
+   FurnituresMakers:
+      - production
+      - logistics
+      - sales
+      - network
+#############################################################################
+#  Used for ID registry setup
+#############################################################################
+registry:
+  # Default - Maximum number of times a password/secret can be reused for enrollment
+  maxenrollments: -1
+
+  # Contains identity information which is used when LDAP is disabled
+  identities:
+  # Admin for network management
+  - name: admin
+    pass: adminpw
+    type: admin
+    affiliation: "FurnituresMakers"
+    attrs:
+      hf.EnrollmentID: admin:ecert
+      hf.Type: admin:ecert
+      hf.Affiliation: FurnituresMakers:ecert
+      hf.Registrar.Roles: "*"
+      hf.Registrar.DelegateRoles: "*"
+      hf.Revoker: true:ecert
+      hf.IntermediateCA: true
+      hf.GenCRL: true
+      hf.Registrar.Attributes: "*"
+      hf.AffiliationMgr: true
+
+  # Infrastructure identities
+  - name: peer0
+    pass: peer0pw
+    type: peer
+    affiliation: "FurnituresMakers.network"
+    attrs:
+      hf.EnrollmentID: peer0:ecert
+      hf.Type: peer:ecert
+      hf.Affiliation: FurnituresMakers.network:ecert
+
+  # Internal peers - for redundancy and load balancing
+  - name: peer1
+    pass: peer1pw
+    type: peer
+    affiliation: "FurnituresMakers.network"
+    attrs:
+      hf.EnrollmentID: peer1:ecert
+      hf.Type: peer:ecert
+      hf.Affiliation: FurnituresMakers.network:ecert
+
+  - name: peer2
+    pass: peer2pw
+    type: peer
+    affiliation: "FurnituresMakers.network"
+    attrs:
+      hf.EnrollmentID: peer2:ecert
+      hf.Type: peer:ecert
+      hf.Affiliation: FurnituresMakers.network:ecert
+
+  - name: orderer0
+    pass: orderer0pw
+    type: orderer
+    affiliation: "FurnituresMakers.network"
+    attrs:
+      hf.EnrollmentID: orderer0:ecert
+      hf.Type: orderer:ecert
+      hf.Affiliation: FurnituresMakers.network:ecert
+
+  # Department-specific API identities
+  - name: production_api
+    pass: productionapipw
+    type: client
+    affiliation: "FurnituresMakers.production"
+    attrs:
+      hf.EnrollmentID: production_api:ecert
+      hf.Type: client:ecert
+      hf.Affiliation: FurnituresMakers.production:ecert
+
+  - name: logistics_api
+    pass: logisticsapipw
+    type: client
+    affiliation: "FurnituresMakers.logistics"
+    attrs:
+      hf.EnrollmentID: logistics_api:ecert
+      hf.Type: client:ecert
+      hf.Affiliation: FurnituresMakers.logistics:ecert
+
+  - name: sales_api
+    pass: salesapipw
+    type: client
+    affiliation: "FurnituresMakers.sales"
+    attrs:
+      hf.EnrollmentID: sales_api:ecert
+      hf.Type: client:ecert
+      hf.Affiliation: FurnituresMakers.sales:ecert
+
+      
+            
+###########################################################################
+#  Certificate Signing Request (CSR) section.
+#  This controls the creation of the root CA certificate.
+###########################################################################
+csr:
+   cn: furnituresmakers-ca
+   names:
+      - C: "PL"
+        ST: "Swietokrzyskie"
+        L: "Kielce" 
+        O: "FurnituresMakers"
+        OU: "Organization CA"
+   hosts:
+     - admin.furnituresmakers.com
+     #- admin-furnituresmakers-com
+     - localhost
+     - peer0.furnituresmakers.com
+     #- peer0-furnituresmakers-com
+     - peer1.furnituresmakers.com
+     #- peer1-furnituresmakers-com
+     - peer2.furnituresmakers.com
+     #- peer2-furnituresmakers-com
+     - orderer0.furnituresmakers.com
+     #- orderer0-furnituresmakers-com
+     - production_api.furnituresmakers.com
+     #- production_api-furnituresmakers-com
+     - sales_api.furnituresmakers.com
+     #- sales_api-furnituresmakers-com
+     - logistics_api.furnituresmakers.com
+     #- logistics_api-furnituresmakers-com
+   ca:
+      expiry: 131400h
+      pathlength: 0
+#############################################################################
+#  Signing section - default config used for signing ECerts
+#  Profile-ca used for signing ICA certs, Profile-tls used for sign TLS certs
+#############################################################################
+signing:
+    default:
+      usage:
+        - digital signature
+      expiry: 8760h
+    profiles:
+      ca:
+         usage:
+           - cert sign
+           - crl sign
+         expiry: 43800h
+         caconstraint:
+           isca: true
+           maxpathlen: 0
+#      tls:
+#         usage:
+#            - signing
+#            - key encipherment
+#            - server auth
+#            - client auth
+#            - key agreement
+#         expiry: 8760h
+#############################################################################
+#  TLS section for the server's listening port
+#############################################################################
+tls:
+  enabled: true
+  certfile: tls/cert.pem
+  keyfile: tls/key.pem
+  clientauth:
+    type: RequireAndVerifyClientCert
+    certfiles:
+      - /etc/hyperledger/server/tls-ca/msp/cacerts/ca-cert.pem
+
+
+#############################################################################
+# This section contains configuration options that are used
+# during gencrl request processing.
+#############################################################################
+crl:
+  # Specifies expiration for the generated CRL. 
+  expiry: 24h
+
+
+
+#############################################################################
+#  Database section - Supported types are: "sqlite3", "postgres", and "mysql".
+#############################################################################
+db:
+  type: sqlite3
+  datasource: fabric-ca-server.db
+  tls:
+      enabled: false
+      certfiles:
+      client:
+        certfile:
+        keyfile:
+
+#############################################################################
+#  LDAP section
+#############################################################################
+ldap:
+   # Enables/disables LDAP client, if true Registry section ignored
+   enabled: false
+   # The URL of the LDAP server
+   url: ldap://<adminDN>:<adminPassword>@<host>:<port>/<base>
+   # TLS configuration for the client connection to the LDAP server
+   tls:
+      certfiles:
+      client:
+         certfile:
+         keyfile:
+   # Attribute related configuration for mapping from LDAP entries to Fabric CA attributes
+   attribute:
+      # 'names' is an array of strings containing the LDAP attribute names which are
+      # requested from the LDAP server for an LDAP identity's entry
+      names: ['uid','member']
+      # Config for converting LDAP attributes to CA/Fabric attributes
+      converters:
+         - name:
+           value:
+      # The 'maps' section contains named maps which may be referenced by the 'map'
+      # function in the 'converters' section to map LDAP responses to arbitrary values.
+      maps:
+         groups:
+            - name:
+              value:
+
+
+#############################################################################
+# Multi CA section - setup multiple CA in a single Server process
+#############################################################################
+
+cacount:
+
+cafiles:
+
+#############################################################################
+# Intermediate CA section - for setting up an ICA
+#############################################################################
+intermediate:
+  parentserver:
+    url:
+    caname:
+
+  enrollment:
+    hosts:
+    profile:
+    label:
+
+  tls:
+    certfiles:
+    client:
+      certfile:
+      keyfile:
+
+#############################################################################
+# BCCSP (BlockChain Crypto Service Provider) section is used to select which
+# crypto library implementation to use
+#############################################################################
+bccsp:
+    default: SW
+    sw:
+        hash: SHA2
+        security: 256
+        filekeystore:
+            # The directory used for the software file-based keystore
+            keystore: msp/keystore

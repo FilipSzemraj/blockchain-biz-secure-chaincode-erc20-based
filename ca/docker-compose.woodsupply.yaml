@@ -1,15 +1,25 @@
+networks:
+  fabric-network:
+    driver: bridge
+    name: fabric-network
+
 services:
   initializer_woodsupply:
+    networks:
+      - fabric-network
     build:
       context: ./Wood_Supply
       dockerfile: Dockerfile
-    image: fabric/woodsupply-ca:latest
+    image: yfw-woodsupply-ca:latest
     container_name: container-initializer-woodsupply-ca
+    hostname: woodsupply
     ports:
-      - "7055:7055"
+      - "8054:8054"
     volumes:
       - ./Wood_Supply/crypto/:/etc/hyperledger/
+      - ./_scripts/:/etc/scripts/
     environment:
+      - FABRIC_CA_SERVER_PORT=8054
       - FABRIC_CA_SERVER_HOME=/etc/hyperledger/server/tls-ca
       - FABRIC_CA_SERVER_TLS_CLIENTAUTH_TYPE=NoClientCert
     command: >
@@ -23,22 +33,26 @@ services:
     restart: "no" # Ensure this container exits after completing its task
 
   woodsupply-ca:
+    networks:
+      - fabric-network
     build:
       context: ./Wood_Supply
       dockerfile: Dockerfile
     image: fabric/woodsupply-ca:latest
-    container_name: container-woodsupply-ca
+    container_name: woodsupply-ca
     hostname: woodsupply
     ports:
-      - "7055:7055"
+      - "8054:8054"
     volumes:
       - ./Wood_Supply/crypto/:/etc/hyperledger/
-      - ./_shared_certs/:/etc/hyperledger/_shared_certs/
-      - ./_env/:/etc/hyperledger/_env/
+      - ./_scripts/:/etc/scripts/
+      - ./_shared_certs/:/etc/_shared_certs/
+      - ./Wood_Supply/_env/:/etc/_env/
     depends_on:
       initializer_woodsupply:
         condition: service_completed_successfully
     environment:
+      - FABRIC_CA_SERVER_PORT=8054
       - FABRIC_CA_SERVER_HOME=/etc/hyperledger/server/ca
       - FABRIC_CA_SERVER_TLS_CLIENTAUTH_TYPE=RequireAndVerifyClientCert
     command: >
@@ -49,8 +63,8 @@ services:
       echo 'Running enroll-ca.sh...';
       ./enroll-ca-new.sh;
       wait;
-      if [ -f ./_env/env ]; then
-        source ./_env/env && fabric-ca-server start;
+      if [ -f /etc/_env/env ]; then
+        source /etc/_env/env && fabric-ca-server start;
       else
         echo 'Env file not found!';
         exit 1;
