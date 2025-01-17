@@ -14,6 +14,9 @@ services:
     hostname: peer0.furnituresmakers.com
     container_name: peer0.furnituresmakers.com
     environment:
+      #- FABRIC_LOGGING_SPEC=debug
+      #- CORE_PEER_DISCOVERY_ORGMEMBERSALLOWEDACCESS=false
+
       - CA_FILE=/etc/hyperledger/msp/tls/tlscacerts/tls-ca-cert.pem
       - CERT_FILE=/etc/hyperledger/msp/tls/signcerts/cert.pem
       - KEY_FILE=/etc/hyperledger/msp/tls/keystore/key.pem
@@ -27,7 +30,7 @@ services:
       - CORE_PEER_LOCALMSPID=FurnituresMakers
 
       #- CORE_PEER_GOSSIP_BOOTSTRAP=${CORE_PEER_GOSSIP_BOOTSTRAP}
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.furnituresmakers.com:7051 peer2.furnituresmakers.com:7051
+      #- CORE_PEER_GOSSIP_BOOTSTRAP=peer1.furnituresmakers.com:7051 peer2.furnituresmakers.com:7051
 
       - CORE_PEER_GOSSIP_ENDPOINT=peer0.furnituresmakers.com:7051
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.furnituresmakers.com:7051
@@ -67,7 +70,7 @@ services:
       
       
       echo 'Starting peer - peer0.furnituresmakers.com:7051';
-      ./start-peer.sh;
+      ./start-anchor-peer.sh;
       find /etc/hyperledger/msp/ -type f -print | sed \"s|^\./||\";
       echo 'CACERTS';
       find /etc/hyperledger/_shared_certs/ -type f -print | sed \"s|^\./||\";
@@ -88,6 +91,9 @@ services:
     hostname: peer0.woodsupply.com
     container_name: peer0.woodsupply.com
     environment:
+      #- FABRIC_LOGGING_SPEC=debug
+      #- CORE_PEER_DISCOVERY_ORGMEMBERSALLOWEDACCESS=false
+
       - CA_FILE=/etc/hyperledger/msp/tls/tlscacerts/tls-ca-cert.pem
       - CERT_FILE=/etc/hyperledger/msp/tls/signcerts/cert.pem
       - KEY_FILE=/etc/hyperledger/msp/tls/keystore/key.pem
@@ -101,7 +107,7 @@ services:
       - CORE_PEER_LOCALMSPID=WoodSupply
 
       #- CORE_PEER_GOSSIP_BOOTSTRAP=${CORE_PEER_GOSSIP_BOOTSTRAP}
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.woodsupply.com:8051 peer2.woodsupply.com:8051
+      #- CORE_PEER_GOSSIP_BOOTSTRAP=peer1.woodsupply.com:8051 peer2.woodsupply.com:8051
 
       - CORE_PEER_GOSSIP_ENDPOINT=peer0.woodsupply.com:8051
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.woodsupply.com:8051
@@ -141,7 +147,7 @@ services:
 
 
       echo 'Starting peer - peer0.woodsupply.com:8051';
-      ./start-peer.sh;
+      ./start-anchor-peer.sh;
       find /etc/hyperledger/msp/ -type f -print | sed \"s|^\./||\";
       echo 'CACERTS';
       find /etc/hyperledger/_shared_certs/ -type f -print | sed \"s|^\./||\";
@@ -162,6 +168,9 @@ services:
     hostname: peer0.yachtsales.com
     container_name: peer0.yachtsales.com
     environment:
+      #- FABRIC_LOGGING_SPEC=debug
+      #- CORE_PEER_DISCOVERY_ORGMEMBERSALLOWEDACCESS=false
+
       - CA_FILE=/etc/hyperledger/msp/tls/tlscacerts/tls-ca-cert.pem
       - CERT_FILE=/etc/hyperledger/msp/tls/signcerts/cert.pem
       - KEY_FILE=/etc/hyperledger/msp/tls/keystore/key.pem
@@ -175,7 +184,7 @@ services:
       - CORE_PEER_LOCALMSPID=YachtSales
 
       #- CORE_PEER_GOSSIP_BOOTSTRAP=${CORE_PEER_GOSSIP_BOOTSTRAP}
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.yachtsales.com:9051 peer2.yachtsales.com:9051
+      #- CORE_PEER_GOSSIP_BOOTSTRAP=peer1.yachtsales.com:9051 peer2.yachtsales.com:9051
       - CORE_PEER_GOSSIP_ENDPOINT=peer0.yachtsales.com:9051
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.yachtsales.com:9051
 
@@ -214,7 +223,7 @@ services:
 
 
       echo 'Starting peer - peer0.yachtsales.com:9052';
-      ./start-peer.sh;
+      ./start-anchor-peer.sh;
       find /etc/hyperledger/msp/ -type f -print | sed \"s|^\./||\";
       echo 'CACERTS';
       find /etc/hyperledger/_shared_certs/ -type f -print | sed \"s|^\./||\";

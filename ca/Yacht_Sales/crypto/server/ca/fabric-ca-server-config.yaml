@@ -91,6 +91,7 @@ registry:
       hf.EnrollmentID: production_api:ecert
       hf.Type: client:ecert
       hf.Affiliation: YachtSales.production:ecert
+      hf.iban: PL22222222222222222222222222:ecert
 
   - name: logistics_api
     pass: logisticsapipw
@@ -100,6 +101,7 @@ registry:
       hf.EnrollmentID: logistics_api:ecert
       hf.Type: client:ecert
       hf.Affiliation: YachtSales.logistics:ecert
+      hf.iban: PL22222222222222222222222222:ecert
 
   - name: sales_api
     pass: salesapipw
@@ -109,6 +111,7 @@ registry:
       hf.EnrollmentID: sales_api:ecert
       hf.Type: client:ecert
       hf.Affiliation: YachtSales.sales:ecert
+      hf.iban: PL22222222222222222222222222:ecert
 
       
             

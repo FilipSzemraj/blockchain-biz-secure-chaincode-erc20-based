@@ -24,5 +24,5 @@ peer lifecycle chaincode package basic.tar.gz --path ../chaincode/chaincode-type
 #fi
 
 #sleep 1
-
+#Nazwa name z poniższej komendy jako chaincode_name
 #peer lifecycle chaincode approveformyorg -o orderer0.furnituresmakers.com:7050 --channelID yfw-channel --name basic --version 1.0 --package-id $CC_PACKAGE_ID --sequence 1 --tls --cafile $CA_FILE --clientauth --certfile $CERT_FILE --keyfile $KEY_FILE

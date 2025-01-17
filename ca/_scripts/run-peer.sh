@@ -26,6 +26,8 @@ for ORG in "${ORGS[@]}"; do
   done
 done
 
+echo BOOTSTRAPUSERS
+
 
 export CORE_PEER_ID="${PEER_NAME}.${ORG_QUICK_NAME}.com"
 export CORE_PEER_NETWORKID="${PEER_NAME}.${ORG_QUICK_NAME}.com"
@@ -44,6 +46,8 @@ export CORE_OPERATIONS_LISTENADDRESS="${PEER_NAME}.${ORG_QUICK_NAME}.com:9443"
 #cd "$BASE_DIR/.."
 
 # Write variables to .env file
+#CORE_PEER_GOSSIP_EXTERNALENDPOINT=${PEER_NAME}.${ORG_QUICK_NAME}.com:${PEER_PORT}
+
 cat > "../_config_files/peer/.env" <<EOF
 PEER_NAME=${PEER_NAME}
 PEER_ORG=${PEER_ORG}
@@ -59,17 +63,20 @@ CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:${NEXT_PORT}
 CORE_PEER_LOCALMSPID=${CORE_PEER_LOCALMSPID}
 
 CORE_PEER_GOSSIP_ENDPOINT=${PEER_NAME}.${ORG_QUICK_NAME}.com:${PEER_PORT}
-CORE_PEER_GOSSIP_EXTERNALENDPOINT=${PEER_NAME}.${ORG_QUICK_NAME}.com:${PEER_PORT}
 
 CORE_OPERATIONS_LISTENADDRESS=${PEER_NAME}.${ORG_QUICK_NAME}.com:9443
+CORE_PEER_GOSSIP_ORGLEADER=false
+CORE_PEER_DISCOVERY_ORGMEMBERSALLOWEDACCESS=true
 EOF
 
-cp -f start-peer.sh ../_config_files/peer/start-peer.sh
+cp -f start-anchor-peer.sh ../_config_files/peer/start-anchor-peer.sh
 
 echo "Copied start-peer.sh to ../_config_files/peer/start-peer.sh"
 
 
-docker-compose --project-name "admin-${ORG_NAME}" --env-file ../_config_files/peer/.env -f "../docker-compose.peer.yaml" down
+#docker-compose --project-name "admin-${ORG_NAME}" --env-file ../_config_files/peer/.env -f "../docker-compose.peer.yaml" down
+
+docker-compose --env-file ../_config_files/peer/.env -f "../docker-compose.peer.yaml" down
 
 docker-compose --env-file ../_config_files/peer/.env -f "../docker-compose.peer.yaml" config
 

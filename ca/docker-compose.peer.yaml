@@ -14,9 +14,14 @@ services:
     hostname: $CORE_PEER_ID
     container_name: $CORE_PEER_ID
     environment:
+      #- FABRIC_LOGGING_SPEC=debug
+      - CORE_PEER_GOSSIP_ORGLEADER=${CORE_PEER_GOSSIP_ORGLEADER}
+      - CORE_PEER_DISCOVERY_ORGMEMBERSALLOWEDACCESS=${CORE_PEER_DISCOVERY_ORGMEMBERSALLOWEDACCESS}
+
       - CA_FILE=/etc/hyperledger/msp/tls/tlscacerts/tls-ca-cert.pem
       - CERT_FILE=/etc/hyperledger/msp/tls/signcerts/cert.pem
       - KEY_FILE=/etc/hyperledger/msp/tls/keystore/key.pem
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp
 
       - CORE_PEER_ID=${CORE_PEER_ID}
       - CORE_PEER_NETWORKID=${CORE_PEER_NETWORKID}
@@ -25,20 +30,22 @@ services:
       - CORE_PEER_CHAINCODELISTENADDRESS=${CORE_PEER_CHAINCODELISTENADDRESS}
       - CORE_PEER_LOCALMSPID=${CORE_PEER_LOCALMSPID}
 
-      - CORE_PEER_GOSSIP_BOOTSTRAP=${CORE_PEER_GOSSIP_BOOTSTRAP}
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.furnituresmakers.com:7051 peer2.furnituresmakers.com:7051
+
+      #- CORE_PEER_GOSSIP_BOOTSTRAP=${CORE_PEER_GOSSIP_BOOTSTRAP}
       - CORE_PEER_GOSSIP_ENDPOINT=${CORE_PEER_GOSSIP_ENDPOINT}
-      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=${CORE_PEER_GOSSIP_EXTERNALENDPOINT}
+      #- CORE_PEER_GOSSIP_EXTERNALENDPOINT=${CORE_PEER_GOSSIP_EXTERNALENDPOINT} Po ustawieniu adres jest rozgłaszany innym organizacjom
 
       - CORE_OPERATIONS_LISTENADDRESS=${CORE_OPERATIONS_LISTENADDRESS}
 
       - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=YFW
 
       - ORG_QUICK_NAME=${ORG_QUICK_NAME}
-
       - FABRIC_CFG_PATH=/etc/hyperledger/config
-    ports:
-      - "${PEER_PORT}:${PEER_PORT}"
-      - "${NEXT_PORT}:${NEXT_PORT}"
+
+    #ports:
+      #- "${PEER_PORT}:${PEER_PORT}"
+      #- "${NEXT_PORT}:${NEXT_PORT}"
     volumes:
       - ./${PEER_ORG}/crypto/client/ca/${PEER_NAME}/msp:/etc/hyperledger/msp
       - ./_shared_certs:/etc/hyperledger/_shared_certs

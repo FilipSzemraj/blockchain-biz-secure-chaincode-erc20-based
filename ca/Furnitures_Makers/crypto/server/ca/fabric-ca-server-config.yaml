@@ -91,6 +91,8 @@ registry:
       hf.EnrollmentID: production_api:ecert
       hf.Type: client:ecert
       hf.Affiliation: FurnituresMakers.production:ecert
+      hf.iban: PL00000000000000000000000000:ecert
+
 
   - name: logistics_api
     pass: logisticsapipw
@@ -100,6 +102,7 @@ registry:
       hf.EnrollmentID: logistics_api:ecert
       hf.Type: client:ecert
       hf.Affiliation: FurnituresMakers.logistics:ecert
+      hf.iban: PL00000000000000000000000000:ecert
 
   - name: sales_api
     pass: salesapipw
@@ -109,6 +112,7 @@ registry:
       hf.EnrollmentID: sales_api:ecert
       hf.Type: client:ecert
       hf.Affiliation: FurnituresMakers.sales:ecert
+      hf.iban: PL00000000000000000000000000:ecert
 
       
             

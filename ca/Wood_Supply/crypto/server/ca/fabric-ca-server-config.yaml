@@ -91,6 +91,7 @@ registry:
       hf.EnrollmentID: production_api:ecert
       hf.Type: client:ecert
       hf.Affiliation: WoodSupply.production:ecert
+      hf.iban: PL11111111111111111111111111:ecert
 
   - name: logistics_api
     pass: logisticsapipw
@@ -100,6 +101,7 @@ registry:
       hf.EnrollmentID: logistics_api:ecert
       hf.Type: client:ecert
       hf.Affiliation: WoodSupply.logistics:ecert
+      hf.iban: PL11111111111111111111111111:ecert
 
   - name: sales_api
     pass: salesapipw
@@ -109,6 +111,7 @@ registry:
       hf.EnrollmentID: sales_api:ecert
       hf.Type: client:ecert
       hf.Affiliation: WoodSupply.sales:ecert
+      hf.iban: PL11111111111111111111111111:ecert
 
       
             

@@ -67,8 +67,13 @@ for ((i=1; i<${#USERS[@]}; i++)); do
         --tls.certfiles \"$TLS_CA_CERT\" \
         --csr.hosts \"$HOSTS\" \
         --csr.cn \"$USERNAME\" \
-        --csr.names C=PL,ST=Swietokrzyskie,L=Kielce,O=$ORG_NAME"
+        --csr.names C=PL,ST=Swietokrzyskie,L=Kielce,O=$ORG_NAME "
         #--csr.names C=PL,ST=Swietokrzyskie,L=Kielce,O=$ORG_NAME,OU=$ROLE"
+
+  # Sprawdzenie, czy nazwa użytkownika zawiera postfix "_api"
+  if [[ "$USERNAME" == *_api ]]; then
+      CMD="$CMD --enrollment.attrs \"hf.iban\""
+  fi
 
   if [ -f "$CLIENT_CERT" ]; then
     CMD="$CMD --tls.client.certfile \"$CLIENT_CERT\""
