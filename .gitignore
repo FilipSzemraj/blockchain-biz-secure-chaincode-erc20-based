@@ -1,0 +1,41 @@
+# Ignore everything in parent directories
+/*
+
+# Allow this folder and its contents
+!.gitignore
+!/.
+
+# Ignore build artifacts
+/build/
+.gradle/
+/out/
+/build.gradle.bak
+
+# Ignore IDE and editor specific files
+/.idea/
+/*.iml
+.vscode/
+
+# Ignore OS generated files
+.DS_Store
+Thumbs.db
+
+# Ignore gradle wrappers
+/gradle/
+/gradlew
+/gradlew.bat
+
+# Ignore Docker build artifacts
+/docker/
+Dockerfile
+
+# Ignore sensitive or security-related files
+#/private_key.pem
+#*.pem
+
+# Allow configuration files and source code
+!config/
+!src/
+!settings.gradle
+!build.gradle
+!public_key.pem
