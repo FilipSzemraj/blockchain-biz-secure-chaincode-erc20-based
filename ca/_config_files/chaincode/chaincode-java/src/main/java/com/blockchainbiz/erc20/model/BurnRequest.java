@@ -66,7 +66,7 @@ public final class BurnRequest {
      * Constructor for BurnRequest
      *
      * @param id Unique txId from the burn request transaction.
-     * @param tempAccount Temporary account holding the tokens.
+     * @param burnWallet Temporary account holding the tokens.
      * @param recipientAccount Recipient account for withdrawal.
      * @param amount Number of tokens being burned.
      * @param timestamp Time of request creation.

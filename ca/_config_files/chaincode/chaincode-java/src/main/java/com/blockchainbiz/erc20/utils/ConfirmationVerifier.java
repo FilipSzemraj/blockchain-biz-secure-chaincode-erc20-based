@@ -8,6 +8,7 @@ import com.owlike.genson.Genson;
 import javax.crypto.Cipher;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -37,8 +38,7 @@ public final class ConfirmationVerifier {
      * @throws RuntimeException If the key file is not found or can't be parsed.
      */
     private static PublicKey loadPublicKey(String resourcePath) {
-        ClassLoader classLoader = ConfirmationVerifier.class.getClass().getClassLoader();
-        try (InputStream inputStream = classLoader.getResourceAsStream(resourcePath)){
+        try (InputStream inputStream = ConfirmationVerifier.class.getResourceAsStream("/" + resourcePath)) {
             if (inputStream == null) {
                 throw new RuntimeException("Public key resource not found: " + resourcePath);
             }
@@ -73,6 +73,9 @@ public final class ConfirmationVerifier {
         String json = new Genson().serialize(obj);
         System.out.println("Serialized JSON (Java): " + json);
         return json;
+    }
+    public static <T> T unmarshalString(String json, Class<T> clazz) {
+        return new Genson().deserialize(json, clazz);
     }
 
     /**
@@ -207,6 +210,7 @@ public final class ConfirmationVerifier {
             cipher.init(Cipher.DECRYPT_MODE, publicKey);
             byte[] decryptedHash = cipher.doFinal(encryptedHash);
             String decryptedHashString = new String(decryptedHash, StandardCharsets.UTF_8);
+            System.out.println("localHash (hex): " + localHash);
             System.out.println("Decrypted hash (hex): " + decryptedHashString);
 
             boolean hashesMatch = decryptedHashString.equals(localHash);
@@ -224,15 +228,15 @@ public final class ConfirmationVerifier {
      * to retrieve the required parameters for hash verification.
      * </p>
      *
-     * @param jsonFilePath the path to the JSON file containing the data for verification
+     * @param jsonContent the path to the JSON file containing the data for verification
      * @return {@code true} if the hash is valid; {@code false} otherwise
      * @throws IllegalArgumentException if the JSON file does not exist or contains invalid data
      * @see ConfirmationVerifier#verifyHash(String, Confirmation)
      * @see #loadConfirmationWithHash(String)
      */
 
-    public static VerificationResult verifyHashFromJson(String jsonFilePath) {
-        ConfirmationWithHash tuple = loadConfirmationWithHash(jsonFilePath);
+    public static VerificationResult verifyHashFromJson(String jsonContent) {
+        ConfirmationWithHash tuple = loadConfirmationWithHash(jsonContent);
         // Zweryfikuj hash
         return verifyHash(tuple.getHash(), tuple.getConfirmation());
     }

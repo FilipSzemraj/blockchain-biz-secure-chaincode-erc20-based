@@ -84,4 +84,16 @@ public final class Confirmation {
     public void setRawData(Map<String, Object> rawData) {
         this.rawData = rawData;
     }
+
+    @Override
+    public String toString() {
+        return "Confirmation{" +
+                "amount=" + amount +
+                ", fromIBAN='" + fromIBAN + '\'' +
+                ", rawData='" + rawData + '\'' +
+                ", refNumber='" + refNumber + '\'' +
+                ", toIBAN='" + toIBAN + '\'' +
+                ", transferDate='" + transferDate + '\'' +
+                '}';
+    }
 }

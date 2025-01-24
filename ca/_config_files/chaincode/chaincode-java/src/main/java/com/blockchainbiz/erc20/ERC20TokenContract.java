@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.Map;
 
 import com.blockchainbiz.erc20.utils.ConfirmationVerifier;
+import com.owlike.genson.Genson;
 import org.hyperledger.fabric.Logger;
 import org.hyperledger.fabric.contract.ClientIdentity;
 import org.hyperledger.fabric.contract.Context;
@@ -78,13 +79,18 @@ public final class ERC20TokenContract implements ContractInterface {
     if (!"admin".equalsIgnoreCase(role)) {
       throw new ChaincodeException("Unauthorized: Only admin can mint tokens", UNAUTHORIZED_SENDER.toString());
     }
-    //String policy = "AND('YachtSales.member', 'FurnituresMakers.member', 'WoodSupply.member')";
-    //stub.setStateValidationParameter("totalSupply", policy.getBytes(UTF_8));
 
     this.checkInitialized(ctx);
 
     // Check correctness of confirmation and get transaction data.
-    final VerificationResult result = verifyHashFromJson(jsonContent);
+
+    VerificationResult result;
+    try{
+      result = verifyHashFromJson(jsonContent);
+    }catch(RuntimeException e){
+      throw new ChaincodeException("Error during hash verification: " + e.getMessage(), INVALID_HASH.toString());
+    }
+
     final Confirmation confirmation = result.getConfirmation();
     final long amount = confirmation.getAmount();
     final String localHash = result.getLocalHash();
@@ -111,18 +117,21 @@ public final class ERC20TokenContract implements ContractInterface {
     ClientIdentity clientIdentity = ctx.getClientIdentity();
     String minter = clientIdentity.getId();
     String clientIBAN = clientIdentity.getAttributeValue("hf.iban");
-    String orgIBAN = confirmation.getToIBAN();
+    String destIBAN = confirmation.getToIBAN();
 
-    if (clientIBAN == null || clientIBAN != sourceIBAN) {
+
+    if (clientIBAN == null || !clientIBAN.equalsIgnoreCase(sourceIBAN)) {
       throw new RuntimeException("Client IBAN not found in certificate or isn't the same as the one from transaction details.");
     }
 
     String currentIBAN = stub.getStringState(IBAN_KEY.getValue());
+
+
     if(stringIsNullOrEmpty(currentIBAN)){
       throw new ChaincodeException(
               "No IBAN number found for the consortium. Initialization or operation cannot proceed.", NOT_FOUND.toString());
     }
-    if(!currentIBAN.equalsIgnoreCase(orgIBAN)){
+    if(!currentIBAN.equalsIgnoreCase(destIBAN)){
       throw new ChaincodeException(
               "The provided recipient IBAN does not match the consortium's IBAN. Operation cannot proceed.", INVALID_CONFIRMATION.toString());
     }
@@ -188,25 +197,26 @@ public final class ERC20TokenContract implements ContractInterface {
           "Client is not authorized to burn tokens", UNAUTHORIZED_SENDER.toString());
     }
 
+    String role = ctx.getClientIdentity().getAttributeValue("role");
+
+    if (!"admin".equalsIgnoreCase(role)) {
+      throw new ChaincodeException("Unauthorized: Only admin can create burn request tokens", UNAUTHORIZED_SENDER.toString());
+    }
+
     // Check contract options are already set first to execute the function
     this.checkInitialized(ctx);
 
-    // Check correctness of confirmation and get transaction data.
-    //final VerificationResult result = verifyHashFromJson(jsonContent);
-    //final Confirmation confirmation = result.getConfirmation();
-    //final long amount = confirmation.getAmount();
-    //final String localHash = result.getLocalHash();
     if (amountLong <= 0) {
       throw new ChaincodeException(
               "Burn amount must be a positive integer", INVALID_AMOUNT.toString());
     }
 
     // obliczanie hasza
-    CompositeKey burnBalanceKey = stub.createCompositeKey(BURN_BALANCE_PREFIX.getValue(), clientMSPID);
+    CompositeKey orgBurnBalanceKey = stub.createCompositeKey(BURN_BALANCE_PREFIX.getValue(), clientMSPID);
 
     // Get ID of submitting client identity
     String txId = stub.getTxId();
-    String burnWallet = burnBalanceKey.toString();
+    String burnWallet = orgBurnBalanceKey.toString();
     String clientIBAN = clientIdentity.getAttributeValue("hf.iban");
     if (clientIBAN == null || clientIBAN.isEmpty()) {
       throw new ChaincodeException("Client IBAN is missing or invalid", "INVALID_IBAN");
@@ -236,7 +246,6 @@ public final class ERC20TokenContract implements ContractInterface {
       throw new ChaincodeException("The balance does not exist", BALANCE_NOT_FOUND.toString());
     }
     long currentBalance = Long.parseLong(currentBalanceStr);
-    // Check if the sender has enough tokens to burn.
 
     if (currentBalance < amountLong) {
       String errorMessage = String.format("Organization account %s has insufficient funds", clientMSPID);
@@ -258,6 +267,9 @@ public final class ERC20TokenContract implements ContractInterface {
       if (history.iterator().hasNext()) {
         throw new ChaincodeException("Burn ID already used in the past", DUPLICATE_TRANSACTION_ID.toString());
       }
+    }catch (ChaincodeException ce) {
+      // If it's already a ChaincodeException, just rethrow it
+      throw ce;
     }catch (Exception e) {
       throw new RuntimeException("Error while closing the iterator: " + e.getMessage(), e);
     }
@@ -266,16 +278,15 @@ public final class ERC20TokenContract implements ContractInterface {
     stub.putStringState(balanceKey.toString(), String.valueOf(updatedBalance));
     //markAsWaiting(stub, localHash);
     //burnBalanceKey
-    String currentBalanceBurnKeyStr = stub.getStringState(burnBalanceKey.toString());
+    String currentBalanceBurnKeyStr = stub.getStringState(orgBurnBalanceKey.toString());
     long currentBalanceBurnKey = 0;
     if (!stringIsNullOrEmpty(currentBalanceBurnKeyStr)) {
       currentBalanceBurnKey = Long.parseLong(currentBalanceBurnKeyStr);
     }
     currentBalanceBurnKey = Math.addExact(amountLong, currentBalanceBurnKey);
 
-    stub.putStringState(burnBalanceKey.toString(), String.valueOf(currentBalanceBurnKey));
+    stub.putStringState(orgBurnBalanceKey.toString(), String.valueOf(currentBalanceBurnKey));
 
-    // Send tokens to temporary wallet.
     stub.putStringState(burnKey.toString(), marshalString(combinedRequest));
     stub.setEvent("BurnPendingEvent", marshalBytes(combinedRequest));
     logger.info(
@@ -302,61 +313,52 @@ public final class ERC20TokenContract implements ContractInterface {
     String role = ctx.getClientIdentity().getAttributeValue("role");
 
     if (!"admin".equalsIgnoreCase(role)) {
-      throw new ChaincodeException("Unauthorized: Only admin can mint tokens", UNAUTHORIZED_SENDER.toString());
+      throw new ChaincodeException("Unauthorized: Only admin can finalize burn of tokens", UNAUTHORIZED_SENDER.toString());
     }
 
-    final VerificationResult result = verifyHashFromJson(jsonContent);
-    final Confirmation confirmation = result.getConfirmation();
-    final Map<String, Object> rawData = confirmation.getRawData();
-
+    VerificationResult result;
+    try{
+      result = verifyHashFromJson(jsonContent);
+    }catch(RuntimeException e){
+      throw new ChaincodeException("Error during hash verification: " + e.getMessage(), INVALID_HASH.toString());
+    }
 
     if(!result.isMatches()){
       throw new ChaincodeException("Unauthorized: Hash of transaction data isn't equal to the encrypted one", UNAUTHORIZED_SENDER.toString());
     }
 
+    final Confirmation confirmation = result.getConfirmation();
+    final Map<String, Object> rawData = confirmation.getRawData();
+
+    if(!rawData.containsKey("BurnRequestHash")){
+      throw new ChaincodeException("Error while getting hash of burnRequest: ", INVALID_CONFIRMATION.toString());
+    }
+    Object burnRequestHashObj = rawData.get("BurnRequestHash");
+    if (burnRequestHashObj == null) {
+      throw new ChaincodeException("Error while containing hash of burnRequest: ", INVALID_CONFIRMATION.toString());
+    }
+
+    if (!(burnRequestHashObj instanceof String)) {
+      throw new ChaincodeException("Error while containing hash of burnRequest: "+ INVALID_CONFIRMATION.toString()
+              + burnRequestHashObj.getClass().getName());
+    }
+
+    String burnRequestHashConfirmation = (String) burnRequestHashObj;
+
+    System.out.println("burnRequestHashConfirmation: "+burnRequestHashConfirmation);
+
     //CompositeKey burnKey = stub.createCompositeKey(BURN_TRANSACTIONS_PREFIX.getValue(), burnRequestHash);
-
-    // Zadeklaruj zmienną przed blokiem try-catch
-    BurnRequestWithHash burnRequestWithHash = null;
-
-    try {
-      // Pobierz wartość z mapy
-      Object value = rawData.get("BurnRequestWithHash");
-
-      // Sprawdź, czy wartość istnieje
-      if (value == null) {
-        throw new IllegalArgumentException("Key 'BurnRequestWithHash' not found in rawData.");
-      }
-
-      // Sprawdź, czy wartość jest instancją oczekiwanej klasy
-      if (!(value instanceof BurnRequestWithHash)) {
-        throw new ClassCastException("Value for key 'BurnRequestWithHash' is not of type BurnRequestWithHash.");
-      }
-
-      // Jeśli wszystko się zgadza, dokonaj rzutowania
-      burnRequestWithHash = (BurnRequestWithHash) value;
-
-    } catch (IllegalArgumentException | ClassCastException e) {
-      // Obsłuż wyjątek
-      System.err.println("Error: " + e.getMessage());
-      e.printStackTrace();
-      // Możesz tutaj podjąć odpowiednie działania, np. zakończyć metodę, zwrócić błąd itd.
-    }
-
-    if (burnRequestWithHash == null) {
-      throw new ChaincodeException("There was no object within confirmation that contains burn data", INVALID_ARGUMENT.toString());
-    }
 
     final long amount = confirmation.getAmount();
     final String localHash = result.getLocalHash();
-    final String burnRequestHash = burnRequestWithHash.getHash();
 
+    CompositeKey burnKey = stub.createCompositeKey(BURN_TRANSACTIONS_PREFIX.getValue(), burnRequestHashConfirmation);
 
-    CompositeKey burnKey = stub.createCompositeKey(BURN_TRANSACTIONS_PREFIX.getValue(), burnRequestHash);
-
+    System.out.println("burnRequestHashConfirmation: "+burnRequestHashConfirmation);
+    System.out.println("burnKey: "+burnKey.toString());
     // Checking exsitance of burnId within world state.
-    String existingBurn = stub.getStringState(burnKey.toString());
-    if (stringIsNullOrEmpty(existingBurn)) {
+    String existingBurnJson = stub.getStringState(burnKey.toString());
+    if (stringIsNullOrEmpty(existingBurnJson)) {
       throw new ChaincodeException("Burn ID doesn't exists in world state", DUPLICATE_TRANSACTION_ID.toString());
     }
 
@@ -370,22 +372,34 @@ public final class ERC20TokenContract implements ContractInterface {
     if(!(receiverIBAN.equalsIgnoreCase(clientIBAN))){
       throw new ChaincodeException("Receiver IBAN isn't the org one", "INVALID_IBAN");
     }
-    final String currentIBAN = stub.getStringState(IBAN_KEY.getValue());
-    if(stringIsNullOrEmpty(currentIBAN)){
+    final String currentConsortiumIBAN = stub.getStringState(IBAN_KEY.getValue());
+    if(stringIsNullOrEmpty(currentConsortiumIBAN)){
       throw new ChaincodeException(
               "No IBAN number found for the consortium. Initialization or operation cannot proceed.", NOT_FOUND.toString());
     }
 
-    if(!(senderIBAN.equalsIgnoreCase(clientIBAN))){
+    if(!(senderIBAN.equalsIgnoreCase(currentConsortiumIBAN))){
       throw new ChaincodeException("Sender IBAN isn't the consortium one", "INVALID_IBAN");
     }
 
-    BurnRequest burnRequest = burnRequestWithHash.getBurnRequest();
+    BurnRequestWithHash existingBurnWithHash = unmarshalString(existingBurnJson, BurnRequestWithHash.class);
+    //BurnRequestWithHash existingBurnWithHash = new Genson().deserialize(existingBurnJson, BurnRequestWithHash.class);
+
+    System.out.println("existingBurnJson: "+ existingBurnJson);
+    System.out.println("existingBurnWithHash: "+ existingBurnWithHash);
+
+    BurnRequest burnRequest = existingBurnWithHash.getBurnRequest();
+    String burnRequestHashWorldState = existingBurnWithHash.getHash();
+
+    if(!(burnRequestHashWorldState.equalsIgnoreCase(burnRequestHashConfirmation))){
+      throw new ChaincodeException("Error while comparing world state and confirmation hash of burning request: ", INVALID_CONFIRMATION.toString());
+    }
+
     final Long burnRequestAmount = burnRequest.getAmount();
     final Long confirmationAmount = confirmation.getAmount();
 
     if(burnRequestAmount != confirmationAmount){
-      throw new ChaincodeException("Amount of request and actual transaction isn't the same." + INVALID_ARGUMENT);
+      throw new ChaincodeException("Amount of request and actual transaction isn't the same.", INVALID_ARGUMENT.toString());
     }
 
     // Przesłanie tokenów na adres 0x0
@@ -415,10 +429,11 @@ public final class ERC20TokenContract implements ContractInterface {
     stub.putStringState(burnBalanceKey, String.valueOf(updatedBurnBalance));
 
     // Emitowanie zdarzenia finalizacji przepalania
-    //stub.setEvent("BurnFinalizedEvent", burnId.getBytes(StandardCharsets.UTF_8));
+    stub.setEvent("BurnFinalizedEvent", burnRequestHashWorldState.getBytes(StandardCharsets.UTF_8));
 
     // Usuwanie klucza burnId z World State
     stub.delState(burnKey.toString());
+    this.markAsUsed(stub, burnRequestHashWorldState, existingBurnJson);
   }
 
   /**
@@ -666,6 +681,7 @@ public final class ERC20TokenContract implements ContractInterface {
     logger.info(
         String.format(
             "recipient %s balance updated from %d to %d", to, toCurrentBalance, toUpdatedBalance));
+    logger.info(String.format("transferHelper: %s -> %s, value=%d", from, to, value));
   }
 
   /**
@@ -819,8 +835,148 @@ public final class ERC20TokenContract implements ContractInterface {
     String key = USED_TRANSACTIONS_PREFIX.getValue() + txId;
     stub.putStringState(key, "used");
   }
+  private void markAsUsed(final ChaincodeStub stub, final String txId, String body) {
+    String key = USED_TRANSACTIONS_PREFIX.getValue() + txId;
+    stub.putStringState(key, body);
+  }
   private void markAsWaiting(final ChaincodeStub stub, final String txId) {
     String key = USED_TRANSACTIONS_PREFIX.getValue() + txId;
     stub.putStringState(key, "waiting");
   }
+
+
+  /* ------------------------------------------------------------------------ */
+  /*                     HELPER / REUSABLE METHODS                            */
+  /* ------------------------------------------------------------------------ */
+
+  private enum IbanValidationMode {
+    MINT,
+    FINALIZE_BURN
+  }
+
+  /**
+   * Checks that the caller is from one of the allowed MSPs and has "admin" role.
+   */
+  private void validateAdminOrg(Context ctx) {
+    String clientMSPID = ctx.getClientIdentity().getMSPID();
+    if (!(clientMSPID.equalsIgnoreCase(ORG1.getValue())
+            || clientMSPID.equalsIgnoreCase(ORG2.getValue())
+            || clientMSPID.equalsIgnoreCase(ORG3.getValue()))) {
+      throw new ChaincodeException("Client is not authorized for this operation", UNAUTHORIZED_SENDER.toString());
+    }
+    String role = ctx.getClientIdentity().getAttributeValue("role");
+    if (!"admin".equalsIgnoreCase(role)) {
+      throw new ChaincodeException("Unauthorized: Only admin can perform this action", UNAUTHORIZED_SENDER.toString());
+    }
+  }
+
+  /**
+   * Verifies the JSON-based transaction data, ensures the hash matches, etc.
+   */
+  private VerificationResult checkAndParseConfirmation(String jsonContent) {
+    try {
+      VerificationResult result = verifyHashFromJson(jsonContent);
+      if(!result.isMatches()) {
+        throw new ChaincodeException("Transaction data hash mismatch", UNAUTHORIZED_SENDER.toString());
+      }
+      return result;
+    } catch(RuntimeException e) {
+      throw new ChaincodeException("Error during hash verification: " + e.getMessage(), INVALID_HASH.toString());
+    }
+  }
+
+  /**
+   * Increase total supply by a given amount (safe math).
+   */
+  private void increaseTotalSupply(ChaincodeStub stub, long amount) {
+    String totalSupplyStr = stub.getStringState(TOTAL_SUPPLY_KEY.getValue());
+    long totalSupply = 0;
+    if (!stringIsNullOrEmpty(totalSupplyStr)) {
+      totalSupply = Long.parseLong(totalSupplyStr);
+    }
+    long updatedTotalSupply = Math.addExact(totalSupply, amount);
+    stub.putStringState(TOTAL_SUPPLY_KEY.getValue(), String.valueOf(updatedTotalSupply));
+  }
+
+  /**
+   * Checks if a given burn key was used or stored previously.
+   */
+  private void failIfBurnKeyExists(ChaincodeStub stub, String burnKey) {
+    String existing = stub.getStringState(burnKey);
+    if (!stringIsNullOrEmpty(existing)) {
+      throw new ChaincodeException("Burn ID already exists", DUPLICATE_TRANSACTION_ID.toString());
+    }
+    // Additionally check if it existed in history
+    try (QueryResultsIterator<KeyModification> history = stub.getHistoryForKey(burnKey)) {
+      if (history.iterator().hasNext()) {
+        throw new ChaincodeException("Burn ID was used in the past", DUPLICATE_TRANSACTION_ID.toString());
+      }
+    } catch (Exception e) {
+      throw new RuntimeException("Error while closing the iterator: " + e.getMessage(), e);
+    }
+  }
+
+  private void failIfDuplicateHash(ChaincodeStub stub, String txHash) {
+    String key = USED_TRANSACTIONS_PREFIX.getValue() + txHash;
+    String usedValue = stub.getStringState(key);
+    if (usedValue != null && !usedValue.isEmpty()) {
+      throw new ChaincodeException("Transaction hash already used", DUPLICATE_TRANSACTION_ID.toString());
+    }
+  }
+
+  /**
+   * Validates IBAN logic for Mint and FinalizeBurn flows.
+   * - For MINT:
+   *   - The client's IBAN must match confirmation.fromIBAN.
+   *   - The consortium's IBAN must match confirmation.toIBAN.
+   * - For FINALIZE_BURN:
+   *   - The client's IBAN must match confirmation.toIBAN.
+   *   - The consortium's IBAN must match confirmation.fromIBAN.
+   *
+   * @param ctx The transaction context.
+   * @param confirmation The confirmation data containing IBANs.
+   * @param operationType The type of operation (MINT or FINALIZE_BURN).
+   */
+  private void validateIban(Context ctx, Confirmation confirmation, IbanValidationMode operationType) {
+    ChaincodeStub stub = ctx.getStub();
+    String clientIban = ctx.getClientIdentity().getAttributeValue("hf.iban");
+    String consortiumIban = stub.getStringState(IBAN_KEY.getValue());
+
+    // Ensure consortium IBAN exists
+    if (stringIsNullOrEmpty(consortiumIban)) {
+      throw new ChaincodeException("No consortium IBAN found in ledger. Cannot proceed.", NOT_FOUND.toString());
+    }
+
+    // Variables to hold the expected values for comparison
+    String expectedClientIban = null;
+    String expectedConsortiumIban = null;
+
+    // Dynamically set the expected values based on operation type
+    switch (operationType) {
+      case MINT:
+        expectedClientIban = confirmation.getFromIBAN();
+        expectedConsortiumIban = confirmation.getToIBAN();
+        break;
+      case FINALIZE_BURN:
+        expectedClientIban = confirmation.getToIBAN();
+        expectedConsortiumIban = confirmation.getFromIBAN();
+        break;
+      default:
+        throw new IllegalArgumentException("Unsupported operation type");
+    }
+
+    // Perform the comparisons outside the switch
+    if (stringIsNullOrEmpty(clientIban) || !clientIban.equalsIgnoreCase(expectedClientIban)) {
+      throw new ChaincodeException(
+              String.format("Client IBAN doesn't match the expected IBAN for operation %s.", operationType),
+              INVALID_IBAN.toString());
+    }
+
+    if (!consortiumIban.equalsIgnoreCase(expectedConsortiumIban)) {
+      throw new ChaincodeException(
+              String.format("Consortium IBAN doesn't match the expected IBAN for operation %s.", operationType),
+              INVALID_CONFIRMATION.toString());
+    }
+  }
+
 }
