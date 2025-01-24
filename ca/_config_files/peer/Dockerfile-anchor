@@ -3,11 +3,10 @@ FROM hyperledger/fabric-peer:2.5
 RUN mkdir -p /etc/hyperledger/scripts
 RUN mkdir -p /etc/hyperledger/config
 
-COPY core.yaml /etc/hyperledger/config/core.yaml
+COPY core-anchor.yaml /etc/hyperledger/config/core.yaml
 
-COPY start-peer.sh /etc/hyperledger/scripts/start-peer.sh
-COPY fetch-block-as-peer.sh /etc/hyperledger/scripts/fetch-block-as-peer.sh
-#COPY add-anchor-peers.sh /etc/hyperledger/scripts/add-anchor-peers.sh
+COPY start-anchor-peer.sh /etc/hyperledger/scripts/start-anchor-peer.sh
+COPY add-anchor-peers.sh /etc/hyperledger/scripts/add-anchor-peers.sh
 
 COPY config.yaml /etc/hyperledger/config/
 

@@ -9,7 +9,7 @@ services:
       - fabric-network
     build:
       context: ./_config_files/peer
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile-anchor
     #image: yfw-peer:latest
     hostname: peer0.furnituresmakers.com
     container_name: peer0.furnituresmakers.com
@@ -86,7 +86,7 @@ services:
       - fabric-network
     build:
       context: ./_config_files/peer
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile-anchor
     #image: yfw-peer:latest
     hostname: peer0.woodsupply.com
     container_name: peer0.woodsupply.com
@@ -163,7 +163,7 @@ services:
       - fabric-network
     build:
       context: ./_config_files/peer
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile-anchor
     #image: yfw-peer:latest
     hostname: peer0.yachtsales.com
     container_name: peer0.yachtsales.com

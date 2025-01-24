@@ -2,9 +2,10 @@ networks:
   fabric-network:
     driver: bridge
     name: fabric-network
+    external: true
 
 services:
-  -com:
+  com:
     networks:
       - fabric-network
     build:
@@ -15,8 +16,7 @@ services:
     container_name: $CORE_PEER_ID
     environment:
       #- FABRIC_LOGGING_SPEC=debug
-      - CORE_PEER_GOSSIP_ORGLEADER=${CORE_PEER_GOSSIP_ORGLEADER}
-      - CORE_PEER_DISCOVERY_ORGMEMBERSALLOWEDACCESS=${CORE_PEER_DISCOVERY_ORGMEMBERSALLOWEDACCESS}
+
 
       - CA_FILE=/etc/hyperledger/msp/tls/tlscacerts/tls-ca-cert.pem
       - CERT_FILE=/etc/hyperledger/msp/tls/signcerts/cert.pem
@@ -30,7 +30,8 @@ services:
       - CORE_PEER_CHAINCODELISTENADDRESS=${CORE_PEER_CHAINCODELISTENADDRESS}
       - CORE_PEER_LOCALMSPID=${CORE_PEER_LOCALMSPID}
 
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.furnituresmakers.com:7051 peer2.furnituresmakers.com:7051
+      #- CORE_PEER_GOSSIP_BOOTSTRAP=peer0.furnituresmakers.com:7051 peer2.furnituresmakers.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=${CORE_PEER_GOSSIP_BOOTSTRAP}
 
       #- CORE_PEER_GOSSIP_BOOTSTRAP=${CORE_PEER_GOSSIP_BOOTSTRAP}
       - CORE_PEER_GOSSIP_ENDPOINT=${CORE_PEER_GOSSIP_ENDPOINT}
@@ -38,10 +39,11 @@ services:
 
       - CORE_OPERATIONS_LISTENADDRESS=${CORE_OPERATIONS_LISTENADDRESS}
 
-      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=YFW
-
+      #- CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=YFW
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=fabric-network
       - ORG_QUICK_NAME=${ORG_QUICK_NAME}
       - FABRIC_CFG_PATH=/etc/hyperledger/config
+      - PREFIX_PORT=${PREFIX}
 
     #ports:
       #- "${PEER_PORT}:${PEER_PORT}"
@@ -58,14 +60,159 @@ services:
       echo 'Found CA certificates:';
       echo \"$$CLIENT_ROOT_CAs\";
       export CORE_TLS_CLIENTROOTCAS_FILES=\"$$CLIENT_ROOT_CAs\";
-      
-      
+
+
       echo 'Starting peer - ${CORE_PEER_ID}';
       ./start-peer.sh;
       find /etc/hyperledger/msp/ -type f -print | sed \"s|^\./||\";
       echo 'CACERTS';
       find /etc/hyperledger/_shared_certs/ -type f -print | sed \"s|^\./||\";
 
-      peer node start
+
+      peer node start &
+      sleep 2;
+      ./fetch-block-as-peer.sh;
+      tail -f /dev/null
       "
 
+#  peer1.furnituresmakers.com:
+#    networks:
+#      - fabric-network
+#    build:
+#      context: ./_config_files/peer
+#      dockerfile: Dockerfile
+#    image: yfw-peer:latest
+#    hostname: peer1.furnituresmakers.com
+#    container_name: peer1.furnituresmakers.com
+#    environment:
+#      #- FABRIC_LOGGING_SPEC=debug
+#
+#
+#      - CA_FILE=/etc/hyperledger/msp/tls/tlscacerts/tls-ca-cert.pem
+#      - CERT_FILE=/etc/hyperledger/msp/tls/signcerts/cert.pem
+#      - KEY_FILE=/etc/hyperledger/msp/tls/keystore/key.pem
+#      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp
+#
+#      - CORE_PEER_ID=peer1.furnituresmakers.com
+#      - CORE_PEER_NETWORKID=peer1.furnituresmakers.com
+#      - CORE_PEER_LISTENADDRESS=0.0.0.0:7051
+#      - CORE_PEER_ADDRESS=peer1.furnituresmakers.com:7051
+#      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:7052
+#      - CORE_PEER_LOCALMSPID=FurnituresMakers
+#
+#      #- CORE_PEER_GOSSIP_BOOTSTRAP=peer0.furnituresmakers.com:7051 peer2.furnituresmakers.com:7051
+#      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.furnituresmakers.com:7051 peer2.furnituresmakers.com:7051
+#
+#      #- CORE_PEER_GOSSIP_BOOTSTRAP=${CORE_PEER_GOSSIP_BOOTSTRAP}
+#      - CORE_PEER_GOSSIP_ENDPOINT=peer1.furnituresmakers.com:7051
+#      #- CORE_PEER_GOSSIP_EXTERNALENDPOINT=${CORE_PEER_GOSSIP_EXTERNALENDPOINT} Po ustawieniu adres jest rozgłaszany innym organizacjom
+#
+#      - CORE_OPERATIONS_LISTENADDRESS=peer1.furnituresmakers.com:9443
+#
+#
+#      #- CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=YFW
+#      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=fabric-network
+#      - ORG_QUICK_NAME=furnituresmakers
+#      - FABRIC_CFG_PATH=/etc/hyperledger/config
+#      - PREFIX_PORT=70
+#
+#      #ports:
+#      #- "${PEER_PORT}:${PEER_PORT}"
+#      #- "${NEXT_PORT}:${NEXT_PORT}"
+#    volumes:
+#      - ./Furnitures_Makers/crypto/client/ca/peer1/msp:/etc/hyperledger/msp
+#      - ./_shared_certs:/etc/hyperledger/_shared_certs
+#      #- ./_config_files/peer/:/etc/hyperledger/config
+#
+#
+#    command: >
+#      bash -c "
+#      CLIENT_ROOT_CAs=$$(find /etc/hyperledger/_shared_certs -type f -name '*.pem' -path '*/tlscacerts/*' ! -path '*${ORG_QUICK_NAME}*' | paste -sd ',' -);
+#      echo 'Found CA certificates:';
+#      echo \"$$CLIENT_ROOT_CAs\";
+#      export CORE_TLS_CLIENTROOTCAS_FILES=\"$$CLIENT_ROOT_CAs\";
+#
+#
+#      echo 'Starting peer - ${CORE_PEER_ID}';
+#      ./start-peer.sh;
+#      find /etc/hyperledger/msp/ -type f -print | sed \"s|^\./||\";
+#      echo 'CACERTS';
+#      find /etc/hyperledger/_shared_certs/ -type f -print | sed \"s|^\./||\";
+#
+#
+#      peer node start &
+#      sleep 2;
+#      ./fetch-block-as-peer.sh;
+#      tail -f /dev/null
+#      "
+#
+#  peer2.furnituresmakers.com:
+#    networks:
+#      - fabric-network
+#    build:
+#      context: ./_config_files/peer
+#      dockerfile: Dockerfile
+#    image: yfw-peer:latest
+#    hostname: peer2.furnituresmakers.com
+#    container_name: peer2.furnituresmakers.com
+#    environment:
+#      #- FABRIC_LOGGING_SPEC=debug
+#
+#
+#      - CA_FILE=/etc/hyperledger/msp/tls/tlscacerts/tls-ca-cert.pem
+#      - CERT_FILE=/etc/hyperledger/msp/tls/signcerts/cert.pem
+#      - KEY_FILE=/etc/hyperledger/msp/tls/keystore/key.pem
+#      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp
+#
+#      - CORE_PEER_ID=peer2.furnituresmakers.com
+#      - CORE_PEER_NETWORKID=peer2.furnituresmakers.com
+#      - CORE_PEER_LISTENADDRESS=0.0.0.0:7051
+#      - CORE_PEER_ADDRESS=peer2.furnituresmakers.com:7051
+#      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:7052
+#      - CORE_PEER_LOCALMSPID=FurnituresMakers
+#
+#      #- CORE_PEER_GOSSIP_BOOTSTRAP=peer0.furnituresmakers.com:7051 peer2.furnituresmakers.com:7051
+#      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.furnituresmakers.com:7051 peer1.furnituresmakers.com:7051
+#
+#      #- CORE_PEER_GOSSIP_BOOTSTRAP=${CORE_PEER_GOSSIP_BOOTSTRAP}
+#      - CORE_PEER_GOSSIP_ENDPOINT=peer2.furnituresmakers.com:7051
+#      #- CORE_PEER_GOSSIP_EXTERNALENDPOINT=${CORE_PEER_GOSSIP_EXTERNALENDPOINT} Po ustawieniu adres jest rozgłaszany innym organizacjom
+#
+#      - CORE_OPERATIONS_LISTENADDRESS=peer2.furnituresmakers.com:9443
+#
+#
+#      #- CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=YFW
+#      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=fabric-network
+#      - ORG_QUICK_NAME=furnituresmakers
+#      - FABRIC_CFG_PATH=/etc/hyperledger/config
+#      - PREFIX_PORT=70
+#
+#      #ports:
+#      #- "${PEER_PORT}:${PEER_PORT}"
+#      #- "${NEXT_PORT}:${NEXT_PORT}"
+#    volumes:
+#      - ./Furnitures_Makers/crypto/client/ca/peer2/msp:/etc/hyperledger/msp
+#      - ./_shared_certs:/etc/hyperledger/_shared_certs
+#      #- ./_config_files/peer/:/etc/hyperledger/config
+#
+#
+#    command: >
+#      bash -c "
+#      CLIENT_ROOT_CAs=$$(find /etc/hyperledger/_shared_certs -type f -name '*.pem' -path '*/tlscacerts/*' ! -path '*${ORG_QUICK_NAME}*' | paste -sd ',' -);
+#      echo 'Found CA certificates:';
+#      echo \"$$CLIENT_ROOT_CAs\";
+#      export CORE_TLS_CLIENTROOTCAS_FILES=\"$$CLIENT_ROOT_CAs\";
+#
+#
+#      echo 'Starting peer - ${CORE_PEER_ID}';
+#      ./start-peer.sh;
+#      find /etc/hyperledger/msp/ -type f -print | sed \"s|^\./||\";
+#      echo 'CACERTS';
+#      find /etc/hyperledger/_shared_certs/ -type f -print | sed \"s|^\./||\";
+#
+#
+#      peer node start &
+#      sleep 2;
+#      ./fetch-block-as-peer.sh;
+#      tail -f /dev/null
+#      "

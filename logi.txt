@@ -1,0 +1,696 @@
+2025-01-17 00:52:26.528 UTC 00f6 INFO [nodeCmd] serve -> Deployed system chaincodes
+2025-01-17 00:52:26.528 UTC 00f7 INFO [discovery] NewService -> Created with config TLS: true, authCacheMaxSize: 1000, authCachePurgeRatio: 0.750000
+2025-01-17 00:52:26.528 UTC 00f8 INFO [nodeCmd] serve -> Discovery service activated
+2025-01-17 00:52:26.528 UTC 00f9 INFO [nodeCmd] serve -> Starting peer with Gateway enabled
+2025-01-17 00:52:26.528 UTC 00fa INFO [nodeCmd] serve -> Starting peer with ID=[peer1.furnituresmakers.com], network ID=[peer1.furnituresmakers.com], address=[peer1.furnituresmakers.com:7051]
+2025-01-17 00:52:26.529 UTC 00fb INFO [nodeCmd] serve -> Started peer with ID=[peer1.furnituresmakers.com], network ID=[peer1.furnituresmakers.com], address=[peer1.furnituresmakers.com:7051]
+2025-01-17 00:52:26.529 UTC 00fc INFO [kvledger] LoadPreResetHeight -> Loading prereset height from path [/etc/hyperledger/ledger/ledgersData/chains]
+2025-01-17 00:52:26.529 UTC 00fd DEBU [blkstorage] LoadPreResetHeight -> Loading Pre-reset heights
+2025-01-17 00:52:26.529 UTC 00fe INFO [blkstorage] preResetHtFiles -> No active channels passed
+2025-01-17 00:52:26.529 UTC 00ff DEBU [grpc] InfoDepth -> [core] [Server #1 ListenSocket #12]ListenSocket created
+2025-01-17 00:52:26.623 UTC 0100 DEBU [grpc] InfoDepth -> [core] Creating new client transport to "{Addr: \"peer2.furnituresmakers.com:7051\", ServerName: \"peer2.furnituresmakers.com:7051\", }": connection error: desc = "transport: Error while dialing: dial tcp: lookup peer2.furnituresmakers.com on 127.0.0.11:53: no such host"
+2025-01-17 00:52:26.623 UTC 0101 DEBU [grpc] WarningDepth -> [core] [Channel #2 SubChannel #5]grpc: addrConn.createTransport failed to connect to {Addr: "peer2.furnituresmakers.com:7051", ServerName: "peer2.furnituresmakers.com:7051", }. Err: connection error: desc = "transport: Error while dialing: dial tcp: lookup peer2.furnituresmakers.com on 127.0.0.11:53: no such host"
+2025-01-17 00:52:26.624 UTC 0102 DEBU [grpc] InfoDepth -> [core] [Channel #2 SubChannel #5]Subchannel Connectivity change to TRANSIENT_FAILURE, last error: connection error: desc = "transport: Error while dialing: dial tcp: lookup peer2.furnituresmakers.com on 127.0.0.11:53: no such host"
+2025-01-17 00:52:26.624 UTC 0103 DEBU [grpc] InfoDepth -> [pick-first-lb] [pick-first-lb 0xc00328acc0] Received SubConn state update: 0xc00328ad20, {ConnectivityState:TRANSIENT_FAILURE ConnectionError:connection error: desc = "transport: Error while dialing: dial tcp: lookup peer2.furnituresmakers.com on 127.0.0.11:53: no such host"}
+2025-01-17 00:52:26.624 UTC 0104 DEBU [grpc] InfoDepth -> [core] [Channel #2]Channel Connectivity change to TRANSIENT_FAILURE
+2025-01-17 00:52:27.534 UTC 0105 DEBU [gossip.comm] func1 -> Got message: GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:154 , Envelope: 88 bytes, Signature: 70 bytes Secret payload: 33 bytes, Secret Signature: 71 bytes
+2025-01-17 00:52:27.535 UTC 0106 DEBU [gossip.gossip] handleMessage -> Entering, 172.18.0.8:7051 772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 sent us GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:154 , Envelope: 88 bytes, Signature: 70 bytes Secret payload: 33 bytes, Secret Signature: 71 bytes
+2025-01-17 00:52:27.535 UTC 0107 DEBU [gossip.gossip] handleMessage -> Exiting
+2025-01-17 00:52:27.535 UTC 0108 DEBU [gossip.discovery] handleMsgFromComm -> Got message: GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:154 , Envelope: 88 bytes, Signature: 70 bytes Secret payload: 33 bytes, Secret Signature: 71 bytes
+2025-01-17 00:52:27.535 UTC 0109 DEBU [gossip.gossip] ValidateAliveMsg -> Fetched identity of Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 from identity store
+2025-01-17 00:52:27.535 UTC 010a DEBU [msp.identity] Verify -> Verify: signer identity (certificate subject=CN=peer0,OU=peer+OU=network+OU=FurnituresMakers,O=FurnituresMakers,L=Kielce,ST=Swietokrzyskie,C=PL issuer=CN=furnituresmakers-ca,OU=Organization CA,O=FurnituresMakers,L=Kielce,ST=Swietokrzyskie,C=PL serialnumber=504259801133774798052594680189490003716031820718)
+2025-01-17 00:52:27.537 UTC 010b DEBU [msp.identity] Verify -> Verify: signer identity (certificate subject=CN=peer0,OU=peer+OU=network+OU=FurnituresMakers,O=FurnituresMakers,L=Kielce,ST=Swietokrzyskie,C=PL issuer=CN=furnituresmakers-ca,OU=Organization CA,O=FurnituresMakers,L=Kielce,ST=Swietokrzyskie,C=PL serialnumber=504259801133774798052594680189490003716031820718)
+2025-01-17 00:52:27.537 UTC 010c DEBU [gossip.discovery] handleAliveMessage -> Entering GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:154 , Envelope: 88 bytes, Signature: 70 bytes Secret payload: 33 bytes, Secret Signature: 71 bytes
+2025-01-17 00:52:27.537 UTC 010d DEBU [gossip.discovery] learnExistingMembers -> Entering: learnedMembers={[GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:154 , Envelope: 88 bytes, Signature: 70 bytes Secret payload: 33 bytes, Secret Signature: 71 bytes]}
+2025-01-17 00:52:27.537 UTC 010e DEBU [gossip.discovery] learnExistingMembers -> updating Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:154
+2025-01-17 00:52:27.537 UTC 010f DEBU [gossip.discovery] learnExistingMembers -> Updating aliveness data: Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:154
+2025-01-17 00:52:27.537 UTC 0110 DEBU [gossip.discovery] learnExistingMembers -> Replacing GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:152 , Envelope: 88 bytes, Signature: 71 bytes Secret payload: 33 bytes, Secret Signature: 70 bytes in aliveMembership
+2025-01-17 00:52:27.538 UTC 0111 DEBU [gossip.discovery] learnExistingMembers -> Exiting
+2025-01-17 00:52:27.538 UTC 0112 DEBU [gossip.discovery] handleAliveMessage -> Exiting
+2025-01-17 00:52:27.538 UTC 0113 DEBU [gossip.discovery] handleMsgFromComm -> Exiting
+2025-01-17 00:52:27.625 UTC 0114 DEBU [grpc] InfoDepth -> [core] [Channel #2 SubChannel #5]Subchannel Connectivity change to IDLE, last error: connection error: desc = "transport: Error while dialing: dial tcp: lookup peer2.furnituresmakers.com on 127.0.0.11:53: no such host"
+2025-01-17 00:52:27.625 UTC 0115 DEBU [grpc] InfoDepth -> [pick-first-lb] [pick-first-lb 0xc00328acc0] Received SubConn state update: 0xc00328ad20, {ConnectivityState:IDLE ConnectionError:connection error: desc = "transport: Error while dialing: dial tcp: lookup peer2.furnituresmakers.com on 127.0.0.11:53: no such host"}
+2025-01-17 00:52:27.625 UTC 0116 DEBU [grpc] InfoDepth -> [core] [Channel #2 SubChannel #5]Subchannel Connectivity change to CONNECTING
+2025-01-17 00:52:27.625 UTC 0117 DEBU [grpc] InfoDepth -> [core] [Channel #2 SubChannel #5]Subchannel picks a new address "peer2.furnituresmakers.com:7051" to connect
+2025-01-17 00:52:27.625 UTC 0118 DEBU [grpc] InfoDepth -> [pick-first-lb] [pick-first-lb 0xc00328acc0] Received SubConn state update: 0xc00328ad20, {ConnectivityState:CONNECTING ConnectionError:<nil>}
+2025-01-17 00:52:27.631 UTC 0119 DEBU [grpc] InfoDepth -> [core] Creating new client transport to "{Addr: \"peer2.furnituresmakers.com:7051\", ServerName: \"peer2.furnituresmakers.com:7051\", }": connection error: desc = "transport: Error while dialing: dial tcp: lookup peer2.furnituresmakers.com on 127.0.0.11:53: no such host"
+2025-01-17 00:52:27.631 UTC 011a DEBU [grpc] WarningDepth -> [core] [Channel #2 SubChannel #5]grpc: addrConn.createTransport failed to connect to {Addr: "peer2.furnituresmakers.com:7051", ServerName: "peer2.furnituresmakers.com:7051", }. Err: connection error: desc = "transport: Error while dialing: dial tcp: lookup peer2.furnituresmakers.com on 127.0.0.11:53: no such host"
+2025-01-17 00:52:27.631 UTC 011b DEBU [grpc] InfoDepth -> [core] [Channel #2 SubChannel #5]Subchannel Connectivity change to TRANSIENT_FAILURE, last error: connection error: desc = "transport: Error while dialing: dial tcp: lookup peer2.furnituresmakers.com on 127.0.0.11:53: no such host"
+2025-01-17 00:52:27.631 UTC 011c DEBU [grpc] InfoDepth -> [pick-first-lb] [pick-first-lb 0xc00328acc0] Received SubConn state update: 0xc00328ad20, {ConnectivityState:TRANSIENT_FAILURE ConnectionError:connection error: desc = "transport: Error while dialing: dial tcp: lookup peer2.furnituresmakers.com on 127.0.0.11:53: no such host"}
+2025-01-17 00:52:28.603 UTC 011d DEBU [gossip.comm] func1 -> Got message: GossipMessage: Channel: , nonce: 0, tag: CHAN_OR_ORG state_info_pull_req: Channel MAC:b1ef51efe8592f8d4cbbbbec9a09e91e07ad59c25f9bdf6afdf26600be0ea156, Envelope: 39 bytes, Signature: 0 bytes
+2025-01-17 00:52:28.603 UTC 011e DEBU [gossip.gossip] handleMessage -> Entering, 172.18.0.8:7051 772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 sent us GossipMessage: Channel: , nonce: 0, tag: CHAN_OR_ORG state_info_pull_req: Channel MAC:b1ef51efe8592f8d4cbbbbec9a09e91e07ad59c25f9bdf6afdf26600be0ea156, Envelope: 39 bytes, Signature: 0 bytes
+2025-01-17 00:52:28.603 UTC 011f DEBU [gossip.gossip] handleMessage -> No such channel [] discarding message GossipMessage: Channel: , nonce: 0, tag: CHAN_OR_ORG state_info_pull_req: Channel MAC:b1ef51efe8592f8d4cbbbbec9a09e91e07ad59c25f9bdf6afdf26600be0ea156, Envelope: 39 bytes, Signature: 0 bytes
+2025-01-17 00:52:28.603 UTC 0120 DEBU [gossip.gossip] handleMessage -> Exiting
+2025-01-17 00:52:29.173 UTC 0121 DEBU [grpc] InfoDepth -> [core] [Channel #2 SubChannel #5]Subchannel Connectivity change to IDLE, last error: connection error: desc = "transport: Error while dialing: dial tcp: lookup peer2.furnituresmakers.com on 127.0.0.11:53: no such host"
+2025-01-17 00:52:29.174 UTC 0122 DEBU [grpc] InfoDepth -> [pick-first-lb] [pick-first-lb 0xc00328acc0] Received SubConn state update: 0xc00328ad20, {ConnectivityState:IDLE ConnectionError:connection error: desc = "transport: Error while dialing: dial tcp: lookup peer2.furnituresmakers.com on 127.0.0.11:53: no such host"}
+2025-01-17 00:52:29.174 UTC 0123 DEBU [grpc] InfoDepth -> [core] [Channel #2 SubChannel #5]Subchannel Connectivity change to CONNECTING
+2025-01-17 00:52:29.174 UTC 0124 DEBU [grpc] InfoDepth -> [core] [Channel #2 SubChannel #5]Subchannel picks a new address "peer2.furnituresmakers.com:7051" to connect
+2025-01-17 00:52:29.174 UTC 0125 DEBU [grpc] InfoDepth -> [pick-first-lb] [pick-first-lb 0xc00328acc0] Received SubConn state update: 0xc00328ad20, {ConnectivityState:CONNECTING ConnectionError:<nil>}
+2025-01-17 00:52:29.184 UTC 0126 DEBU [grpc] InfoDepth -> [core] Creating new client transport to "{Addr: \"peer2.furnituresmakers.com:7051\", ServerName: \"peer2.furnituresmakers.com:7051\", }": connection error: desc = "transport: Error while dialing: dial tcp: lookup peer2.furnituresmakers.com on 127.0.0.11:53: no such host"
+2025-01-17 00:52:29.184 UTC 0127 DEBU [grpc] WarningDepth -> [core] [Channel #2 SubChannel #5]grpc: addrConn.createTransport failed to connect to {Addr: "peer2.furnituresmakers.com:7051", ServerName: "peer2.furnituresmakers.com:7051", }. Err: connection error: desc = "transport: Error while dialing: dial tcp: lookup peer2.furnituresmakers.com on 127.0.0.11:53: no such host"
+2025-01-17 00:52:29.184 UTC 0128 DEBU [grpc] InfoDepth -> [core] [Channel #2 SubChannel #5]Subchannel Connectivity change to TRANSIENT_FAILURE, last error: connection error: desc = "transport: Error while dialing: dial tcp: lookup peer2.furnituresmakers.com on 127.0.0.11:53: no such host"
+2025-01-17 00:52:29.184 UTC 0129 DEBU [grpc] InfoDepth -> [pick-first-lb] [pick-first-lb 0xc00328acc0] Received SubConn state update: 0xc00328ad20, {ConnectivityState:TRANSIENT_FAILURE ConnectionError:connection error: desc = "transport: Error while dialing: dial tcp: lookup peer2.furnituresmakers.com on 127.0.0.11:53: no such host"}
+2025-01-17 00:52:29.499 UTC 012a DEBU [grpc] InfoDepth -> [core] [Channel #2]Channel Connectivity change to SHUTDOWN
+2025-01-17 00:52:29.499 UTC 012b DEBU [grpc] InfoDepth -> [core] [Channel #2]Closing the name resolver
+2025-01-17 00:52:29.499 UTC 012c DEBU [grpc] InfoDepth -> [core] [Channel #2]ccBalancerWrapper: closing
+2025-01-17 00:52:29.499 UTC 012d DEBU [grpc] InfoDepth -> [core] [Channel #2 SubChannel #5]Subchannel Connectivity change to SHUTDOWN
+2025-01-17 00:52:29.499 UTC 012e DEBU [grpc] InfoDepth -> [core] [Channel #2 SubChannel #5]Subchannel deleted
+2025-01-17 00:52:29.499 UTC 012f DEBU [grpc] InfoDepth -> [core] [Channel #2]Channel deleted
+2025-01-17 00:52:29.500 UTC 0130 WARN [gossip.discovery] func1 -> Could not connect to Endpoint: peer2.furnituresmakers.com:7051, InternalEndpoint: peer2.furnituresmakers.com:7051, PKI-ID: <nil>, Metadata:  : context deadline exceeded
+2025-01-17 00:52:29.545 UTC 0131 DEBU [gossip.comm] func1 -> Got message: GossipMessage: Channel: , nonce: 0, tag: EMPTY Membership Request with self information of GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:155 , Envelope: 88 bytes, Signature: 70 bytes Secret payload: 33 bytes, Secret Signature: 70 bytes , Envelope: 279 bytes, Signature: 0 bytes
+2025-01-17 00:52:29.545 UTC 0132 DEBU [gossip.comm] func1 -> Got message: GossipMessage: tag:EMPTY hello:<nonce:16554801586047789944 msg_type:IDENTITY_MSG > , Envelope: 17 bytes, Signature: 0 bytes
+2025-01-17 00:52:29.545 UTC 0133 DEBU [gossip.gossip] handleMessage -> Entering, 172.18.0.8:7051 772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 sent us GossipMessage: Channel: , nonce: 0, tag: EMPTY Membership Request with self information of GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:155 , Envelope: 88 bytes, Signature: 70 bytes Secret payload: 33 bytes, Secret Signature: 70 bytes , Envelope: 279 bytes, Signature: 0 bytes
+2025-01-17 00:52:29.545 UTC 0134 DEBU [gossip.gossip] handleMessage -> Exiting
+2025-01-17 00:52:29.545 UTC 0135 DEBU [gossip.gossip] handleMessage -> Entering, 172.18.0.8:7051 772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 sent us GossipMessage: tag:EMPTY hello:<nonce:16554801586047789944 msg_type:IDENTITY_MSG > , Envelope: 17 bytes, Signature: 0 bytes
+2025-01-17 00:52:29.545 UTC 0136 DEBU [gossip.pull] HandleMessage -> GossipMessage: tag:EMPTY hello:<nonce:16554801586047789944 msg_type:IDENTITY_MSG > , Envelope: 17 bytes, Signature: 0 bytes
+2025-01-17 00:52:29.545 UTC 0137 DEBU [gossip.pull] SendDigest -> Sending IDENTITY_MSG digest: [3b0e2f1ae582b8cb2ad01ca88539bcde2bfc42d14cc346954a9654871a510103] to 172.18.0.8:7051 772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4
+2025-01-17 00:52:29.545 UTC 0138 DEBU [gossip.gossip] handleMessage -> Exiting
+2025-01-17 00:52:29.546 UTC 0139 DEBU [gossip.discovery] handleMsgFromComm -> Got message: GossipMessage: Channel: , nonce: 0, tag: EMPTY Membership Request with self information of GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:155 , Envelope: 88 bytes, Signature: 70 bytes Secret payload: 33 bytes, Secret Signature: 70 bytes , Envelope: 279 bytes, Signature: 0 bytes
+2025-01-17 00:52:29.546 UTC 013a DEBU [gossip.gossip] ValidateAliveMsg -> Fetched identity of Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 from identity store
+2025-01-17 00:52:29.546 UTC 013b DEBU [msp.identity] Verify -> Verify: signer identity (certificate subject=CN=peer0,OU=peer+OU=network+OU=FurnituresMakers,O=FurnituresMakers,L=Kielce,ST=Swietokrzyskie,C=PL issuer=CN=furnituresmakers-ca,OU=Organization CA,O=FurnituresMakers,L=Kielce,ST=Swietokrzyskie,C=PL serialnumber=504259801133774798052594680189490003716031820718)
+2025-01-17 00:52:29.546 UTC 013c DEBU [msp.identity] Verify -> Verify: signer identity (certificate subject=CN=peer0,OU=peer+OU=network+OU=FurnituresMakers,O=FurnituresMakers,L=Kielce,ST=Swietokrzyskie,C=PL issuer=CN=furnituresmakers-ca,OU=Organization CA,O=FurnituresMakers,L=Kielce,ST=Swietokrzyskie,C=PL serialnumber=504259801133774798052594680189490003716031820718)
+2025-01-17 00:52:29.546 UTC 013d DEBU [gossip.discovery] handleAliveMessage -> Entering GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:155 , Envelope: 88 bytes, Signature: 70 bytes Secret payload: 33 bytes, Secret Signature: 70 bytes
+2025-01-17 00:52:29.546 UTC 013e DEBU [gossip.discovery] learnExistingMembers -> Entering: learnedMembers={[GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:155 , Envelope: 88 bytes, Signature: 70 bytes Secret payload: 33 bytes, Secret Signature: 70 bytes]}
+2025-01-17 00:52:29.546 UTC 013f DEBU [gossip.discovery] learnExistingMembers -> updating Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:155
+2025-01-17 00:52:29.546 UTC 0140 DEBU [gossip.discovery] learnExistingMembers -> Updating aliveness data: Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:155
+2025-01-17 00:52:29.546 UTC 0141 DEBU [gossip.discovery] learnExistingMembers -> Replacing GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:154 , Envelope: 88 bytes, Signature: 70 bytes Secret payload: 33 bytes, Secret Signature: 71 bytes in aliveMembership
+2025-01-17 00:52:29.546 UTC 0142 DEBU [gossip.discovery] learnExistingMembers -> Exiting
+2025-01-17 00:52:29.547 UTC 0143 DEBU [gossip.discovery] handleAliveMessage -> Exiting
+2025-01-17 00:52:29.547 UTC 0144 DEBU [gossip.discovery] handleMsgFromComm -> Exiting
+2025-01-17 00:52:29.547 UTC 0145 DEBU [gossip.discovery] sendMemResponse -> Entering Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4
+2025-01-17 00:52:29.547 UTC 0146 DEBU [msp.identity] Sign -> Sign: plaintext: 18012AFA090A221A203B0E2F1AE582B8...455254494649434154452D2D2D2D2D0A
+2025-01-17 00:52:29.547 UTC 0147 DEBU [msp.identity] Sign -> Sign: digest: D5D7AE06C5F613CCF4EEEEF99A5B0535593BF907B0F100BC112868A875CFC2D4
+2025-01-17 00:52:29.547 UTC 0148 DEBU [msp.identity] Sign -> Sign: plaintext: 0A1F70656572312E6675726E69747572...736D616B6572732E636F6D3A37303531
+2025-01-17 00:52:29.547 UTC 0149 DEBU [msp.identity] Sign -> Sign: digest: 53E8FC80EEA001CBFE463C6185F8360AF7B663B6AADD49A73EA86C4A045BE867
+2025-01-17 00:52:29.547 UTC 014a DEBU [gossip.comm] Send -> Entering, sending GossipMessage: Channel: , nonce: 0, tag: EMPTY MembershipResponse with Alive: 2, Dead: 0, Envelope: 1745 bytes, Signature: 0 bytes to  1 peers
+2025-01-17 00:52:29.547 UTC 014b DEBU [gossip.discovery] sendMemResponse -> Exiting, replying with MembershipResponse with Alive: 2, Dead: 0
+2025-01-17 00:52:29.547 UTC 014c DEBU [gossip.comm] sendToEndpoint -> Entering, Sending to peer0.furnituresmakers.com:7051 , msg: GossipMessage: Channel: , nonce: 0, tag: EMPTY MembershipResponse with Alive: 2, Dead: 0, Envelope: 1745 bytes, Signature: 0 bytes
+2025-01-17 00:52:29.547 UTC 014d DEBU [gossip.comm] sendToEndpoint -> Exiting
+2025-01-17 00:52:30.498 UTC 014e DEBU [gossip.pull] Hello -> Sending IDENTITY_MSG hello to peer0.furnituresmakers.com:7051
+2025-01-17 00:52:30.499 UTC 014f DEBU [gossip.comm] Send -> Entering, sending GossipMessage: tag:EMPTY hello:<nonce:6969486551080857495 msg_type:IDENTITY_MSG > , Envelope: 16 bytes, Signature: 0 bytes to  1 peers
+2025-01-17 00:52:30.499 UTC 0150 DEBU [msp.identity] Sign -> Sign: plaintext: 18012AFA090A221A203B0E2F1AE582B8...455254494649434154452D2D2D2D2D0A
+2025-01-17 00:52:30.499 UTC 0151 DEBU [msp.identity] Sign -> Sign: digest: 9B9BE9CFF7C4A8AEE5EF59A188F9C84C41A66A08546E448A3E1F715E74D9967B
+2025-01-17 00:52:30.499 UTC 0152 DEBU [gossip.comm] sendToEndpoint -> Entering, Sending to peer0.furnituresmakers.com:7051 , msg: GossipMessage: tag:EMPTY hello:<nonce:6969486551080857495 msg_type:IDENTITY_MSG > , Envelope: 16 bytes, Signature: 0 bytes
+2025-01-17 00:52:30.499 UTC 0153 DEBU [gossip.comm] sendToEndpoint -> Exiting
+2025-01-17 00:52:30.499 UTC 0154 DEBU [msp.identity] Sign -> Sign: plaintext: 0A1F70656572312E6675726E69747572...736D616B6572732E636F6D3A37303531
+2025-01-17 00:52:30.499 UTC 0155 DEBU [msp.identity] Sign -> Sign: digest: 53E8FC80EEA001CBFE463C6185F8360AF7B663B6AADD49A73EA86C4A045BE867
+2025-01-17 00:52:30.499 UTC 0156 DEBU [gossip.comm] Send -> Entering, sending GossipMessage: Channel: , nonce: 0, tag: EMPTY Membership Request with self information of GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint: PKI-id:3b0e2f1ae582b8cb2ad01ca88539bcde2bfc42d14cc346954a9654871a510103Identity:FurnituresMakers-----BEGIN CERTIFICATE-----
+MIIDSTCCAvCgAwIBAgIUA6hmrLbMTN1wQHQ1NSjUgBUjC8cwCgYIKoZIzj0EAwIw
+gYoxCzAJBgNVBAYTAlBMMRcwFQYDVQQIEw5Td2lldG9rcnp5c2tpZTEPMA0GA1UE
+BxMGS2llbGNlMRkwFwYDVQQKExBGdXJuaXR1cmVzTWFrZXJzMRgwFgYDVQQLEw9P
+cmdhbml6YXRpb24gQ0ExHDAaBgNVBAMTE2Z1cm5pdHVyZXNtYWtlcnMtY2EwHhcN
+MjUwMTAzMTQ1MzAwWhcNMjYwMTAzMTQ1ODAwWjCBmjELMAkGA1UEBhMCUEwxFzAV
+BgNVBAgTDlN3aWV0b2tyenlza2llMQ8wDQYDVQQHEwZLaWVsY2UxGTAXBgNVBAoT
+EEZ1cm5pdHVyZXNNYWtlcnMxNjALBgNVBAsTBHBlZXIwDgYDVQQLEwduZXR3b3Jr
+MBcGA1UECxMQRnVybml0dXJlc01ha2VyczEOMAwGA1UEAxMFcGVlcjEwWTATBgcq
+hkjOPQIBBggqhkjOPQMBBwNCAAR4MK0/rcxu43jusImcwk5vDgQmp1IN3L18EQj0
+zRCuUz8zbKXTQJkxOZYL1+EsmjL7bGpKyBsuEp9GJaf7iZz9o4IBIDCCARwwDgYD
+VR0PAQH/BAQDAgeAMAwGA1UdEwEB/wQCMAAwHQYDVR0OBBYEFANc4o0RutnA2N8I
+27Kqk6ojH8/sMB8GA1UdIwQYMBaAFCogmAwl6qqLFcQ/FL+Hejlg8To2MEwGA1Ud
+EQRFMEOCGnBlZXIxLmZ1cm5pdHVyZXNtYWtlcnMuY29tgglsb2NhbGhvc3SCGnBl
+ZXIxLWZ1cm5pdHVyZXNtYWtlcnMtY29tMG4GCCoDBAUGBwgBBGJ7ImF0dHJzIjp7
+ImhmLkFmZmlsaWF0aW9uIjoiRnVybml0dXJlc01ha2Vycy5uZXR3b3JrIiwiaGYu
+RW5yb2xsbWVudElEIjoicGVlcjEiLCJoZi5UeXBlIjoicGVlciJ9fTAKBggqhkjO
+PQQDAgNHADBEAiAA/tZ7da6qYwM6KtHGUMMsAqli0LTLv5I0PNOO8nofpwIgZDco
+ga86Xxc40SUa5RjJMStjsGfy+bIKPCOgos4Ru0E=
+-----END CERTIFICATE-----
+Timestamp:inc_num:1737075146497516808 seq_num:5 , Envelope: 1279 bytes, Signature: 71 bytes Secret payload: 33 bytes, Secret Signature: 71 bytes , Envelope: 1473 bytes, Signature: 0 bytes to  1 peers
+2025-01-17 00:52:30.499 UTC 0157 DEBU [gossip.comm] sendToEndpoint -> Entering, Sending to peer0.furnituresmakers.com:7051 , msg: GossipMessage: Channel: , nonce: 0, tag: EMPTY Membership Request with self information of GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint: PKI-id:3b0e2f1ae582b8cb2ad01ca88539bcde2bfc42d14cc346954a9654871a510103Identity:FurnituresMakers-----BEGIN CERTIFICATE-----
+MIIDSTCCAvCgAwIBAgIUA6hmrLbMTN1wQHQ1NSjUgBUjC8cwCgYIKoZIzj0EAwIw
+gYoxCzAJBgNVBAYTAlBMMRcwFQYDVQQIEw5Td2lldG9rcnp5c2tpZTEPMA0GA1UE
+BxMGS2llbGNlMRkwFwYDVQQKExBGdXJuaXR1cmVzTWFrZXJzMRgwFgYDVQQLEw9P
+cmdhbml6YXRpb24gQ0ExHDAaBgNVBAMTE2Z1cm5pdHVyZXNtYWtlcnMtY2EwHhcN
+MjUwMTAzMTQ1MzAwWhcNMjYwMTAzMTQ1ODAwWjCBmjELMAkGA1UEBhMCUEwxFzAV
+BgNVBAgTDlN3aWV0b2tyenlza2llMQ8wDQYDVQQHEwZLaWVsY2UxGTAXBgNVBAoT
+EEZ1cm5pdHVyZXNNYWtlcnMxNjALBgNVBAsTBHBlZXIwDgYDVQQLEwduZXR3b3Jr
+MBcGA1UECxMQRnVybml0dXJlc01ha2VyczEOMAwGA1UEAxMFcGVlcjEwWTATBgcq
+hkjOPQIBBggqhkjOPQMBBwNCAAR4MK0/rcxu43jusImcwk5vDgQmp1IN3L18EQj0
+zRCuUz8zbKXTQJkxOZYL1+EsmjL7bGpKyBsuEp9GJaf7iZz9o4IBIDCCARwwDgYD
+VR0PAQH/BAQDAgeAMAwGA1UdEwEB/wQCMAAwHQYDVR0OBBYEFANc4o0RutnA2N8I
+27Kqk6ojH8/sMB8GA1UdIwQYMBaAFCogmAwl6qqLFcQ/FL+Hejlg8To2MEwGA1Ud
+EQRFMEOCGnBlZXIxLmZ1cm5pdHVyZXNtYWtlcnMuY29tgglsb2NhbGhvc3SCGnBl
+ZXIxLWZ1cm5pdHVyZXNtYWtlcnMtY29tMG4GCCoDBAUGBwgBBGJ7ImF0dHJzIjp7
+ImhmLkFmZmlsaWF0aW9uIjoiRnVybml0dXJlc01ha2Vycy5uZXR3b3JrIiwiaGYu
+RW5yb2xsbWVudElEIjoicGVlcjEiLCJoZi5UeXBlIjoicGVlciJ9fTAKBggqhkjO
+PQQDAgNHADBEAiAA/tZ7da6qYwM6KtHGUMMsAqli0LTLv5I0PNOO8nofpwIgZDco
+ga86Xxc40SUa5RjJMStjsGfy+bIKPCOgos4Ru0E=
+-----END CERTIFICATE-----
+Timestamp:inc_num:1737075146497516808 seq_num:5 , Envelope: 1279 bytes, Signature: 71 bytes Secret payload: 33 bytes, Secret Signature: 71 bytes , Envelope: 1473 bytes, Signature: 0 bytes
+2025-01-17 00:52:30.499 UTC 0158 DEBU [gossip.comm] sendToEndpoint -> Exiting
+2025-01-17 00:52:30.499 UTC 0159 DEBU [gossip.comm] func1 -> Got message: GossipMessage: Channel: , nonce: 0, tag: EMPTY data_dig: nonce: 6969486551080857495 , Msg_type: IDENTITY_MSG, digests: [a4a88af81613c7d67995948a8aedfec76279f81d75d558e3af8ef52dddff7250 772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 537c681b5ab2023345a19708c7a0816f770611c0b7db60bf0d5d2c615f02d6f3], Envelope: 118 bytes, Signature: 0 bytes
+2025-01-17 00:52:30.500 UTC 015a DEBU [gossip.gossip] handleMessage -> Entering, 172.18.0.8:7051 772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 sent us GossipMessage: Channel: , nonce: 0, tag: EMPTY data_dig: nonce: 6969486551080857495 , Msg_type: IDENTITY_MSG, digests: [a4a88af81613c7d67995948a8aedfec76279f81d75d558e3af8ef52dddff7250 772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 537c681b5ab2023345a19708c7a0816f770611c0b7db60bf0d5d2c615f02d6f3], Envelope: 118 bytes, Signature: 0 bytes
+2025-01-17 00:52:30.500 UTC 015b DEBU [gossip.pull] HandleMessage -> GossipMessage: Channel: , nonce: 0, tag: EMPTY data_dig: nonce: 6969486551080857495 , Msg_type: IDENTITY_MSG, digests: [a4a88af81613c7d67995948a8aedfec76279f81d75d558e3af8ef52dddff7250 772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 537c681b5ab2023345a19708c7a0816f770611c0b7db60bf0d5d2c615f02d6f3], Envelope: 118 bytes, Signature: 0 bytes
+2025-01-17 00:52:30.500 UTC 015c DEBU [gossip.gossip] handleMessage -> Exiting
+2025-01-17 00:52:30.501 UTC 015d DEBU [gossip.comm] func1 -> Got message: GossipMessage: Channel: , nonce: 0, tag: EMPTY MembershipResponse with Alive: 2, Dead: 0, Envelope: 1748 bytes, Signature: 0 bytes
+2025-01-17 00:52:30.501 UTC 015e DEBU [gossip.gossip] handleMessage -> Entering, 172.18.0.8:7051 772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 sent us GossipMessage: Channel: , nonce: 0, tag: EMPTY MembershipResponse with Alive: 2, Dead: 0, Envelope: 1748 bytes, Signature: 0 bytes
+2025-01-17 00:52:30.501 UTC 015f DEBU [gossip.gossip] handleMessage -> Exiting
+2025-01-17 00:52:30.501 UTC 0160 DEBU [gossip.discovery] handleMsgFromComm -> Got message: GossipMessage: Channel: , nonce: 0, tag: EMPTY MembershipResponse with Alive: 2, Dead: 0, Envelope: 1748 bytes, Signature: 0 bytes
+2025-01-17 00:52:30.502 UTC 0161 DEBU [msp.identity] Verify -> Verify: signer identity (certificate subject=CN=peer1,OU=peer+OU=network+OU=FurnituresMakers,O=FurnituresMakers,L=Kielce,ST=Swietokrzyskie,C=PL issuer=CN=furnituresmakers-ca,OU=Organization CA,O=FurnituresMakers,L=Kielce,ST=Swietokrzyskie,C=PL serialnumber=20882441730537096006340931653930515231223778247)
+2025-01-17 00:52:30.502 UTC 0162 DEBU [msp.identity] Verify -> Verify: signer identity (certificate subject=CN=peer1,OU=peer+OU=network+OU=FurnituresMakers,O=FurnituresMakers,L=Kielce,ST=Swietokrzyskie,C=PL issuer=CN=furnituresmakers-ca,OU=Organization CA,O=FurnituresMakers,L=Kielce,ST=Swietokrzyskie,C=PL serialnumber=20882441730537096006340931653930515231223778247)
+2025-01-17 00:52:30.502 UTC 0163 DEBU [gossip.discovery] handleAliveMessage -> Entering GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint: PKI-id:3b0e2f1ae582b8cb2ad01ca88539bcde2bfc42d14cc346954a9654871a510103Identity:FurnituresMakers-----BEGIN CERTIFICATE-----
+MIIDSTCCAvCgAwIBAgIUA6hmrLbMTN1wQHQ1NSjUgBUjC8cwCgYIKoZIzj0EAwIw
+gYoxCzAJBgNVBAYTAlBMMRcwFQYDVQQIEw5Td2lldG9rcnp5c2tpZTEPMA0GA1UE
+BxMGS2llbGNlMRkwFwYDVQQKExBGdXJuaXR1cmVzTWFrZXJzMRgwFgYDVQQLEw9P
+cmdhbml6YXRpb24gQ0ExHDAaBgNVBAMTE2Z1cm5pdHVyZXNtYWtlcnMtY2EwHhcN
+MjUwMTAzMTQ1MzAwWhcNMjYwMTAzMTQ1ODAwWjCBmjELMAkGA1UEBhMCUEwxFzAV
+BgNVBAgTDlN3aWV0b2tyenlza2llMQ8wDQYDVQQHEwZLaWVsY2UxGTAXBgNVBAoT
+EEZ1cm5pdHVyZXNNYWtlcnMxNjALBgNVBAsTBHBlZXIwDgYDVQQLEwduZXR3b3Jr
+MBcGA1UECxMQRnVybml0dXJlc01ha2VyczEOMAwGA1UEAxMFcGVlcjEwWTATBgcq
+hkjOPQIBBggqhkjOPQMBBwNCAAR4MK0/rcxu43jusImcwk5vDgQmp1IN3L18EQj0
+zRCuUz8zbKXTQJkxOZYL1+EsmjL7bGpKyBsuEp9GJaf7iZz9o4IBIDCCARwwDgYD
+VR0PAQH/BAQDAgeAMAwGA1UdEwEB/wQCMAAwHQYDVR0OBBYEFANc4o0RutnA2N8I
+27Kqk6ojH8/sMB8GA1UdIwQYMBaAFCogmAwl6qqLFcQ/FL+Hejlg8To2MEwGA1Ud
+EQRFMEOCGnBlZXIxLmZ1cm5pdHVyZXNtYWtlcnMuY29tgglsb2NhbGhvc3SCGnBl
+ZXIxLWZ1cm5pdHVyZXNtYWtlcnMtY29tMG4GCCoDBAUGBwgBBGJ7ImF0dHJzIjp7
+ImhmLkFmZmlsaWF0aW9uIjoiRnVybml0dXJlc01ha2Vycy5uZXR3b3JrIiwiaGYu
+RW5yb2xsbWVudElEIjoicGVlcjEiLCJoZi5UeXBlIjoicGVlciJ9fTAKBggqhkjO
+PQQDAgNHADBEAiAA/tZ7da6qYwM6KtHGUMMsAqli0LTLv5I0PNOO8nofpwIgZDco
+ga86Xxc40SUa5RjJMStjsGfy+bIKPCOgos4Ru0E=
+-----END CERTIFICATE-----
+Timestamp:inc_num:1737075146497516808 seq_num:5 , Envelope: 1279 bytes, Signature: 71 bytes Secret payload: 33 bytes, Secret Signature: 71 bytes
+2025-01-17 00:52:30.502 UTC 0164 DEBU [gossip.discovery] isSentByMe -> Got alive message about ourselves, GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint: PKI-id:3b0e2f1ae582b8cb2ad01ca88539bcde2bfc42d14cc346954a9654871a510103Identity:FurnituresMakers-----BEGIN CERTIFICATE-----
+MIIDSTCCAvCgAwIBAgIUA6hmrLbMTN1wQHQ1NSjUgBUjC8cwCgYIKoZIzj0EAwIw
+gYoxCzAJBgNVBAYTAlBMMRcwFQYDVQQIEw5Td2lldG9rcnp5c2tpZTEPMA0GA1UE
+BxMGS2llbGNlMRkwFwYDVQQKExBGdXJuaXR1cmVzTWFrZXJzMRgwFgYDVQQLEw9P
+cmdhbml6YXRpb24gQ0ExHDAaBgNVBAMTE2Z1cm5pdHVyZXNtYWtlcnMtY2EwHhcN
+MjUwMTAzMTQ1MzAwWhcNMjYwMTAzMTQ1ODAwWjCBmjELMAkGA1UEBhMCUEwxFzAV
+BgNVBAgTDlN3aWV0b2tyenlza2llMQ8wDQYDVQQHEwZLaWVsY2UxGTAXBgNVBAoT
+EEZ1cm5pdHVyZXNNYWtlcnMxNjALBgNVBAsTBHBlZXIwDgYDVQQLEwduZXR3b3Jr
+MBcGA1UECxMQRnVybml0dXJlc01ha2VyczEOMAwGA1UEAxMFcGVlcjEwWTATBgcq
+hkjOPQIBBggqhkjOPQMBBwNCAAR4MK0/rcxu43jusImcwk5vDgQmp1IN3L18EQj0
+zRCuUz8zbKXTQJkxOZYL1+EsmjL7bGpKyBsuEp9GJaf7iZz9o4IBIDCCARwwDgYD
+VR0PAQH/BAQDAgeAMAwGA1UdEwEB/wQCMAAwHQYDVR0OBBYEFANc4o0RutnA2N8I
+27Kqk6ojH8/sMB8GA1UdIwQYMBaAFCogmAwl6qqLFcQ/FL+Hejlg8To2MEwGA1Ud
+EQRFMEOCGnBlZXIxLmZ1cm5pdHVyZXNtYWtlcnMuY29tgglsb2NhbGhvc3SCGnBl
+ZXIxLWZ1cm5pdHVyZXNtYWtlcnMtY29tMG4GCCoDBAUGBwgBBGJ7ImF0dHJzIjp7
+ImhmLkFmZmlsaWF0aW9uIjoiRnVybml0dXJlc01ha2Vycy5uZXR3b3JrIiwiaGYu
+RW5yb2xsbWVudElEIjoicGVlcjEiLCJoZi5UeXBlIjoicGVlciJ9fTAKBggqhkjO
+PQQDAgNHADBEAiAA/tZ7da6qYwM6KtHGUMMsAqli0LTLv5I0PNOO8nofpwIgZDco
+ga86Xxc40SUa5RjJMStjsGfy+bIKPCOgos4Ru0E=
+-----END CERTIFICATE-----
+Timestamp:inc_num:1737075146497516808 seq_num:5 , Envelope: 1279 bytes, Signature: 71 bytes Secret payload: 33 bytes, Secret Signature: 71 bytes
+2025-01-17 00:52:30.502 UTC 0165 DEBU [gossip.discovery] handleAliveMessage -> Exiting
+2025-01-17 00:52:30.502 UTC 0166 DEBU [gossip.discovery] handleMsgFromComm -> Exiting
+2025-01-17 00:52:30.544 UTC 0167 DEBU [gossip.comm] func1 -> Got message: GossipMessage: Channel: , nonce: 0, tag: EMPTY data request: nonce: 16554801586047789944 , Msg_type: IDENTITY_MSG, digests: [3b0e2f1ae582b8cb2ad01ca88539bcde2bfc42d14cc346954a9654871a510103], Envelope: 51 bytes, Signature: 0 bytes
+2025-01-17 00:52:30.544 UTC 0168 DEBU [gossip.gossip] handleMessage -> Entering, 172.18.0.8:7051 772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 sent us GossipMessage: Channel: , nonce: 0, tag: EMPTY data request: nonce: 16554801586047789944 , Msg_type: IDENTITY_MSG, digests: [3b0e2f1ae582b8cb2ad01ca88539bcde2bfc42d14cc346954a9654871a510103], Envelope: 51 bytes, Signature: 0 bytes
+2025-01-17 00:52:30.544 UTC 0169 DEBU [gossip.pull] HandleMessage -> GossipMessage: Channel: , nonce: 0, tag: EMPTY data request: nonce: 16554801586047789944 , Msg_type: IDENTITY_MSG, digests: [3b0e2f1ae582b8cb2ad01ca88539bcde2bfc42d14cc346954a9654871a510103], Envelope: 51 bytes, Signature: 0 bytes
+2025-01-17 00:52:30.544 UTC 016a DEBU [gossip.gossip] handleMessage -> Exiting
+2025-01-17 00:52:30.544 UTC 016b DEBU [gossip.pull] SendRes -> Sending 1 IDENTITY_MSG items to 172.18.0.8:7051 772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4
+2025-01-17 00:52:31.498 UTC 016c DEBU [msp.identity] Sign -> Sign: plaintext: 18012AFA090A221A203B0E2F1AE582B8...455254494649434154452D2D2D2D2D0A
+2025-01-17 00:52:31.498 UTC 016d DEBU [msp.identity] Sign -> Sign: digest: 13B3F6CD9987C2D5758D665E71BE6BC12C574BF652F615C2A6A150C148E99D38
+2025-01-17 00:52:31.498 UTC 016e DEBU [msp.identity] Sign -> Sign: plaintext: 0A1F70656572312E6675726E69747572...736D616B6572732E636F6D3A37303531
+2025-01-17 00:52:31.498 UTC 016f DEBU [msp.identity] Sign -> Sign: digest: 53E8FC80EEA001CBFE463C6185F8360AF7B663B6AADD49A73EA86C4A045BE867
+2025-01-17 00:52:31.498 UTC 0170 DEBU [gossip.discovery] periodicalSendAlive -> Sleeping 5s
+2025-01-17 00:52:31.499 UTC 0171 DEBU [gossip.pull] SendReq -> Sending [a4a88af81613c7d67995948a8aedfec76279f81d75d558e3af8ef52dddff7250 772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 537c681b5ab2023345a19708c7a0816f770611c0b7db60bf0d5d2c615f02d6f3] to peer0.furnituresmakers.com:7051
+2025-01-17 00:52:31.499 UTC 0172 DEBU [gossip.comm] Send -> Entering, sending GossipMessage: Channel: , nonce: 0, tag: EMPTY data request: nonce: 6969486551080857495 , Msg_type: IDENTITY_MSG, digests: [a4a88af81613c7d67995948a8aedfec76279f81d75d558e3af8ef52dddff7250 772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 537c681b5ab2023345a19708c7a0816f770611c0b7db60bf0d5d2c615f02d6f3], Envelope: 118 bytes, Signature: 0 bytes to  1 peers
+2025-01-17 00:52:31.499 UTC 0173 DEBU [gossip.comm] sendToEndpoint -> Entering, Sending to peer0.furnituresmakers.com:7051 , msg: GossipMessage: Channel: , nonce: 0, tag: EMPTY data request: nonce: 6969486551080857495 , Msg_type: IDENTITY_MSG, digests: [a4a88af81613c7d67995948a8aedfec76279f81d75d558e3af8ef52dddff7250 772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 537c681b5ab2023345a19708c7a0816f770611c0b7db60bf0d5d2c615f02d6f3], Envelope: 118 bytes, Signature: 0 bytes
+2025-01-17 00:52:31.499 UTC 0174 DEBU [gossip.comm] sendToEndpoint -> Exiting
+2025-01-17 00:52:31.500 UTC 0175 DEBU [gossip.comm] func1 -> Got message: GossipMessage: Channel: , nonce: 0, tag: EMPTY DataUpdate: Type: IDENTITY_MSG, items: 3, nonce: 6969486551080857495, Envelope: 3918 bytes, Signature: 0 bytes
+2025-01-17 00:52:31.500 UTC 0176 DEBU [gossip.gossip] handleMessage -> Entering, 172.18.0.8:7051 772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 sent us GossipMessage: Channel: , nonce: 0, tag: EMPTY DataUpdate: Type: IDENTITY_MSG, items: 3, nonce: 6969486551080857495, Envelope: 3918 bytes, Signature: 0 bytes
+2025-01-17 00:52:31.500 UTC 0177 DEBU [msp] DeserializeIdentity -> Obtaining identity
+2025-01-17 00:52:31.500 UTC 0178 ERRO [peer.gossip.mcs] Verify -> Failed getting validated identity from peer identity [Peer Identity {"CN":"peer0","Issuer-CN":"woodsupply-ca","Issuer-L-ST-C":"[Kielce]-[]-[PL]","Issuer-OU":["Organization CA"],"L-ST-C":"[Kielce]-[]-[PL]","MSP":"WoodSupply","OU":["peer","network","WoodSupply"]} cannot be validated. No MSP found able to do that.]
+2025-01-17 00:52:31.501 UTC 0179 WARN [gossip.gossip] handleMessage -> Failed validating identity message: Peer Identity {"CN":"peer0","Issuer-CN":"woodsupply-ca","Issuer-L-ST-C":"[Kielce]-[]-[PL]","Issuer-OU":["Organization CA"],"L-ST-C":"[Kielce]-[]-[PL]","MSP":"WoodSupply","OU":["peer","network","WoodSupply"]} cannot be validated. No MSP found able to do that.
+Failed verifying message
+github.com/hyperledger/fabric/gossip/gossip.(*certStore).validateIdentityMsg
+        /gossip/gossip/certstore.go:105
+github.com/hyperledger/fabric/gossip/gossip.(*certStore).handleMessage
+        /gossip/gossip/certstore.go:77
+github.com/hyperledger/fabric/gossip/gossip.(*Node).handleMessage
+        /gossip/gossip/gossip_impl.go:399
+github.com/hyperledger/fabric/gossip/gossip.(*Node).acceptMessages
+        /gossip/gossip/gossip_impl.go:326
+runtime.goexit
+        /usr/local/go/src/runtime/asm_amd64.s:1700
+github.com/hyperledger/fabric/gossip/gossip.(*certStore).handleMessage
+        /gossip/gossip/certstore.go:78
+github.com/hyperledger/fabric/gossip/gossip.(*Node).handleMessage
+        /gossip/gossip/gossip_impl.go:399
+github.com/hyperledger/fabric/gossip/gossip.(*Node).acceptMessages
+        /gossip/gossip/gossip_impl.go:326
+runtime.goexit
+        /usr/local/go/src/runtime/asm_amd64.s:1700
+2025-01-17 00:52:31.501 UTC 017a DEBU [gossip.gossip] handleMessage -> Exiting
+2025-01-17 00:52:31.508 UTC 017b DEBU [gossip.comm] Send -> Entering, sending GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint: PKI-id:3b0e2f1ae582b8cb2ad01ca88539bcde2bfc42d14cc346954a9654871a510103Identity:FurnituresMakers-----BEGIN CERTIFICATE-----
+MIIDSTCCAvCgAwIBAgIUA6hmrLbMTN1wQHQ1NSjUgBUjC8cwCgYIKoZIzj0EAwIw
+gYoxCzAJBgNVBAYTAlBMMRcwFQYDVQQIEw5Td2lldG9rcnp5c2tpZTEPMA0GA1UE
+BxMGS2llbGNlMRkwFwYDVQQKExBGdXJuaXR1cmVzTWFrZXJzMRgwFgYDVQQLEw9P
+cmdhbml6YXRpb24gQ0ExHDAaBgNVBAMTE2Z1cm5pdHVyZXNtYWtlcnMtY2EwHhcN
+MjUwMTAzMTQ1MzAwWhcNMjYwMTAzMTQ1ODAwWjCBmjELMAkGA1UEBhMCUEwxFzAV
+BgNVBAgTDlN3aWV0b2tyenlza2llMQ8wDQYDVQQHEwZLaWVsY2UxGTAXBgNVBAoT
+EEZ1cm5pdHVyZXNNYWtlcnMxNjALBgNVBAsTBHBlZXIwDgYDVQQLEwduZXR3b3Jr
+MBcGA1UECxMQRnVybml0dXJlc01ha2VyczEOMAwGA1UEAxMFcGVlcjEwWTATBgcq
+hkjOPQIBBggqhkjOPQMBBwNCAAR4MK0/rcxu43jusImcwk5vDgQmp1IN3L18EQj0
+zRCuUz8zbKXTQJkxOZYL1+EsmjL7bGpKyBsuEp9GJaf7iZz9o4IBIDCCARwwDgYD
+VR0PAQH/BAQDAgeAMAwGA1UdEwEB/wQCMAAwHQYDVR0OBBYEFANc4o0RutnA2N8I
+27Kqk6ojH8/sMB8GA1UdIwQYMBaAFCogmAwl6qqLFcQ/FL+Hejlg8To2MEwGA1Ud
+EQRFMEOCGnBlZXIxLmZ1cm5pdHVyZXNtYWtlcnMuY29tgglsb2NhbGhvc3SCGnBl
+ZXIxLWZ1cm5pdHVyZXNtYWtlcnMtY29tMG4GCCoDBAUGBwgBBGJ7ImF0dHJzIjp7
+ImhmLkFmZmlsaWF0aW9uIjoiRnVybml0dXJlc01ha2Vycy5uZXR3b3JrIiwiaGYu
+RW5yb2xsbWVudElEIjoicGVlcjEiLCJoZi5UeXBlIjoicGVlciJ9fTAKBggqhkjO
+PQQDAgNHADBEAiAA/tZ7da6qYwM6KtHGUMMsAqli0LTLv5I0PNOO8nofpwIgZDco
+ga86Xxc40SUa5RjJMStjsGfy+bIKPCOgos4Ru0E=
+-----END CERTIFICATE-----
+Timestamp:inc_num:1737075146497516808 seq_num:6 , Envelope: 1279 bytes, Signature: 71 bytes Secret payload: 33 bytes, Secret Signature: 71 bytes to  1 peers
+2025-01-17 00:52:31.508 UTC 017c DEBU [gossip.comm] sendToEndpoint -> Entering, Sending to peer0.furnituresmakers.com:7051 , msg: GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint: PKI-id:3b0e2f1ae582b8cb2ad01ca88539bcde2bfc42d14cc346954a9654871a510103Identity:FurnituresMakers-----BEGIN CERTIFICATE-----
+MIIDSTCCAvCgAwIBAgIUA6hmrLbMTN1wQHQ1NSjUgBUjC8cwCgYIKoZIzj0EAwIw
+gYoxCzAJBgNVBAYTAlBMMRcwFQYDVQQIEw5Td2lldG9rcnp5c2tpZTEPMA0GA1UE
+BxMGS2llbGNlMRkwFwYDVQQKExBGdXJuaXR1cmVzTWFrZXJzMRgwFgYDVQQLEw9P
+cmdhbml6YXRpb24gQ0ExHDAaBgNVBAMTE2Z1cm5pdHVyZXNtYWtlcnMtY2EwHhcN
+MjUwMTAzMTQ1MzAwWhcNMjYwMTAzMTQ1ODAwWjCBmjELMAkGA1UEBhMCUEwxFzAV
+BgNVBAgTDlN3aWV0b2tyenlza2llMQ8wDQYDVQQHEwZLaWVsY2UxGTAXBgNVBAoT
+EEZ1cm5pdHVyZXNNYWtlcnMxNjALBgNVBAsTBHBlZXIwDgYDVQQLEwduZXR3b3Jr
+MBcGA1UECxMQRnVybml0dXJlc01ha2VyczEOMAwGA1UEAxMFcGVlcjEwWTATBgcq
+hkjOPQIBBggqhkjOPQMBBwNCAAR4MK0/rcxu43jusImcwk5vDgQmp1IN3L18EQj0
+zRCuUz8zbKXTQJkxOZYL1+EsmjL7bGpKyBsuEp9GJaf7iZz9o4IBIDCCARwwDgYD
+VR0PAQH/BAQDAgeAMAwGA1UdEwEB/wQCMAAwHQYDVR0OBBYEFANc4o0RutnA2N8I
+27Kqk6ojH8/sMB8GA1UdIwQYMBaAFCogmAwl6qqLFcQ/FL+Hejlg8To2MEwGA1Ud
+EQRFMEOCGnBlZXIxLmZ1cm5pdHVyZXNtYWtlcnMuY29tgglsb2NhbGhvc3SCGnBl
+ZXIxLWZ1cm5pdHVyZXNtYWtlcnMtY29tMG4GCCoDBAUGBwgBBGJ7ImF0dHJzIjp7
+ImhmLkFmZmlsaWF0aW9uIjoiRnVybml0dXJlc01ha2Vycy5uZXR3b3JrIiwiaGYu
+RW5yb2xsbWVudElEIjoicGVlcjEiLCJoZi5UeXBlIjoicGVlciJ9fTAKBggqhkjO
+PQQDAgNHADBEAiAA/tZ7da6qYwM6KtHGUMMsAqli0LTLv5I0PNOO8nofpwIgZDco
+ga86Xxc40SUa5RjJMStjsGfy+bIKPCOgos4Ru0E=
+-----END CERTIFICATE-----
+Timestamp:inc_num:1737075146497516808 seq_num:6 , Envelope: 1279 bytes, Signature: 71 bytes Secret payload: 33 bytes, Secret Signature: 71 bytes
+2025-01-17 00:52:31.508 UTC 017d DEBU [gossip.comm] sendToEndpoint -> Exiting
+2025-01-17 00:52:32.533 UTC 017e DEBU [gossip.comm] func1 -> Got message: GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:156 , Envelope: 88 bytes, Signature: 71 bytes Secret payload: 33 bytes, Secret Signature: 70 bytes
+2025-01-17 00:52:32.533 UTC 017f DEBU [gossip.gossip] handleMessage -> Entering, 172.18.0.8:7051 772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 sent us GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:156 , Envelope: 88 bytes, Signature: 71 bytes Secret payload: 33 bytes, Secret Signature: 70 bytes
+2025-01-17 00:52:32.533 UTC 0180 DEBU [gossip.gossip] handleMessage -> Exiting
+2025-01-17 00:52:32.533 UTC 0181 DEBU [gossip.discovery] handleMsgFromComm -> Got message: GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:156 , Envelope: 88 bytes, Signature: 71 bytes Secret payload: 33 bytes, Secret Signature: 70 bytes
+2025-01-17 00:52:32.533 UTC 0182 DEBU [gossip.gossip] ValidateAliveMsg -> Fetched identity of Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 from identity store
+2025-01-17 00:52:32.533 UTC 0183 DEBU [msp.identity] Verify -> Verify: signer identity (certificate subject=CN=peer0,OU=peer+OU=network+OU=FurnituresMakers,O=FurnituresMakers,L=Kielce,ST=Swietokrzyskie,C=PL issuer=CN=furnituresmakers-ca,OU=Organization CA,O=FurnituresMakers,L=Kielce,ST=Swietokrzyskie,C=PL serialnumber=504259801133774798052594680189490003716031820718)
+2025-01-17 00:52:32.534 UTC 0184 DEBU [msp.identity] Verify -> Verify: signer identity (certificate subject=CN=peer0,OU=peer+OU=network+OU=FurnituresMakers,O=FurnituresMakers,L=Kielce,ST=Swietokrzyskie,C=PL issuer=CN=furnituresmakers-ca,OU=Organization CA,O=FurnituresMakers,L=Kielce,ST=Swietokrzyskie,C=PL serialnumber=504259801133774798052594680189490003716031820718)
+2025-01-17 00:52:32.534 UTC 0185 DEBU [gossip.discovery] handleAliveMessage -> Entering GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:156 , Envelope: 88 bytes, Signature: 71 bytes Secret payload: 33 bytes, Secret Signature: 70 bytes
+2025-01-17 00:52:32.534 UTC 0186 DEBU [gossip.discovery] learnExistingMembers -> Entering: learnedMembers={[GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:156 , Envelope: 88 bytes, Signature: 71 bytes Secret payload: 33 bytes, Secret Signature: 70 bytes]}
+2025-01-17 00:52:32.534 UTC 0187 DEBU [gossip.discovery] learnExistingMembers -> updating Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:156
+2025-01-17 00:52:32.534 UTC 0188 DEBU [gossip.discovery] learnExistingMembers -> Updating aliveness data: Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:156
+2025-01-17 00:52:32.534 UTC 0189 DEBU [gossip.discovery] learnExistingMembers -> Replacing GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:155 , Envelope: 88 bytes, Signature: 70 bytes Secret payload: 33 bytes, Secret Signature: 70 bytes in aliveMembership
+2025-01-17 00:52:32.534 UTC 018a DEBU [gossip.discovery] learnExistingMembers -> Exiting
+2025-01-17 00:52:32.534 UTC 018b DEBU [gossip.discovery] handleAliveMessage -> Exiting
+2025-01-17 00:52:32.534 UTC 018c DEBU [gossip.discovery] handleMsgFromComm -> Exiting
+2025-01-17 00:52:32.603 UTC 018d DEBU [gossip.comm] func1 -> Got message: GossipMessage: Channel: , nonce: 0, tag: CHAN_OR_ORG state_info_pull_req: Channel MAC:b1ef51efe8592f8d4cbbbbec9a09e91e07ad59c25f9bdf6afdf26600be0ea156, Envelope: 39 bytes, Signature: 0 bytes
+2025-01-17 00:52:32.603 UTC 018e DEBU [gossip.gossip] handleMessage -> Entering, 172.18.0.8:7051 772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 sent us GossipMessage: Channel: , nonce: 0, tag: CHAN_OR_ORG state_info_pull_req: Channel MAC:b1ef51efe8592f8d4cbbbbec9a09e91e07ad59c25f9bdf6afdf26600be0ea156, Envelope: 39 bytes, Signature: 0 bytes
+2025-01-17 00:52:32.603 UTC 018f DEBU [gossip.gossip] handleMessage -> No such channel [] discarding message GossipMessage: Channel: , nonce: 0, tag: CHAN_OR_ORG state_info_pull_req: Channel MAC:b1ef51efe8592f8d4cbbbbec9a09e91e07ad59c25f9bdf6afdf26600be0ea156, Envelope: 39 bytes, Signature: 0 bytes
+2025-01-17 00:52:32.603 UTC 0190 DEBU [gossip.gossip] handleMessage -> Exiting
+2025-01-17 00:52:32.198 UTC 0191 DEBU [gossip.comm] func1 -> Got message: GossipMessage: tag:EMPTY hello:<nonce:763877623303930525 msg_type:IDENTITY_MSG > , Envelope: 16 bytes, Signature: 0 bytes
+2025-01-17 00:52:32.198 UTC 0192 DEBU [gossip.gossip] handleMessage -> Entering, 172.18.0.8:7051 772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 sent us GossipMessage: tag:EMPTY hello:<nonce:763877623303930525 msg_type:IDENTITY_MSG > , Envelope: 16 bytes, Signature: 0 bytes
+2025-01-17 00:52:32.198 UTC 0193 DEBU [gossip.pull] HandleMessage -> GossipMessage: tag:EMPTY hello:<nonce:763877623303930525 msg_type:IDENTITY_MSG > , Envelope: 16 bytes, Signature: 0 bytes
+2025-01-17 00:52:32.198 UTC 0194 DEBU [gossip.pull] SendDigest -> Sending IDENTITY_MSG digest: [3b0e2f1ae582b8cb2ad01ca88539bcde2bfc42d14cc346954a9654871a510103] to 172.18.0.8:7051 772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4
+2025-01-17 00:52:32.198 UTC 0195 DEBU [gossip.comm] func1 -> Got message: GossipMessage: Channel: , nonce: 0, tag: EMPTY Membership Request with self information of GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:157 , Envelope: 88 bytes, Signature: 71 bytes Secret payload: 33 bytes, Secret Signature: 70 bytes , Envelope: 280 bytes, Signature: 0 bytes
+2025-01-17 00:52:32.198 UTC 0196 DEBU [gossip.gossip] handleMessage -> Exiting
+2025-01-17 00:52:32.198 UTC 0197 DEBU [gossip.gossip] handleMessage -> Entering, 172.18.0.8:7051 772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 sent us GossipMessage: Channel: , nonce: 0, tag: EMPTY Membership Request with self information of GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:157 , Envelope: 88 bytes, Signature: 71 bytes Secret payload: 33 bytes, Secret Signature: 70 bytes , Envelope: 280 bytes, Signature: 0 bytes
+2025-01-17 00:52:32.198 UTC 0198 DEBU [gossip.gossip] handleMessage -> Exiting
+2025-01-17 00:52:32.198 UTC 0199 DEBU [gossip.discovery] handleMsgFromComm -> Got message: GossipMessage: Channel: , nonce: 0, tag: EMPTY Membership Request with self information of GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:157 , Envelope: 88 bytes, Signature: 71 bytes Secret payload: 33 bytes, Secret Signature: 70 bytes , Envelope: 280 bytes, Signature: 0 bytes
+2025-01-17 00:52:32.198 UTC 019a DEBU [gossip.gossip] ValidateAliveMsg -> Fetched identity of Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 from identity store
+2025-01-17 00:52:32.199 UTC 019b DEBU [msp.identity] Verify -> Verify: signer identity (certificate subject=CN=peer0,OU=peer+OU=network+OU=FurnituresMakers,O=FurnituresMakers,L=Kielce,ST=Swietokrzyskie,C=PL issuer=CN=furnituresmakers-ca,OU=Organization CA,O=FurnituresMakers,L=Kielce,ST=Swietokrzyskie,C=PL serialnumber=504259801133774798052594680189490003716031820718)
+2025-01-17 00:52:32.199 UTC 019c DEBU [msp.identity] Verify -> Verify: signer identity (certificate subject=CN=peer0,OU=peer+OU=network+OU=FurnituresMakers,O=FurnituresMakers,L=Kielce,ST=Swietokrzyskie,C=PL issuer=CN=furnituresmakers-ca,OU=Organization CA,O=FurnituresMakers,L=Kielce,ST=Swietokrzyskie,C=PL serialnumber=504259801133774798052594680189490003716031820718)
+2025-01-17 00:52:32.199 UTC 019d DEBU [gossip.discovery] handleAliveMessage -> Entering GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:157 , Envelope: 88 bytes, Signature: 71 bytes Secret payload: 33 bytes, Secret Signature: 70 bytes
+2025-01-17 00:52:32.199 UTC 019e DEBU [gossip.discovery] learnExistingMembers -> Entering: learnedMembers={[GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:157 , Envelope: 88 bytes, Signature: 71 bytes Secret payload: 33 bytes, Secret Signature: 70 bytes]}
+2025-01-17 00:52:32.199 UTC 019f DEBU [gossip.discovery] learnExistingMembers -> updating Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:157
+2025-01-17 00:52:32.199 UTC 01a0 DEBU [gossip.discovery] learnExistingMembers -> Updating aliveness data: Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:157
+2025-01-17 00:52:32.199 UTC 01a1 DEBU [gossip.discovery] learnExistingMembers -> Replacing GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:156 , Envelope: 88 bytes, Signature: 71 bytes Secret payload: 33 bytes, Secret Signature: 70 bytes in aliveMembership
+2025-01-17 00:52:32.199 UTC 01a2 DEBU [gossip.discovery] learnExistingMembers -> Exiting
+2025-01-17 00:52:32.199 UTC 01a3 DEBU [gossip.discovery] handleAliveMessage -> Exiting
+2025-01-17 00:52:32.199 UTC 01a4 DEBU [gossip.discovery] handleMsgFromComm -> Exiting
+2025-01-17 00:52:32.199 UTC 01a5 DEBU [gossip.discovery] sendMemResponse -> Entering Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4
+2025-01-17 00:52:32.199 UTC 01a6 DEBU [gossip.comm] Send -> Entering, sending GossipMessage: Channel: , nonce: 0, tag: EMPTY MembershipResponse with Alive: 2, Dead: 0, Envelope: 1748 bytes, Signature: 0 bytes to  1 peers
+2025-01-17 00:52:32.199 UTC 01a7 DEBU [gossip.discovery] sendMemResponse -> Exiting, replying with MembershipResponse with Alive: 2, Dead: 0
+2025-01-17 00:52:32.199 UTC 01a8 DEBU [gossip.comm] sendToEndpoint -> Entering, Sending to peer0.furnituresmakers.com:7051 , msg: GossipMessage: Channel: , nonce: 0, tag: EMPTY MembershipResponse with Alive: 2, Dead: 0, Envelope: 1748 bytes, Signature: 0 bytes
+2025-01-17 00:52:32.199 UTC 01a9 DEBU [gossip.comm] sendToEndpoint -> Exiting
+2025-01-17 00:52:33.152 UTC 01aa DEBU [gossip.pull] Hello -> Sending IDENTITY_MSG hello to peer0.furnituresmakers.com:7051
+2025-01-17 00:52:33.152 UTC 01ab DEBU [gossip.comm] Send -> Entering, sending GossipMessage: tag:EMPTY hello:<nonce:17070130604390406067 msg_type:IDENTITY_MSG > , Envelope: 17 bytes, Signature: 0 bytes to  1 peers
+2025-01-17 00:52:33.152 UTC 01ac DEBU [gossip.comm] sendToEndpoint -> Entering, Sending to peer0.furnituresmakers.com:7051 , msg: GossipMessage: tag:EMPTY hello:<nonce:17070130604390406067 msg_type:IDENTITY_MSG > , Envelope: 17 bytes, Signature: 0 bytes
+2025-01-17 00:52:33.152 UTC 01ad DEBU [msp.identity] Sign -> Sign: plaintext: 18012AFA090A221A203B0E2F1AE582B8...455254494649434154452D2D2D2D2D0A
+2025-01-17 00:52:33.152 UTC 01ae DEBU [msp.identity] Sign -> Sign: digest: C89BB4D42701DC5ED2771575E2F07778FD7AAA38A60EB4369E8F4EEEB27AB3CE
+2025-01-17 00:52:33.152 UTC 01af DEBU [gossip.comm] sendToEndpoint -> Exiting
+2025-01-17 00:52:33.153 UTC 01b0 DEBU [msp.identity] Sign -> Sign: plaintext: 0A1F70656572312E6675726E69747572...736D616B6572732E636F6D3A37303531
+2025-01-17 00:52:33.153 UTC 01b1 DEBU [msp.identity] Sign -> Sign: digest: 53E8FC80EEA001CBFE463C6185F8360AF7B663B6AADD49A73EA86C4A045BE867
+2025-01-17 00:52:33.153 UTC 01b2 DEBU [gossip.comm] Send -> Entering, sending GossipMessage: Channel: , nonce: 0, tag: EMPTY Membership Request with self information of GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint: PKI-id:3b0e2f1ae582b8cb2ad01ca88539bcde2bfc42d14cc346954a9654871a510103Identity:FurnituresMakers-----BEGIN CERTIFICATE-----
+MIIDSTCCAvCgAwIBAgIUA6hmrLbMTN1wQHQ1NSjUgBUjC8cwCgYIKoZIzj0EAwIw
+gYoxCzAJBgNVBAYTAlBMMRcwFQYDVQQIEw5Td2lldG9rcnp5c2tpZTEPMA0GA1UE
+BxMGS2llbGNlMRkwFwYDVQQKExBGdXJuaXR1cmVzTWFrZXJzMRgwFgYDVQQLEw9P
+cmdhbml6YXRpb24gQ0ExHDAaBgNVBAMTE2Z1cm5pdHVyZXNtYWtlcnMtY2EwHhcN
+MjUwMTAzMTQ1MzAwWhcNMjYwMTAzMTQ1ODAwWjCBmjELMAkGA1UEBhMCUEwxFzAV
+BgNVBAgTDlN3aWV0b2tyenlza2llMQ8wDQYDVQQHEwZLaWVsY2UxGTAXBgNVBAoT
+EEZ1cm5pdHVyZXNNYWtlcnMxNjALBgNVBAsTBHBlZXIwDgYDVQQLEwduZXR3b3Jr
+MBcGA1UECxMQRnVybml0dXJlc01ha2VyczEOMAwGA1UEAxMFcGVlcjEwWTATBgcq
+hkjOPQIBBggqhkjOPQMBBwNCAAR4MK0/rcxu43jusImcwk5vDgQmp1IN3L18EQj0
+zRCuUz8zbKXTQJkxOZYL1+EsmjL7bGpKyBsuEp9GJaf7iZz9o4IBIDCCARwwDgYD
+VR0PAQH/BAQDAgeAMAwGA1UdEwEB/wQCMAAwHQYDVR0OBBYEFANc4o0RutnA2N8I
+27Kqk6ojH8/sMB8GA1UdIwQYMBaAFCogmAwl6qqLFcQ/FL+Hejlg8To2MEwGA1Ud
+EQRFMEOCGnBlZXIxLmZ1cm5pdHVyZXNtYWtlcnMuY29tgglsb2NhbGhvc3SCGnBl
+ZXIxLWZ1cm5pdHVyZXNtYWtlcnMtY29tMG4GCCoDBAUGBwgBBGJ7ImF0dHJzIjp7
+ImhmLkFmZmlsaWF0aW9uIjoiRnVybml0dXJlc01ha2Vycy5uZXR3b3JrIiwiaGYu
+RW5yb2xsbWVudElEIjoicGVlcjEiLCJoZi5UeXBlIjoicGVlciJ9fTAKBggqhkjO
+PQQDAgNHADBEAiAA/tZ7da6qYwM6KtHGUMMsAqli0LTLv5I0PNOO8nofpwIgZDco
+ga86Xxc40SUa5RjJMStjsGfy+bIKPCOgos4Ru0E=
+-----END CERTIFICATE-----
+Timestamp:inc_num:1737075146497516808 seq_num:7 , Envelope: 1279 bytes, Signature: 70 bytes Secret payload: 33 bytes, Secret Signature: 71 bytes , Envelope: 1472 bytes, Signature: 0 bytes to  1 peers
+2025-01-17 00:52:33.153 UTC 01b3 DEBU [gossip.comm] sendToEndpoint -> Entering, Sending to peer0.furnituresmakers.com:7051 , msg: GossipMessage: Channel: , nonce: 0, tag: EMPTY Membership Request with self information of GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint: PKI-id:3b0e2f1ae582b8cb2ad01ca88539bcde2bfc42d14cc346954a9654871a510103Identity:FurnituresMakers-----BEGIN CERTIFICATE-----
+MIIDSTCCAvCgAwIBAgIUA6hmrLbMTN1wQHQ1NSjUgBUjC8cwCgYIKoZIzj0EAwIw
+gYoxCzAJBgNVBAYTAlBMMRcwFQYDVQQIEw5Td2lldG9rcnp5c2tpZTEPMA0GA1UE
+BxMGS2llbGNlMRkwFwYDVQQKExBGdXJuaXR1cmVzTWFrZXJzMRgwFgYDVQQLEw9P
+cmdhbml6YXRpb24gQ0ExHDAaBgNVBAMTE2Z1cm5pdHVyZXNtYWtlcnMtY2EwHhcN
+MjUwMTAzMTQ1MzAwWhcNMjYwMTAzMTQ1ODAwWjCBmjELMAkGA1UEBhMCUEwxFzAV
+BgNVBAgTDlN3aWV0b2tyenlza2llMQ8wDQYDVQQHEwZLaWVsY2UxGTAXBgNVBAoT
+EEZ1cm5pdHVyZXNNYWtlcnMxNjALBgNVBAsTBHBlZXIwDgYDVQQLEwduZXR3b3Jr
+MBcGA1UECxMQRnVybml0dXJlc01ha2VyczEOMAwGA1UEAxMFcGVlcjEwWTATBgcq
+hkjOPQIBBggqhkjOPQMBBwNCAAR4MK0/rcxu43jusImcwk5vDgQmp1IN3L18EQj0
+zRCuUz8zbKXTQJkxOZYL1+EsmjL7bGpKyBsuEp9GJaf7iZz9o4IBIDCCARwwDgYD
+VR0PAQH/BAQDAgeAMAwGA1UdEwEB/wQCMAAwHQYDVR0OBBYEFANc4o0RutnA2N8I
+27Kqk6ojH8/sMB8GA1UdIwQYMBaAFCogmAwl6qqLFcQ/FL+Hejlg8To2MEwGA1Ud
+EQRFMEOCGnBlZXIxLmZ1cm5pdHVyZXNtYWtlcnMuY29tgglsb2NhbGhvc3SCGnBl
+ZXIxLWZ1cm5pdHVyZXNtYWtlcnMtY29tMG4GCCoDBAUGBwgBBGJ7ImF0dHJzIjp7
+ImhmLkFmZmlsaWF0aW9uIjoiRnVybml0dXJlc01ha2Vycy5uZXR3b3JrIiwiaGYu
+RW5yb2xsbWVudElEIjoicGVlcjEiLCJoZi5UeXBlIjoicGVlciJ9fTAKBggqhkjO
+PQQDAgNHADBEAiAA/tZ7da6qYwM6KtHGUMMsAqli0LTLv5I0PNOO8nofpwIgZDco
+ga86Xxc40SUa5RjJMStjsGfy+bIKPCOgos4Ru0E=
+-----END CERTIFICATE-----
+Timestamp:inc_num:1737075146497516808 seq_num:7 , Envelope: 1279 bytes, Signature: 70 bytes Secret payload: 33 bytes, Secret Signature: 71 bytes , Envelope: 1472 bytes, Signature: 0 bytes
+2025-01-17 00:52:33.153 UTC 01b4 DEBU [gossip.comm] sendToEndpoint -> Exiting
+2025-01-17 00:52:33.153 UTC 01b5 DEBU [gossip.comm] func1 -> Got message: GossipMessage: Channel: , nonce: 0, tag: EMPTY data_dig: nonce: 17070130604390406067 , Msg_type: IDENTITY_MSG, digests: [a4a88af81613c7d67995948a8aedfec76279f81d75d558e3af8ef52dddff7250 3b0e2f1ae582b8cb2ad01ca88539bcde2bfc42d14cc346954a9654871a510103 772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 537c681b5ab2023345a19708c7a0816f770611c0b7db60bf0d5d2c615f02d6f3], Envelope: 154 bytes, Signature: 0 bytes
+2025-01-17 00:52:33.153 UTC 01b6 DEBU [gossip.gossip] handleMessage -> Entering, 172.18.0.8:7051 772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 sent us GossipMessage: Channel: , nonce: 0, tag: EMPTY data_dig: nonce: 17070130604390406067 , Msg_type: IDENTITY_MSG, digests: [a4a88af81613c7d67995948a8aedfec76279f81d75d558e3af8ef52dddff7250 3b0e2f1ae582b8cb2ad01ca88539bcde2bfc42d14cc346954a9654871a510103 772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 537c681b5ab2023345a19708c7a0816f770611c0b7db60bf0d5d2c615f02d6f3], Envelope: 154 bytes, Signature: 0 bytes
+2025-01-17 00:52:33.153 UTC 01b7 DEBU [gossip.pull] HandleMessage -> GossipMessage: Channel: , nonce: 0, tag: EMPTY data_dig: nonce: 17070130604390406067 , Msg_type: IDENTITY_MSG, digests: [a4a88af81613c7d67995948a8aedfec76279f81d75d558e3af8ef52dddff7250 3b0e2f1ae582b8cb2ad01ca88539bcde2bfc42d14cc346954a9654871a510103 772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 537c681b5ab2023345a19708c7a0816f770611c0b7db60bf0d5d2c615f02d6f3], Envelope: 154 bytes, Signature: 0 bytes
+2025-01-17 00:52:33.153 UTC 01b8 DEBU [gossip.gossip] handleMessage -> Exiting
+2025-01-17 00:52:33.154 UTC 01b9 DEBU [gossip.comm] func1 -> Got message: GossipMessage: Channel: , nonce: 0, tag: EMPTY MembershipResponse with Alive: 2, Dead: 0, Envelope: 1747 bytes, Signature: 0 bytes
+2025-01-17 00:52:33.154 UTC 01ba DEBU [gossip.gossip] handleMessage -> Entering, 172.18.0.8:7051 772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 sent us GossipMessage: Channel: , nonce: 0, tag: EMPTY MembershipResponse with Alive: 2, Dead: 0, Envelope: 1747 bytes, Signature: 0 bytes
+2025-01-17 00:52:33.154 UTC 01bb DEBU [gossip.gossip] handleMessage -> Exiting
+2025-01-17 00:52:33.154 UTC 01bc DEBU [gossip.discovery] handleMsgFromComm -> Got message: GossipMessage: Channel: , nonce: 0, tag: EMPTY MembershipResponse with Alive: 2, Dead: 0, Envelope: 1747 bytes, Signature: 0 bytes
+2025-01-17 00:52:33.155 UTC 01bd DEBU [msp.identity] Verify -> Verify: signer identity (certificate subject=CN=peer1,OU=peer+OU=network+OU=FurnituresMakers,O=FurnituresMakers,L=Kielce,ST=Swietokrzyskie,C=PL issuer=CN=furnituresmakers-ca,OU=Organization CA,O=FurnituresMakers,L=Kielce,ST=Swietokrzyskie,C=PL serialnumber=20882441730537096006340931653930515231223778247)
+2025-01-17 00:52:33.155 UTC 01be DEBU [msp.identity] Verify -> Verify: signer identity (certificate subject=CN=peer1,OU=peer+OU=network+OU=FurnituresMakers,O=FurnituresMakers,L=Kielce,ST=Swietokrzyskie,C=PL issuer=CN=furnituresmakers-ca,OU=Organization CA,O=FurnituresMakers,L=Kielce,ST=Swietokrzyskie,C=PL serialnumber=20882441730537096006340931653930515231223778247)
+2025-01-17 00:52:33.155 UTC 01bf DEBU [gossip.discovery] handleAliveMessage -> Entering GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint: PKI-id:3b0e2f1ae582b8cb2ad01ca88539bcde2bfc42d14cc346954a9654871a510103Identity:FurnituresMakers-----BEGIN CERTIFICATE-----
+MIIDSTCCAvCgAwIBAgIUA6hmrLbMTN1wQHQ1NSjUgBUjC8cwCgYIKoZIzj0EAwIw
+gYoxCzAJBgNVBAYTAlBMMRcwFQYDVQQIEw5Td2lldG9rcnp5c2tpZTEPMA0GA1UE
+BxMGS2llbGNlMRkwFwYDVQQKExBGdXJuaXR1cmVzTWFrZXJzMRgwFgYDVQQLEw9P
+cmdhbml6YXRpb24gQ0ExHDAaBgNVBAMTE2Z1cm5pdHVyZXNtYWtlcnMtY2EwHhcN
+MjUwMTAzMTQ1MzAwWhcNMjYwMTAzMTQ1ODAwWjCBmjELMAkGA1UEBhMCUEwxFzAV
+BgNVBAgTDlN3aWV0b2tyenlza2llMQ8wDQYDVQQHEwZLaWVsY2UxGTAXBgNVBAoT
+EEZ1cm5pdHVyZXNNYWtlcnMxNjALBgNVBAsTBHBlZXIwDgYDVQQLEwduZXR3b3Jr
+MBcGA1UECxMQRnVybml0dXJlc01ha2VyczEOMAwGA1UEAxMFcGVlcjEwWTATBgcq
+hkjOPQIBBggqhkjOPQMBBwNCAAR4MK0/rcxu43jusImcwk5vDgQmp1IN3L18EQj0
+zRCuUz8zbKXTQJkxOZYL1+EsmjL7bGpKyBsuEp9GJaf7iZz9o4IBIDCCARwwDgYD
+VR0PAQH/BAQDAgeAMAwGA1UdEwEB/wQCMAAwHQYDVR0OBBYEFANc4o0RutnA2N8I
+27Kqk6ojH8/sMB8GA1UdIwQYMBaAFCogmAwl6qqLFcQ/FL+Hejlg8To2MEwGA1Ud
+EQRFMEOCGnBlZXIxLmZ1cm5pdHVyZXNtYWtlcnMuY29tgglsb2NhbGhvc3SCGnBl
+ZXIxLWZ1cm5pdHVyZXNtYWtlcnMtY29tMG4GCCoDBAUGBwgBBGJ7ImF0dHJzIjp7
+ImhmLkFmZmlsaWF0aW9uIjoiRnVybml0dXJlc01ha2Vycy5uZXR3b3JrIiwiaGYu
+RW5yb2xsbWVudElEIjoicGVlcjEiLCJoZi5UeXBlIjoicGVlciJ9fTAKBggqhkjO
+PQQDAgNHADBEAiAA/tZ7da6qYwM6KtHGUMMsAqli0LTLv5I0PNOO8nofpwIgZDco
+ga86Xxc40SUa5RjJMStjsGfy+bIKPCOgos4Ru0E=
+-----END CERTIFICATE-----
+Timestamp:inc_num:1737075146497516808 seq_num:7 , Envelope: 1279 bytes, Signature: 70 bytes Secret payload: 33 bytes, Secret Signature: 71 bytes
+2025-01-17 00:52:33.155 UTC 01c0 DEBU [gossip.discovery] isSentByMe -> Got alive message about ourselves, GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint: PKI-id:3b0e2f1ae582b8cb2ad01ca88539bcde2bfc42d14cc346954a9654871a510103Identity:FurnituresMakers-----BEGIN CERTIFICATE-----
+MIIDSTCCAvCgAwIBAgIUA6hmrLbMTN1wQHQ1NSjUgBUjC8cwCgYIKoZIzj0EAwIw
+gYoxCzAJBgNVBAYTAlBMMRcwFQYDVQQIEw5Td2lldG9rcnp5c2tpZTEPMA0GA1UE
+BxMGS2llbGNlMRkwFwYDVQQKExBGdXJuaXR1cmVzTWFrZXJzMRgwFgYDVQQLEw9P
+cmdhbml6YXRpb24gQ0ExHDAaBgNVBAMTE2Z1cm5pdHVyZXNtYWtlcnMtY2EwHhcN
+MjUwMTAzMTQ1MzAwWhcNMjYwMTAzMTQ1ODAwWjCBmjELMAkGA1UEBhMCUEwxFzAV
+BgNVBAgTDlN3aWV0b2tyenlza2llMQ8wDQYDVQQHEwZLaWVsY2UxGTAXBgNVBAoT
+EEZ1cm5pdHVyZXNNYWtlcnMxNjALBgNVBAsTBHBlZXIwDgYDVQQLEwduZXR3b3Jr
+MBcGA1UECxMQRnVybml0dXJlc01ha2VyczEOMAwGA1UEAxMFcGVlcjEwWTATBgcq
+hkjOPQIBBggqhkjOPQMBBwNCAAR4MK0/rcxu43jusImcwk5vDgQmp1IN3L18EQj0
+zRCuUz8zbKXTQJkxOZYL1+EsmjL7bGpKyBsuEp9GJaf7iZz9o4IBIDCCARwwDgYD
+VR0PAQH/BAQDAgeAMAwGA1UdEwEB/wQCMAAwHQYDVR0OBBYEFANc4o0RutnA2N8I
+27Kqk6ojH8/sMB8GA1UdIwQYMBaAFCogmAwl6qqLFcQ/FL+Hejlg8To2MEwGA1Ud
+EQRFMEOCGnBlZXIxLmZ1cm5pdHVyZXNtYWtlcnMuY29tgglsb2NhbGhvc3SCGnBl
+ZXIxLWZ1cm5pdHVyZXNtYWtlcnMtY29tMG4GCCoDBAUGBwgBBGJ7ImF0dHJzIjp7
+ImhmLkFmZmlsaWF0aW9uIjoiRnVybml0dXJlc01ha2Vycy5uZXR3b3JrIiwiaGYu
+RW5yb2xsbWVudElEIjoicGVlcjEiLCJoZi5UeXBlIjoicGVlciJ9fTAKBggqhkjO
+PQQDAgNHADBEAiAA/tZ7da6qYwM6KtHGUMMsAqli0LTLv5I0PNOO8nofpwIgZDco
+ga86Xxc40SUa5RjJMStjsGfy+bIKPCOgos4Ru0E=
+-----END CERTIFICATE-----
+Timestamp:inc_num:1737075146497516808 seq_num:7 , Envelope: 1279 bytes, Signature: 70 bytes Secret payload: 33 bytes, Secret Signature: 71 bytes
+2025-01-17 00:52:33.155 UTC 01c1 DEBU [gossip.discovery] handleAliveMessage -> Exiting
+2025-01-17 00:52:33.155 UTC 01c2 DEBU [gossip.discovery] handleMsgFromComm -> Exiting
+2025-01-17 00:52:34.153 UTC 01c3 DEBU [gossip.pull] SendReq -> Sending [a4a88af81613c7d67995948a8aedfec76279f81d75d558e3af8ef52dddff7250 772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 537c681b5ab2023345a19708c7a0816f770611c0b7db60bf0d5d2c615f02d6f3] to peer0.furnituresmakers.com:7051
+2025-01-17 00:52:34.153 UTC 01c4 DEBU [gossip.comm] Send -> Entering, sending GossipMessage: Channel: , nonce: 0, tag: EMPTY data request: nonce: 17070130604390406067 , Msg_type: IDENTITY_MSG, digests: [a4a88af81613c7d67995948a8aedfec76279f81d75d558e3af8ef52dddff7250 772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 537c681b5ab2023345a19708c7a0816f770611c0b7db60bf0d5d2c615f02d6f3], Envelope: 119 bytes, Signature: 0 bytes to  1 peers
+2025-01-17 00:52:34.153 UTC 01c5 DEBU [gossip.comm] sendToEndpoint -> Entering, Sending to peer0.furnituresmakers.com:7051 , msg: GossipMessage: Channel: , nonce: 0, tag: EMPTY data request: nonce: 17070130604390406067 , Msg_type: IDENTITY_MSG, digests: [a4a88af81613c7d67995948a8aedfec76279f81d75d558e3af8ef52dddff7250 772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 537c681b5ab2023345a19708c7a0816f770611c0b7db60bf0d5d2c615f02d6f3], Envelope: 119 bytes, Signature: 0 bytes
+2025-01-17 00:52:34.153 UTC 01c6 DEBU [gossip.comm] sendToEndpoint -> Exiting
+2025-01-17 00:52:34.154 UTC 01c7 DEBU [gossip.comm] func1 -> Got message: GossipMessage: Channel: , nonce: 0, tag: EMPTY DataUpdate: Type: IDENTITY_MSG, items: 3, nonce: 17070130604390406067, Envelope: 3919 bytes, Signature: 0 bytes
+2025-01-17 00:52:34.154 UTC 01c8 DEBU [gossip.gossip] handleMessage -> Entering, 172.18.0.8:7051 772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 sent us GossipMessage: Channel: , nonce: 0, tag: EMPTY DataUpdate: Type: IDENTITY_MSG, items: 3, nonce: 17070130604390406067, Envelope: 3919 bytes, Signature: 0 bytes
+2025-01-17 00:52:34.154 UTC 01c9 DEBU [msp] DeserializeIdentity -> Obtaining identity
+2025-01-17 00:52:34.155 UTC 01ca ERRO [peer.gossip.mcs] Verify -> Failed getting validated identity from peer identity [Peer Identity {"CN":"peer0","Issuer-CN":"woodsupply-ca","Issuer-L-ST-C":"[Kielce]-[]-[PL]","Issuer-OU":["Organization CA"],"L-ST-C":"[Kielce]-[]-[PL]","MSP":"WoodSupply","OU":["peer","network","WoodSupply"]} cannot be validated. No MSP found able to do that.]
+2025-01-17 00:52:34.155 UTC 01cb WARN [gossip.gossip] handleMessage -> Failed validating identity message: Peer Identity {"CN":"peer0","Issuer-CN":"woodsupply-ca","Issuer-L-ST-C":"[Kielce]-[]-[PL]","Issuer-OU":["Organization CA"],"L-ST-C":"[Kielce]-[]-[PL]","MSP":"WoodSupply","OU":["peer","network","WoodSupply"]} cannot be validated. No MSP found able to do that.
+Failed verifying message
+github.com/hyperledger/fabric/gossip/gossip.(*certStore).validateIdentityMsg
+        /gossip/gossip/certstore.go:105
+github.com/hyperledger/fabric/gossip/gossip.(*certStore).handleMessage
+        /gossip/gossip/certstore.go:77
+github.com/hyperledger/fabric/gossip/gossip.(*Node).handleMessage
+        /gossip/gossip/gossip_impl.go:399
+github.com/hyperledger/fabric/gossip/gossip.(*Node).acceptMessages
+        /gossip/gossip/gossip_impl.go:326
+runtime.goexit
+        /usr/local/go/src/runtime/asm_amd64.s:1700
+github.com/hyperledger/fabric/gossip/gossip.(*certStore).handleMessage
+        /gossip/gossip/certstore.go:78
+github.com/hyperledger/fabric/gossip/gossip.(*Node).handleMessage
+        /gossip/gossip/gossip_impl.go:399
+github.com/hyperledger/fabric/gossip/gossip.(*Node).acceptMessages
+        /gossip/gossip/gossip_impl.go:326
+runtime.goexit
+        /usr/local/go/src/runtime/asm_amd64.s:1700
+2025-01-17 00:52:34.155 UTC 01cc DEBU [gossip.gossip] handleMessage -> Exiting
+2025-01-17 00:52:35.152 UTC 01cd DEBU [msp.identity] Sign -> Sign: plaintext: 18012A320A221A203B0E2F1AE582B8CB...0103120C0888CA93F9C694D58D181008
+2025-01-17 00:52:35.153 UTC 01ce DEBU [msp.identity] Sign -> Sign: digest: B8B15EB6620E79FF00F1CBF51D03102A6F9B2055ADB977978FB5D1C9CA3C6908
+2025-01-17 00:52:35.153 UTC 01cf DEBU [msp.identity] Sign -> Sign: plaintext: 0A1F70656572312E6675726E69747572...736D616B6572732E636F6D3A37303531
+2025-01-17 00:52:35.153 UTC 01d0 DEBU [msp.identity] Sign -> Sign: digest: 53E8FC80EEA001CBFE463C6185F8360AF7B663B6AADD49A73EA86C4A045BE867
+2025-01-17 00:52:35.153 UTC 01d1 DEBU [gossip.discovery] periodicalSendAlive -> Sleeping 5s
+2025-01-17 00:52:35.159 UTC 01d2 DEBU [gossip.comm] Send -> Entering, sending GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint: PKI-id:3b0e2f1ae582b8cb2ad01ca88539bcde2bfc42d14cc346954a9654871a510103Identity:Timestamp:inc_num:1737075146497516808 seq_num:8 , Envelope: 54 bytes, Signature: 70 bytes Secret payload: 33 bytes, Secret Signature: 71 bytes to  1 peers
+2025-01-17 00:52:35.159 UTC 01d3 DEBU [gossip.comm] sendToEndpoint -> Entering, Sending to peer0.furnituresmakers.com:7051 , msg: GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint: PKI-id:3b0e2f1ae582b8cb2ad01ca88539bcde2bfc42d14cc346954a9654871a510103Identity:Timestamp:inc_num:1737075146497516808 seq_num:8 , Envelope: 54 bytes, Signature: 70 bytes Secret payload: 33 bytes, Secret Signature: 71 bytes
+2025-01-17 00:52:35.159 UTC 01d4 DEBU [gossip.comm] sendToEndpoint -> Exiting
+2025-01-17 00:52:35.256 UTC 01d5 DEBU [gossip.comm] func1 -> Got message: GossipMessage: Channel: , nonce: 0, tag: CHAN_OR_ORG state_info_pull_req: Channel MAC:b1ef51efe8592f8d4cbbbbec9a09e91e07ad59c25f9bdf6afdf26600be0ea156, Envelope: 39 bytes, Signature: 0 bytes
+2025-01-17 00:52:35.256 UTC 01d6 DEBU [gossip.gossip] handleMessage -> Entering, 172.18.0.8:7051 772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 sent us GossipMessage: Channel: , nonce: 0, tag: CHAN_OR_ORG state_info_pull_req: Channel MAC:b1ef51efe8592f8d4cbbbbec9a09e91e07ad59c25f9bdf6afdf26600be0ea156, Envelope: 39 bytes, Signature: 0 bytes
+2025-01-17 00:52:35.256 UTC 01d7 DEBU [gossip.gossip] handleMessage -> No such channel [] discarding message GossipMessage: Channel: , nonce: 0, tag: CHAN_OR_ORG state_info_pull_req: Channel MAC:b1ef51efe8592f8d4cbbbbec9a09e91e07ad59c25f9bdf6afdf26600be0ea156, Envelope: 39 bytes, Signature: 0 bytes
+2025-01-17 00:52:35.256 UTC 01d8 DEBU [gossip.gossip] handleMessage -> Exiting
+2025-01-17 00:52:36.192 UTC 01d9 DEBU [gossip.comm] func1 -> Got message: GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:158 , Envelope: 88 bytes, Signature: 70 bytes Secret payload: 33 bytes, Secret Signature: 70 bytes
+2025-01-17 00:52:36.192 UTC 01da DEBU [gossip.gossip] handleMessage -> Entering, 172.18.0.8:7051 772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 sent us GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:158 , Envelope: 88 bytes, Signature: 70 bytes Secret payload: 33 bytes, Secret Signature: 70 bytes
+2025-01-17 00:52:36.192 UTC 01db DEBU [gossip.gossip] handleMessage -> Exiting
+2025-01-17 00:52:36.192 UTC 01dc DEBU [gossip.discovery] handleMsgFromComm -> Got message: GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:158 , Envelope: 88 bytes, Signature: 70 bytes Secret payload: 33 bytes, Secret Signature: 70 bytes
+2025-01-17 00:52:36.192 UTC 01dd DEBU [gossip.gossip] ValidateAliveMsg -> Fetched identity of Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 from identity store
+2025-01-17 00:52:36.192 UTC 01de DEBU [msp.identity] Verify -> Verify: signer identity (certificate subject=CN=peer0,OU=peer+OU=network+OU=FurnituresMakers,O=FurnituresMakers,L=Kielce,ST=Swietokrzyskie,C=PL issuer=CN=furnituresmakers-ca,OU=Organization CA,O=FurnituresMakers,L=Kielce,ST=Swietokrzyskie,C=PL serialnumber=504259801133774798052594680189490003716031820718)
+2025-01-17 00:52:36.192 UTC 01df DEBU [msp.identity] Verify -> Verify: signer identity (certificate subject=CN=peer0,OU=peer+OU=network+OU=FurnituresMakers,O=FurnituresMakers,L=Kielce,ST=Swietokrzyskie,C=PL issuer=CN=furnituresmakers-ca,OU=Organization CA,O=FurnituresMakers,L=Kielce,ST=Swietokrzyskie,C=PL serialnumber=504259801133774798052594680189490003716031820718)
+2025-01-17 00:52:36.193 UTC 01e0 DEBU [gossip.discovery] handleAliveMessage -> Entering GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:158 , Envelope: 88 bytes, Signature: 70 bytes Secret payload: 33 bytes, Secret Signature: 70 bytes
+2025-01-17 00:52:36.193 UTC 01e1 DEBU [gossip.discovery] learnExistingMembers -> Entering: learnedMembers={[GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:158 , Envelope: 88 bytes, Signature: 70 bytes Secret payload: 33 bytes, Secret Signature: 70 bytes]}
+2025-01-17 00:52:36.193 UTC 01e2 DEBU [gossip.discovery] learnExistingMembers -> updating Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:158
+2025-01-17 00:52:36.193 UTC 01e3 DEBU [gossip.discovery] learnExistingMembers -> Updating aliveness data: Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:158
+2025-01-17 00:52:36.193 UTC 01e4 DEBU [gossip.discovery] learnExistingMembers -> Replacing GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:157 , Envelope: 88 bytes, Signature: 71 bytes Secret payload: 33 bytes, Secret Signature: 70 bytes in aliveMembership
+2025-01-17 00:52:36.193 UTC 01e5 DEBU [gossip.discovery] learnExistingMembers -> Exiting
+2025-01-17 00:52:36.193 UTC 01e6 DEBU [gossip.discovery] handleAliveMessage -> Exiting
+2025-01-17 00:52:36.193 UTC 01e7 DEBU [gossip.discovery] handleMsgFromComm -> Exiting
+2025-01-17 00:52:36.198 UTC 01e8 DEBU [gossip.comm] func1 -> Got message: GossipMessage: tag:EMPTY hello:<nonce:17644551730812277848 msg_type:IDENTITY_MSG > , Envelope: 17 bytes, Signature: 0 bytes
+2025-01-17 00:52:36.198 UTC 01e9 DEBU [gossip.gossip] handleMessage -> Entering, 172.18.0.8:7051 772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 sent us GossipMessage: tag:EMPTY hello:<nonce:17644551730812277848 msg_type:IDENTITY_MSG > , Envelope: 17 bytes, Signature: 0 bytes
+2025-01-17 00:52:36.198 UTC 01ea DEBU [gossip.pull] HandleMessage -> GossipMessage: tag:EMPTY hello:<nonce:17644551730812277848 msg_type:IDENTITY_MSG > , Envelope: 17 bytes, Signature: 0 bytes
+2025-01-17 00:52:36.198 UTC 01eb DEBU [gossip.pull] SendDigest -> Sending IDENTITY_MSG digest: [3b0e2f1ae582b8cb2ad01ca88539bcde2bfc42d14cc346954a9654871a510103] to 172.18.0.8:7051 772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4
+2025-01-17 00:52:36.199 UTC 01ec DEBU [gossip.gossip] handleMessage -> Exiting
+2025-01-17 00:52:36.201 UTC 01ed DEBU [gossip.comm] func1 -> Got message: GossipMessage: Channel: , nonce: 0, tag: EMPTY Membership Request with self information of GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:159 , Envelope: 88 bytes, Signature: 71 bytes Secret payload: 33 bytes, Secret Signature: 71 bytes , Envelope: 281 bytes, Signature: 0 bytes
+2025-01-17 00:52:36.201 UTC 01ee DEBU [gossip.gossip] handleMessage -> Entering, 172.18.0.8:7051 772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 sent us GossipMessage: Channel: , nonce: 0, tag: EMPTY Membership Request with self information of GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:159 , Envelope: 88 bytes, Signature: 71 bytes Secret payload: 33 bytes, Secret Signature: 71 bytes , Envelope: 281 bytes, Signature: 0 bytes
+2025-01-17 00:52:36.201 UTC 01ef DEBU [gossip.gossip] handleMessage -> Exiting
+2025-01-17 00:52:36.201 UTC 01f0 DEBU [gossip.discovery] handleMsgFromComm -> Got message: GossipMessage: Channel: , nonce: 0, tag: EMPTY Membership Request with self information of GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:159 , Envelope: 88 bytes, Signature: 71 bytes Secret payload: 33 bytes, Secret Signature: 71 bytes , Envelope: 281 bytes, Signature: 0 bytes
+2025-01-17 00:52:36.201 UTC 01f1 DEBU [gossip.gossip] ValidateAliveMsg -> Fetched identity of Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 from identity store
+2025-01-17 00:52:36.201 UTC 01f2 DEBU [msp.identity] Verify -> Verify: signer identity (certificate subject=CN=peer0,OU=peer+OU=network+OU=FurnituresMakers,O=FurnituresMakers,L=Kielce,ST=Swietokrzyskie,C=PL issuer=CN=furnituresmakers-ca,OU=Organization CA,O=FurnituresMakers,L=Kielce,ST=Swietokrzyskie,C=PL serialnumber=504259801133774798052594680189490003716031820718)
+2025-01-17 00:52:36.201 UTC 01f3 DEBU [msp.identity] Verify -> Verify: signer identity (certificate subject=CN=peer0,OU=peer+OU=network+OU=FurnituresMakers,O=FurnituresMakers,L=Kielce,ST=Swietokrzyskie,C=PL issuer=CN=furnituresmakers-ca,OU=Organization CA,O=FurnituresMakers,L=Kielce,ST=Swietokrzyskie,C=PL serialnumber=504259801133774798052594680189490003716031820718)
+2025-01-17 00:52:36.202 UTC 01f4 DEBU [gossip.discovery] handleAliveMessage -> Entering GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:159 , Envelope: 88 bytes, Signature: 71 bytes Secret payload: 33 bytes, Secret Signature: 71 bytes
+2025-01-17 00:52:36.202 UTC 01f5 DEBU [gossip.discovery] learnExistingMembers -> Entering: learnedMembers={[GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:159 , Envelope: 88 bytes, Signature: 71 bytes Secret payload: 33 bytes, Secret Signature: 71 bytes]}
+2025-01-17 00:52:36.202 UTC 01f6 DEBU [gossip.discovery] learnExistingMembers -> updating Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:159
+2025-01-17 00:52:36.202 UTC 01f7 DEBU [gossip.discovery] learnExistingMembers -> Updating aliveness data: Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:159
+2025-01-17 00:52:36.202 UTC 01f8 DEBU [gossip.discovery] learnExistingMembers -> Replacing GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:158 , Envelope: 88 bytes, Signature: 70 bytes Secret payload: 33 bytes, Secret Signature: 70 bytes in aliveMembership
+2025-01-17 00:52:36.202 UTC 01f9 DEBU [gossip.discovery] learnExistingMembers -> Exiting
+2025-01-17 00:52:36.202 UTC 01fa DEBU [gossip.discovery] handleAliveMessage -> Exiting
+2025-01-17 00:52:36.202 UTC 01fb DEBU [gossip.discovery] handleMsgFromComm -> Exiting
+2025-01-17 00:52:36.202 UTC 01fc DEBU [gossip.discovery] sendMemResponse -> Entering Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4
+2025-01-17 00:52:36.202 UTC 01fd DEBU [gossip.comm] Send -> Entering, sending GossipMessage: Channel: , nonce: 0, tag: EMPTY MembershipResponse with Alive: 2, Dead: 0, Envelope: 522 bytes, Signature: 0 bytes to  1 peers
+2025-01-17 00:52:36.202 UTC 01fe DEBU [gossip.discovery] sendMemResponse -> Exiting, replying with MembershipResponse with Alive: 2, Dead: 0
+2025-01-17 00:52:36.202 UTC 01ff DEBU [gossip.comm] sendToEndpoint -> Entering, Sending to peer0.furnituresmakers.com:7051 , msg: GossipMessage: Channel: , nonce: 0, tag: EMPTY MembershipResponse with Alive: 2, Dead: 0, Envelope: 522 bytes, Signature: 0 bytes
+2025-01-17 00:52:36.202 UTC 0200 DEBU [gossip.comm] sendToEndpoint -> Exiting
+2025-01-17 00:52:37.152 UTC 0201 DEBU [gossip.pull] Hello -> Sending IDENTITY_MSG hello to peer0.furnituresmakers.com:7051
+2025-01-17 00:52:37.153 UTC 0202 DEBU [gossip.comm] Send -> Entering, sending GossipMessage: tag:EMPTY hello:<nonce:9397724760252429265 msg_type:IDENTITY_MSG > , Envelope: 17 bytes, Signature: 0 bytes to  1 peers
+2025-01-17 00:52:37.153 UTC 0203 DEBU [gossip.comm] sendToEndpoint -> Entering, Sending to peer0.furnituresmakers.com:7051 , msg: GossipMessage: tag:EMPTY hello:<nonce:9397724760252429265 msg_type:IDENTITY_MSG > , Envelope: 17 bytes, Signature: 0 bytes
+2025-01-17 00:52:37.153 UTC 0204 DEBU [gossip.comm] sendToEndpoint -> Exiting
+2025-01-17 00:52:37.153 UTC 0205 DEBU [msp.identity] Sign -> Sign: plaintext: 18012A320A221A203B0E2F1AE582B8CB...0103120C0888CA93F9C694D58D181009
+2025-01-17 00:52:37.153 UTC 0206 DEBU [msp.identity] Sign -> Sign: digest: 8129C66B1BAE3F22F65BBE6FFBC988E7CDA919ED0C3A88A1F84DF117CCEECDF3
+2025-01-17 00:52:37.153 UTC 0207 DEBU [msp.identity] Sign -> Sign: plaintext: 0A1F70656572312E6675726E69747572...736D616B6572732E636F6D3A37303531
+2025-01-17 00:52:37.153 UTC 0208 DEBU [msp.identity] Sign -> Sign: digest: 53E8FC80EEA001CBFE463C6185F8360AF7B663B6AADD49A73EA86C4A045BE867
+2025-01-17 00:52:37.153 UTC 0209 DEBU [gossip.comm] Send -> Entering, sending GossipMessage: Channel: , nonce: 0, tag: EMPTY Membership Request with self information of GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint: PKI-id:3b0e2f1ae582b8cb2ad01ca88539bcde2bfc42d14cc346954a9654871a510103Identity:Timestamp:inc_num:1737075146497516808 seq_num:9 , Envelope: 54 bytes, Signature: 70 bytes Secret payload: 33 bytes, Secret Signature: 71 bytes , Envelope: 246 bytes, Signature: 0 bytes to  1 peers
+2025-01-17 00:52:37.153 UTC 020a DEBU [gossip.comm] sendToEndpoint -> Entering, Sending to peer0.furnituresmakers.com:7051 , msg: GossipMessage: Channel: , nonce: 0, tag: EMPTY Membership Request with self information of GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint: PKI-id:3b0e2f1ae582b8cb2ad01ca88539bcde2bfc42d14cc346954a9654871a510103Identity:Timestamp:inc_num:1737075146497516808 seq_num:9 , Envelope: 54 bytes, Signature: 70 bytes Secret payload: 33 bytes, Secret Signature: 71 bytes , Envelope: 246 bytes, Signature: 0 bytes
+2025-01-17 00:52:37.153 UTC 020b DEBU [gossip.comm] sendToEndpoint -> Exiting
+2025-01-17 00:52:37.154 UTC 020c DEBU [gossip.comm] func1 -> Got message: GossipMessage: Channel: , nonce: 0, tag: EMPTY data_dig: nonce: 9397724760252429265 , Msg_type: IDENTITY_MSG, digests: [537c681b5ab2023345a19708c7a0816f770611c0b7db60bf0d5d2c615f02d6f3 a4a88af81613c7d67995948a8aedfec76279f81d75d558e3af8ef52dddff7250 3b0e2f1ae582b8cb2ad01ca88539bcde2bfc42d14cc346954a9654871a510103 772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4], Envelope: 154 bytes, Signature: 0 bytes
+2025-01-17 00:52:37.154 UTC 020d DEBU [gossip.gossip] handleMessage -> Entering, 172.18.0.8:7051 772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 sent us GossipMessage: Channel: , nonce: 0, tag: EMPTY data_dig: nonce: 9397724760252429265 , Msg_type: IDENTITY_MSG, digests: [537c681b5ab2023345a19708c7a0816f770611c0b7db60bf0d5d2c615f02d6f3 a4a88af81613c7d67995948a8aedfec76279f81d75d558e3af8ef52dddff7250 3b0e2f1ae582b8cb2ad01ca88539bcde2bfc42d14cc346954a9654871a510103 772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4], Envelope: 154 bytes, Signature: 0 bytes
+2025-01-17 00:52:37.154 UTC 020e DEBU [gossip.pull] HandleMessage -> GossipMessage: Channel: , nonce: 0, tag: EMPTY data_dig: nonce: 9397724760252429265 , Msg_type: IDENTITY_MSG, digests: [537c681b5ab2023345a19708c7a0816f770611c0b7db60bf0d5d2c615f02d6f3 a4a88af81613c7d67995948a8aedfec76279f81d75d558e3af8ef52dddff7250 3b0e2f1ae582b8cb2ad01ca88539bcde2bfc42d14cc346954a9654871a510103 772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4], Envelope: 154 bytes, Signature: 0 bytes
+2025-01-17 00:52:37.155 UTC 020f DEBU [gossip.comm] func1 -> Got message: GossipMessage: Channel: , nonce: 0, tag: EMPTY MembershipResponse with Alive: 2, Dead: 0, Envelope: 520 bytes, Signature: 0 bytes
+2025-01-17 00:52:37.155 UTC 0210 DEBU [gossip.gossip] handleMessage -> Exiting
+2025-01-17 00:52:37.155 UTC 0211 DEBU [gossip.gossip] handleMessage -> Entering, 172.18.0.8:7051 772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 sent us GossipMessage: Channel: , nonce: 0, tag: EMPTY MembershipResponse with Alive: 2, Dead: 0, Envelope: 520 bytes, Signature: 0 bytes
+2025-01-17 00:52:37.155 UTC 0212 DEBU [gossip.gossip] handleMessage -> Exiting
+2025-01-17 00:52:37.155 UTC 0213 DEBU [gossip.discovery] handleMsgFromComm -> Got message: GossipMessage: Channel: , nonce: 0, tag: EMPTY MembershipResponse with Alive: 2, Dead: 0, Envelope: 520 bytes, Signature: 0 bytes
+2025-01-17 00:52:37.155 UTC 0214 DEBU [gossip.gossip] ValidateAliveMsg -> Fetched identity of Membership: Endpoint: PKI-id:3b0e2f1ae582b8cb2ad01ca88539bcde2bfc42d14cc346954a9654871a510103 from identity store
+2025-01-17 00:52:37.156 UTC 0215 DEBU [msp.identity] Verify -> Verify: signer identity (certificate subject=CN=peer1,OU=peer+OU=network+OU=FurnituresMakers,O=FurnituresMakers,L=Kielce,ST=Swietokrzyskie,C=PL issuer=CN=furnituresmakers-ca,OU=Organization CA,O=FurnituresMakers,L=Kielce,ST=Swietokrzyskie,C=PL serialnumber=20882441730537096006340931653930515231223778247)
+2025-01-17 00:52:37.156 UTC 0216 DEBU [msp.identity] Verify -> Verify: signer identity (certificate subject=CN=peer1,OU=peer+OU=network+OU=FurnituresMakers,O=FurnituresMakers,L=Kielce,ST=Swietokrzyskie,C=PL issuer=CN=furnituresmakers-ca,OU=Organization CA,O=FurnituresMakers,L=Kielce,ST=Swietokrzyskie,C=PL serialnumber=20882441730537096006340931653930515231223778247)
+2025-01-17 00:52:37.156 UTC 0217 DEBU [gossip.discovery] handleAliveMessage -> Entering GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint: PKI-id:3b0e2f1ae582b8cb2ad01ca88539bcde2bfc42d14cc346954a9654871a510103Identity:Timestamp:inc_num:1737075146497516808 seq_num:9 , Envelope: 54 bytes, Signature: 70 bytes Secret payload: 33 bytes, Secret Signature: 71 bytes
+2025-01-17 00:52:37.156 UTC 0218 DEBU [gossip.discovery] isSentByMe -> Got alive message about ourselves, GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint: PKI-id:3b0e2f1ae582b8cb2ad01ca88539bcde2bfc42d14cc346954a9654871a510103Identity:Timestamp:inc_num:1737075146497516808 seq_num:9 , Envelope: 54 bytes, Signature: 70 bytes Secret payload: 33 bytes, Secret Signature: 71 bytes
+2025-01-17 00:52:37.156 UTC 0219 DEBU [gossip.discovery] handleAliveMessage -> Exiting
+2025-01-17 00:52:37.156 UTC 021a DEBU [gossip.discovery] handleMsgFromComm -> Exiting
+2025-01-17 00:52:38.154 UTC 021b DEBU [gossip.pull] SendReq -> Sending [772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 537c681b5ab2023345a19708c7a0816f770611c0b7db60bf0d5d2c615f02d6f3 a4a88af81613c7d67995948a8aedfec76279f81d75d558e3af8ef52dddff7250] to peer0.furnituresmakers.com:7051
+2025-01-17 00:52:38.154 UTC 021c DEBU [gossip.comm] Send -> Entering, sending GossipMessage: Channel: , nonce: 0, tag: EMPTY data request: nonce: 9397724760252429265 , Msg_type: IDENTITY_MSG, digests: [772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 537c681b5ab2023345a19708c7a0816f770611c0b7db60bf0d5d2c615f02d6f3 a4a88af81613c7d67995948a8aedfec76279f81d75d558e3af8ef52dddff7250], Envelope: 119 bytes, Signature: 0 bytes to  1 peers
+2025-01-17 00:52:38.154 UTC 021d DEBU [gossip.comm] sendToEndpoint -> Entering, Sending to peer0.furnituresmakers.com:7051 , msg: GossipMessage: Channel: , nonce: 0, tag: EMPTY data request: nonce: 9397724760252429265 , Msg_type: IDENTITY_MSG, digests: [772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 537c681b5ab2023345a19708c7a0816f770611c0b7db60bf0d5d2c615f02d6f3 a4a88af81613c7d67995948a8aedfec76279f81d75d558e3af8ef52dddff7250], Envelope: 119 bytes, Signature: 0 bytes
+2025-01-17 00:52:38.154 UTC 021e DEBU [gossip.comm] sendToEndpoint -> Exiting
+2025-01-17 00:52:38.155 UTC 021f DEBU [gossip.comm] func1 -> Got message: GossipMessage: Channel: , nonce: 0, tag: EMPTY DataUpdate: Type: IDENTITY_MSG, items: 3, nonce: 9397724760252429265, Envelope: 3919 bytes, Signature: 0 bytes
+2025-01-17 00:52:38.155 UTC 0220 DEBU [gossip.gossip] handleMessage -> Entering, 172.18.0.8:7051 772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 sent us GossipMessage: Channel: , nonce: 0, tag: EMPTY DataUpdate: Type: IDENTITY_MSG, items: 3, nonce: 9397724760252429265, Envelope: 3919 bytes, Signature: 0 bytes
+2025-01-17 00:52:38.155 UTC 0221 DEBU [msp.identity] Verify -> Verify: signer identity (certificate subject=CN=peer0,OU=peer+OU=network+OU=FurnituresMakers,O=FurnituresMakers,L=Kielce,ST=Swietokrzyskie,C=PL issuer=CN=furnituresmakers-ca,OU=Organization CA,O=FurnituresMakers,L=Kielce,ST=Swietokrzyskie,C=PL serialnumber=504259801133774798052594680189490003716031820718)
+2025-01-17 00:52:38.156 UTC 0222 DEBU [msp] DeserializeIdentity -> Obtaining identity
+2025-01-17 00:52:38.156 UTC 0223 ERRO [peer.gossip.mcs] Verify -> Failed getting validated identity from peer identity [Peer Identity {"CN":"peer0","Issuer-CN":"yachtsales-ca","Issuer-L-ST-C":"[Kielce]-[]-[PL]","Issuer-OU":["Organization CA"],"L-ST-C":"[Kielce]-[]-[PL]","MSP":"YachtSales","OU":["peer","network","YachtSales"]} cannot be validated. No MSP found able to do that.]
+2025-01-17 00:52:38.156 UTC 0224 WARN [gossip.gossip] handleMessage -> Failed validating identity message: Peer Identity {"CN":"peer0","Issuer-CN":"yachtsales-ca","Issuer-L-ST-C":"[Kielce]-[]-[PL]","Issuer-OU":["Organization CA"],"L-ST-C":"[Kielce]-[]-[PL]","MSP":"YachtSales","OU":["peer","network","YachtSales"]} cannot be validated. No MSP found able to do that.
+Failed verifying message
+github.com/hyperledger/fabric/gossip/gossip.(*certStore).validateIdentityMsg
+        /gossip/gossip/certstore.go:105
+github.com/hyperledger/fabric/gossip/gossip.(*certStore).handleMessage
+        /gossip/gossip/certstore.go:77
+github.com/hyperledger/fabric/gossip/gossip.(*Node).handleMessage
+        /gossip/gossip/gossip_impl.go:399
+github.com/hyperledger/fabric/gossip/gossip.(*Node).acceptMessages
+        /gossip/gossip/gossip_impl.go:326
+runtime.goexit
+        /usr/local/go/src/runtime/asm_amd64.s:1700
+github.com/hyperledger/fabric/gossip/gossip.(*certStore).handleMessage
+        /gossip/gossip/certstore.go:78
+github.com/hyperledger/fabric/gossip/gossip.(*Node).handleMessage
+        /gossip/gossip/gossip_impl.go:399
+github.com/hyperledger/fabric/gossip/gossip.(*Node).acceptMessages
+        /gossip/gossip/gossip_impl.go:326
+runtime.goexit
+        /usr/local/go/src/runtime/asm_amd64.s:1700
+2025-01-17 00:52:38.156 UTC 0225 DEBU [gossip.gossip] handleMessage -> Exiting
+2025-01-17 00:52:39.256 UTC 0226 DEBU [gossip.comm] func1 -> Got message: GossipMessage: Channel: , nonce: 0, tag: CHAN_OR_ORG state_info_pull_req: Channel MAC:b1ef51efe8592f8d4cbbbbec9a09e91e07ad59c25f9bdf6afdf26600be0ea156, Envelope: 39 bytes, Signature: 0 bytes
+2025-01-17 00:52:39.256 UTC 0227 DEBU [gossip.gossip] handleMessage -> Entering, 172.18.0.8:7051 772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 sent us GossipMessage: Channel: , nonce: 0, tag: CHAN_OR_ORG state_info_pull_req: Channel MAC:b1ef51efe8592f8d4cbbbbec9a09e91e07ad59c25f9bdf6afdf26600be0ea156, Envelope: 39 bytes, Signature: 0 bytes
+2025-01-17 00:52:39.256 UTC 0228 DEBU [gossip.gossip] handleMessage -> No such channel [] discarding message GossipMessage: Channel: , nonce: 0, tag: CHAN_OR_ORG state_info_pull_req: Channel MAC:b1ef51efe8592f8d4cbbbbec9a09e91e07ad59c25f9bdf6afdf26600be0ea156, Envelope: 39 bytes, Signature: 0 bytes
+2025-01-17 00:52:39.256 UTC 0229 DEBU [gossip.gossip] handleMessage -> Exiting
+2025-01-17 00:52:40.153 UTC 022a DEBU [msp.identity] Sign -> Sign: plaintext: 18012A320A221A203B0E2F1AE582B8CB...0103120C0888CA93F9C694D58D18100A
+2025-01-17 00:52:40.153 UTC 022b DEBU [msp.identity] Sign -> Sign: digest: CEB4F11FE72D4AFEF9F9418FE0E3A33E260423384C31A2F927A06A91DFCFE0F1
+2025-01-17 00:52:40.153 UTC 022c DEBU [msp.identity] Sign -> Sign: plaintext: 0A1F70656572312E6675726E69747572...736D616B6572732E636F6D3A37303531
+2025-01-17 00:52:40.153 UTC 022d DEBU [msp.identity] Sign -> Sign: digest: 53E8FC80EEA001CBFE463C6185F8360AF7B663B6AADD49A73EA86C4A045BE867
+2025-01-17 00:52:40.153 UTC 022e DEBU [gossip.discovery] periodicalSendAlive -> Sleeping 5s
+2025-01-17 00:52:40.157 UTC 022f DEBU [gossip.comm] Send -> Entering, sending GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint: PKI-id:3b0e2f1ae582b8cb2ad01ca88539bcde2bfc42d14cc346954a9654871a510103Identity:Timestamp:inc_num:1737075146497516808 seq_num:10 , Envelope: 54 bytes, Signature: 71 bytes Secret payload: 33 bytes, Secret Signature: 70 bytes to  1 peers
+2025-01-17 00:52:40.157 UTC 0230 DEBU [gossip.comm] sendToEndpoint -> Entering, Sending to peer0.furnituresmakers.com:7051 , msg: GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint: PKI-id:3b0e2f1ae582b8cb2ad01ca88539bcde2bfc42d14cc346954a9654871a510103Identity:Timestamp:inc_num:1737075146497516808 seq_num:10 , Envelope: 54 bytes, Signature: 71 bytes Secret payload: 33 bytes, Secret Signature: 70 bytes
+2025-01-17 00:52:40.157 UTC 0231 DEBU [gossip.comm] sendToEndpoint -> Exiting
+2025-01-17 00:52:40.199 UTC 0232 DEBU [gossip.comm] func1 -> Got message: GossipMessage: tag:EMPTY hello:<nonce:11605159536175833562 msg_type:IDENTITY_MSG > , Envelope: 17 bytes, Signature: 0 bytes
+2025-01-17 00:52:40.199 UTC 0233 DEBU [gossip.gossip] handleMessage -> Entering, 172.18.0.8:7051 772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 sent us GossipMessage: tag:EMPTY hello:<nonce:11605159536175833562 msg_type:IDENTITY_MSG > , Envelope: 17 bytes, Signature: 0 bytes
+2025-01-17 00:52:40.199 UTC 0234 DEBU [gossip.pull] HandleMessage -> GossipMessage: tag:EMPTY hello:<nonce:11605159536175833562 msg_type:IDENTITY_MSG > , Envelope: 17 bytes, Signature: 0 bytes
+2025-01-17 00:52:40.199 UTC 0235 DEBU [gossip.pull] SendDigest -> Sending IDENTITY_MSG digest: [3b0e2f1ae582b8cb2ad01ca88539bcde2bfc42d14cc346954a9654871a510103] to 172.18.0.8:7051 772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4
+2025-01-17 00:52:40.199 UTC 0236 DEBU [gossip.gossip] handleMessage -> Exiting
+2025-01-17 00:52:40.199 UTC 0237 DEBU [gossip.comm] func1 -> Got message: GossipMessage: Channel: , nonce: 0, tag: EMPTY Membership Request with self information of GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:160 , Envelope: 88 bytes, Signature: 70 bytes Secret payload: 33 bytes, Secret Signature: 70 bytes , Envelope: 279 bytes, Signature: 0 bytes
+2025-01-17 00:52:40.199 UTC 0238 DEBU [gossip.gossip] handleMessage -> Entering, 172.18.0.8:7051 772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 sent us GossipMessage: Channel: , nonce: 0, tag: EMPTY Membership Request with self information of GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:160 , Envelope: 88 bytes, Signature: 70 bytes Secret payload: 33 bytes, Secret Signature: 70 bytes , Envelope: 279 bytes, Signature: 0 bytes
+2025-01-17 00:52:40.199 UTC 0239 DEBU [gossip.gossip] handleMessage -> Exiting
+2025-01-17 00:52:40.199 UTC 023a DEBU [gossip.discovery] handleMsgFromComm -> Got message: GossipMessage: Channel: , nonce: 0, tag: EMPTY Membership Request with self information of GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:160 , Envelope: 88 bytes, Signature: 70 bytes Secret payload: 33 bytes, Secret Signature: 70 bytes , Envelope: 279 bytes, Signature: 0 bytes
+2025-01-17 00:52:40.199 UTC 023b DEBU [gossip.gossip] ValidateAliveMsg -> Fetched identity of Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 from identity store
+2025-01-17 00:52:40.200 UTC 023c DEBU [msp.identity] Verify -> Verify: signer identity (certificate subject=CN=peer0,OU=peer+OU=network+OU=FurnituresMakers,O=FurnituresMakers,L=Kielce,ST=Swietokrzyskie,C=PL issuer=CN=furnituresmakers-ca,OU=Organization CA,O=FurnituresMakers,L=Kielce,ST=Swietokrzyskie,C=PL serialnumber=504259801133774798052594680189490003716031820718)
+2025-01-17 00:52:40.200 UTC 023d DEBU [msp.identity] Verify -> Verify: signer identity (certificate subject=CN=peer0,OU=peer+OU=network+OU=FurnituresMakers,O=FurnituresMakers,L=Kielce,ST=Swietokrzyskie,C=PL issuer=CN=furnituresmakers-ca,OU=Organization CA,O=FurnituresMakers,L=Kielce,ST=Swietokrzyskie,C=PL serialnumber=504259801133774798052594680189490003716031820718)
+2025-01-17 00:52:40.200 UTC 023e DEBU [gossip.discovery] handleAliveMessage -> Entering GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:160 , Envelope: 88 bytes, Signature: 70 bytes Secret payload: 33 bytes, Secret Signature: 70 bytes
+2025-01-17 00:52:40.200 UTC 023f DEBU [gossip.discovery] learnExistingMembers -> Entering: learnedMembers={[GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:160 , Envelope: 88 bytes, Signature: 70 bytes Secret payload: 33 bytes, Secret Signature: 70 bytes]}
+2025-01-17 00:52:40.200 UTC 0240 DEBU [gossip.discovery] learnExistingMembers -> updating Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:160
+2025-01-17 00:52:40.200 UTC 0241 DEBU [gossip.discovery] learnExistingMembers -> Updating aliveness data: Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:160
+2025-01-17 00:52:40.200 UTC 0242 DEBU [gossip.discovery] learnExistingMembers -> Replacing GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:159 , Envelope: 88 bytes, Signature: 71 bytes Secret payload: 33 bytes, Secret Signature: 71 bytes in aliveMembership
+2025-01-17 00:52:40.200 UTC 0243 DEBU [gossip.discovery] learnExistingMembers -> Exiting
+2025-01-17 00:52:40.200 UTC 0244 DEBU [gossip.discovery] handleAliveMessage -> Exiting
+2025-01-17 00:52:40.200 UTC 0245 DEBU [gossip.discovery] handleMsgFromComm -> Exiting
+2025-01-17 00:52:40.200 UTC 0246 DEBU [gossip.discovery] sendMemResponse -> Entering Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4
+2025-01-17 00:52:40.200 UTC 0247 DEBU [gossip.comm] Send -> Entering, sending GossipMessage: Channel: , nonce: 0, tag: EMPTY MembershipResponse with Alive: 2, Dead: 0, Envelope: 520 bytes, Signature: 0 bytes to  1 peers
+2025-01-17 00:52:40.200 UTC 0248 DEBU [gossip.discovery] sendMemResponse -> Exiting, replying with MembershipResponse with Alive: 2, Dead: 0
+2025-01-17 00:52:40.200 UTC 0249 DEBU [gossip.comm] sendToEndpoint -> Entering, Sending to peer0.furnituresmakers.com:7051 , msg: GossipMessage: Channel: , nonce: 0, tag: EMPTY MembershipResponse with Alive: 2, Dead: 0, Envelope: 520 bytes, Signature: 0 bytes
+2025-01-17 00:52:40.200 UTC 024a DEBU [gossip.comm] sendToEndpoint -> Exiting
+2025-01-17 00:52:41.153 UTC 024b DEBU [gossip.pull] Hello -> Sending IDENTITY_MSG hello to peer0.furnituresmakers.com:7051
+2025-01-17 00:52:41.153 UTC 024c DEBU [gossip.comm] Send -> Entering, sending GossipMessage: tag:EMPTY hello:<nonce:1320183288488341698 msg_type:IDENTITY_MSG > , Envelope: 16 bytes, Signature: 0 bytes to  1 peers
+2025-01-17 00:52:41.153 UTC 024d DEBU [gossip.comm] sendToEndpoint -> Entering, Sending to peer0.furnituresmakers.com:7051 , msg: GossipMessage: tag:EMPTY hello:<nonce:1320183288488341698 msg_type:IDENTITY_MSG > , Envelope: 16 bytes, Signature: 0 bytes
+2025-01-17 00:52:41.153 UTC 024e DEBU [gossip.comm] sendToEndpoint -> Exiting
+2025-01-17 00:52:41.154 UTC 024f DEBU [msp.identity] Sign -> Sign: plaintext: 18012A320A221A203B0E2F1AE582B8CB...0103120C0888CA93F9C694D58D18100B
+2025-01-17 00:52:41.154 UTC 0250 DEBU [msp.identity] Sign -> Sign: digest: 099B04BC25583BE5C56CD0F3683995099AED3D8734AE2C35C9B992873742EC2F
+2025-01-17 00:52:41.154 UTC 0251 DEBU [msp.identity] Sign -> Sign: plaintext: 0A1F70656572312E6675726E69747572...736D616B6572732E636F6D3A37303531
+2025-01-17 00:52:41.154 UTC 0252 DEBU [msp.identity] Sign -> Sign: digest: 53E8FC80EEA001CBFE463C6185F8360AF7B663B6AADD49A73EA86C4A045BE867
+2025-01-17 00:52:41.154 UTC 0253 DEBU [gossip.comm] Send -> Entering, sending GossipMessage: Channel: , nonce: 0, tag: EMPTY Membership Request with self information of GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint: PKI-id:3b0e2f1ae582b8cb2ad01ca88539bcde2bfc42d14cc346954a9654871a510103Identity:Timestamp:inc_num:1737075146497516808 seq_num:11 , Envelope: 54 bytes, Signature: 71 bytes Secret payload: 33 bytes, Secret Signature: 70 bytes , Envelope: 246 bytes, Signature: 0 bytes to  1 peers
+2025-01-17 00:52:41.154 UTC 0254 DEBU [gossip.comm] sendToEndpoint -> Entering, Sending to peer0.furnituresmakers.com:7051 , msg: GossipMessage: Channel: , nonce: 0, tag: EMPTY Membership Request with self information of GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint: PKI-id:3b0e2f1ae582b8cb2ad01ca88539bcde2bfc42d14cc346954a9654871a510103Identity:Timestamp:inc_num:1737075146497516808 seq_num:11 , Envelope: 54 bytes, Signature: 71 bytes Secret payload: 33 bytes, Secret Signature: 70 bytes , Envelope: 246 bytes, Signature: 0 bytes
+2025-01-17 00:52:41.154 UTC 0255 DEBU [gossip.comm] sendToEndpoint -> Exiting
+2025-01-17 00:52:41.154 UTC 0256 DEBU [gossip.comm] func1 -> Got message: GossipMessage: Channel: , nonce: 0, tag: EMPTY data_dig: nonce: 1320183288488341698 , Msg_type: IDENTITY_MSG, digests: [772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 537c681b5ab2023345a19708c7a0816f770611c0b7db60bf0d5d2c615f02d6f3 a4a88af81613c7d67995948a8aedfec76279f81d75d558e3af8ef52dddff7250 3b0e2f1ae582b8cb2ad01ca88539bcde2bfc42d14cc346954a9654871a510103], Envelope: 153 bytes, Signature: 0 bytes
+2025-01-17 00:52:41.154 UTC 0257 DEBU [gossip.gossip] handleMessage -> Entering, 172.18.0.8:7051 772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 sent us GossipMessage: Channel: , nonce: 0, tag: EMPTY data_dig: nonce: 1320183288488341698 , Msg_type: IDENTITY_MSG, digests: [772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 537c681b5ab2023345a19708c7a0816f770611c0b7db60bf0d5d2c615f02d6f3 a4a88af81613c7d67995948a8aedfec76279f81d75d558e3af8ef52dddff7250 3b0e2f1ae582b8cb2ad01ca88539bcde2bfc42d14cc346954a9654871a510103], Envelope: 153 bytes, Signature: 0 bytes
+2025-01-17 00:52:41.154 UTC 0258 DEBU [gossip.pull] HandleMessage -> GossipMessage: Channel: , nonce: 0, tag: EMPTY data_dig: nonce: 1320183288488341698 , Msg_type: IDENTITY_MSG, digests: [772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 537c681b5ab2023345a19708c7a0816f770611c0b7db60bf0d5d2c615f02d6f3 a4a88af81613c7d67995948a8aedfec76279f81d75d558e3af8ef52dddff7250 3b0e2f1ae582b8cb2ad01ca88539bcde2bfc42d14cc346954a9654871a510103], Envelope: 153 bytes, Signature: 0 bytes
+2025-01-17 00:52:41.154 UTC 0259 DEBU [gossip.gossip] handleMessage -> Exiting
+2025-01-17 00:52:41.155 UTC 025a DEBU [gossip.comm] func1 -> Got message: GossipMessage: Channel: , nonce: 0, tag: EMPTY MembershipResponse with Alive: 2, Dead: 0, Envelope: 520 bytes, Signature: 0 bytes
+2025-01-17 00:52:41.155 UTC 025b DEBU [gossip.gossip] handleMessage -> Entering, 172.18.0.8:7051 772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 sent us GossipMessage: Channel: , nonce: 0, tag: EMPTY MembershipResponse with Alive: 2, Dead: 0, Envelope: 520 bytes, Signature: 0 bytes
+2025-01-17 00:52:41.155 UTC 025c DEBU [gossip.gossip] handleMessage -> Exiting
+2025-01-17 00:52:41.155 UTC 025d DEBU [gossip.discovery] handleMsgFromComm -> Got message: GossipMessage: Channel: , nonce: 0, tag: EMPTY MembershipResponse with Alive: 2, Dead: 0, Envelope: 520 bytes, Signature: 0 bytes
+2025-01-17 00:52:41.155 UTC 025e DEBU [gossip.gossip] ValidateAliveMsg -> Fetched identity of Membership: Endpoint: PKI-id:3b0e2f1ae582b8cb2ad01ca88539bcde2bfc42d14cc346954a9654871a510103 from identity store
+2025-01-17 00:52:41.155 UTC 025f DEBU [msp.identity] Verify -> Verify: signer identity (certificate subject=CN=peer1,OU=peer+OU=network+OU=FurnituresMakers,O=FurnituresMakers,L=Kielce,ST=Swietokrzyskie,C=PL issuer=CN=furnituresmakers-ca,OU=Organization CA,O=FurnituresMakers,L=Kielce,ST=Swietokrzyskie,C=PL serialnumber=20882441730537096006340931653930515231223778247)
+2025-01-17 00:52:41.156 UTC 0260 DEBU [msp.identity] Verify -> Verify: signer identity (certificate subject=CN=peer1,OU=peer+OU=network+OU=FurnituresMakers,O=FurnituresMakers,L=Kielce,ST=Swietokrzyskie,C=PL issuer=CN=furnituresmakers-ca,OU=Organization CA,O=FurnituresMakers,L=Kielce,ST=Swietokrzyskie,C=PL serialnumber=20882441730537096006340931653930515231223778247)
+2025-01-17 00:52:41.156 UTC 0261 DEBU [gossip.discovery] handleAliveMessage -> Entering GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint: PKI-id:3b0e2f1ae582b8cb2ad01ca88539bcde2bfc42d14cc346954a9654871a510103Identity:Timestamp:inc_num:1737075146497516808 seq_num:11 , Envelope: 54 bytes, Signature: 71 bytes Secret payload: 33 bytes, Secret Signature: 70 bytes
+2025-01-17 00:52:41.156 UTC 0262 DEBU [gossip.discovery] isSentByMe -> Got alive message about ourselves, GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint: PKI-id:3b0e2f1ae582b8cb2ad01ca88539bcde2bfc42d14cc346954a9654871a510103Identity:Timestamp:inc_num:1737075146497516808 seq_num:11 , Envelope: 54 bytes, Signature: 71 bytes Secret payload: 33 bytes, Secret Signature: 70 bytes
+2025-01-17 00:52:41.156 UTC 0263 DEBU [gossip.discovery] handleAliveMessage -> Exiting
+2025-01-17 00:52:41.156 UTC 0264 DEBU [gossip.discovery] handleMsgFromComm -> Exiting
+2025-01-17 00:52:41.186 UTC 0265 DEBU [gossip.comm] func1 -> Got message: GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:161 , Envelope: 88 bytes, Signature: 71 bytes Secret payload: 33 bytes, Secret Signature: 71 bytes
+2025-01-17 00:52:41.187 UTC 0266 DEBU [gossip.gossip] handleMessage -> Entering, 172.18.0.8:7051 772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 sent us GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:161 , Envelope: 88 bytes, Signature: 71 bytes Secret payload: 33 bytes, Secret Signature: 71 bytes
+2025-01-17 00:52:41.187 UTC 0267 DEBU [gossip.gossip] handleMessage -> Exiting
+2025-01-17 00:52:41.187 UTC 0268 DEBU [gossip.discovery] handleMsgFromComm -> Got message: GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:161 , Envelope: 88 bytes, Signature: 71 bytes Secret payload: 33 bytes, Secret Signature: 71 bytes
+2025-01-17 00:52:41.187 UTC 0269 DEBU [gossip.gossip] ValidateAliveMsg -> Fetched identity of Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 from identity store
+2025-01-17 00:52:41.187 UTC 026a DEBU [msp.identity] Verify -> Verify: signer identity (certificate subject=CN=peer0,OU=peer+OU=network+OU=FurnituresMakers,O=FurnituresMakers,L=Kielce,ST=Swietokrzyskie,C=PL issuer=CN=furnituresmakers-ca,OU=Organization CA,O=FurnituresMakers,L=Kielce,ST=Swietokrzyskie,C=PL serialnumber=504259801133774798052594680189490003716031820718)
+2025-01-17 00:52:41.187 UTC 026b DEBU [msp.identity] Verify -> Verify: signer identity (certificate subject=CN=peer0,OU=peer+OU=network+OU=FurnituresMakers,O=FurnituresMakers,L=Kielce,ST=Swietokrzyskie,C=PL issuer=CN=furnituresmakers-ca,OU=Organization CA,O=FurnituresMakers,L=Kielce,ST=Swietokrzyskie,C=PL serialnumber=504259801133774798052594680189490003716031820718)
+2025-01-17 00:52:41.187 UTC 026c DEBU [gossip.discovery] handleAliveMessage -> Entering GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:161 , Envelope: 88 bytes, Signature: 71 bytes Secret payload: 33 bytes, Secret Signature: 71 bytes
+2025-01-17 00:52:41.187 UTC 026d DEBU [gossip.discovery] learnExistingMembers -> Entering: learnedMembers={[GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:161 , Envelope: 88 bytes, Signature: 71 bytes Secret payload: 33 bytes, Secret Signature: 71 bytes]}
+2025-01-17 00:52:41.187 UTC 026e DEBU [gossip.discovery] learnExistingMembers -> updating Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:161
+2025-01-17 00:52:41.187 UTC 026f DEBU [gossip.discovery] learnExistingMembers -> Updating aliveness data: Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:161
+2025-01-17 00:52:41.187 UTC 0270 DEBU [gossip.discovery] learnExistingMembers -> Replacing GossipMessage: Channel: , nonce: 0, tag: EMPTY Alive Message:Membership: Endpoint:peer0.furnituresmakers.com:7051 PKI-id:772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4Identity:Timestamp:inc_num:1737074851082847553 seq_num:160 , Envelope: 88 bytes, Signature: 70 bytes Secret payload: 33 bytes, Secret Signature: 70 bytes in aliveMembership
+2025-01-17 00:52:41.187 UTC 0271 DEBU [gossip.discovery] learnExistingMembers -> Exiting
+2025-01-17 00:52:41.187 UTC 0272 DEBU [gossip.discovery] handleAliveMessage -> Exiting
+2025-01-17 00:52:41.187 UTC 0273 DEBU [gossip.discovery] handleMsgFromComm -> Exiting
+2025-01-17 00:52:42.154 UTC 0274 DEBU [gossip.pull] SendReq -> Sending [772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 537c681b5ab2023345a19708c7a0816f770611c0b7db60bf0d5d2c615f02d6f3 a4a88af81613c7d67995948a8aedfec76279f81d75d558e3af8ef52dddff7250] to peer0.furnituresmakers.com:7051
+2025-01-17 00:52:42.154 UTC 0275 DEBU [gossip.comm] Send -> Entering, sending GossipMessage: Channel: , nonce: 0, tag: EMPTY data request: nonce: 1320183288488341698 , Msg_type: IDENTITY_MSG, digests: [772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 537c681b5ab2023345a19708c7a0816f770611c0b7db60bf0d5d2c615f02d6f3 a4a88af81613c7d67995948a8aedfec76279f81d75d558e3af8ef52dddff7250], Envelope: 118 bytes, Signature: 0 bytes to  1 peers
+2025-01-17 00:52:42.154 UTC 0276 DEBU [gossip.comm] sendToEndpoint -> Entering, Sending to peer0.furnituresmakers.com:7051 , msg: GossipMessage: Channel: , nonce: 0, tag: EMPTY data request: nonce: 1320183288488341698 , Msg_type: IDENTITY_MSG, digests: [772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 537c681b5ab2023345a19708c7a0816f770611c0b7db60bf0d5d2c615f02d6f3 a4a88af81613c7d67995948a8aedfec76279f81d75d558e3af8ef52dddff7250], Envelope: 118 bytes, Signature: 0 bytes
+2025-01-17 00:52:42.154 UTC 0277 DEBU [gossip.comm] sendToEndpoint -> Exiting
+2025-01-17 00:52:42.155 UTC 0278 DEBU [gossip.comm] func1 -> Got message: GossipMessage: Channel: , nonce: 0, tag: EMPTY DataUpdate: Type: IDENTITY_MSG, items: 3, nonce: 1320183288488341698, Envelope: 3918 bytes, Signature: 0 bytes
+2025-01-17 00:52:42.155 UTC 0279 DEBU [gossip.gossip] handleMessage -> Entering, 172.18.0.8:7051 772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 sent us GossipMessage: Channel: , nonce: 0, tag: EMPTY DataUpdate: Type: IDENTITY_MSG, items: 3, nonce: 1320183288488341698, Envelope: 3918 bytes, Signature: 0 bytes
+2025-01-17 00:52:42.155 UTC 027a DEBU [msp.identity] Verify -> Verify: signer identity (certificate subject=CN=peer0,OU=peer+OU=network+OU=FurnituresMakers,O=FurnituresMakers,L=Kielce,ST=Swietokrzyskie,C=PL issuer=CN=furnituresmakers-ca,OU=Organization CA,O=FurnituresMakers,L=Kielce,ST=Swietokrzyskie,C=PL serialnumber=504259801133774798052594680189490003716031820718)
+2025-01-17 00:52:42.156 UTC 027b DEBU [msp] DeserializeIdentity -> Obtaining identity
+2025-01-17 00:52:42.156 UTC 027c ERRO [peer.gossip.mcs] Verify -> Failed getting validated identity from peer identity [Peer Identity {"CN":"peer0","Issuer-CN":"yachtsales-ca","Issuer-L-ST-C":"[Kielce]-[]-[PL]","Issuer-OU":["Organization CA"],"L-ST-C":"[Kielce]-[]-[PL]","MSP":"YachtSales","OU":["peer","network","YachtSales"]} cannot be validated. No MSP found able to do that.]
+2025-01-17 00:52:42.156 UTC 027d WARN [gossip.gossip] handleMessage -> Failed validating identity message: Peer Identity {"CN":"peer0","Issuer-CN":"yachtsales-ca","Issuer-L-ST-C":"[Kielce]-[]-[PL]","Issuer-OU":["Organization CA"],"L-ST-C":"[Kielce]-[]-[PL]","MSP":"YachtSales","OU":["peer","network","YachtSales"]} cannot be validated. No MSP found able to do that.
+Failed verifying message
+github.com/hyperledger/fabric/gossip/gossip.(*certStore).validateIdentityMsg
+        /gossip/gossip/certstore.go:105
+github.com/hyperledger/fabric/gossip/gossip.(*certStore).handleMessage
+        /gossip/gossip/certstore.go:77
+github.com/hyperledger/fabric/gossip/gossip.(*Node).handleMessage
+        /gossip/gossip/gossip_impl.go:399
+github.com/hyperledger/fabric/gossip/gossip.(*Node).acceptMessages
+        /gossip/gossip/gossip_impl.go:326
+runtime.goexit
+        /usr/local/go/src/runtime/asm_amd64.s:1700
+github.com/hyperledger/fabric/gossip/gossip.(*certStore).handleMessage
+        /gossip/gossip/certstore.go:78
+github.com/hyperledger/fabric/gossip/gossip.(*Node).handleMessage
+        /gossip/gossip/gossip_impl.go:399
+github.com/hyperledger/fabric/gossip/gossip.(*Node).acceptMessages
+        /gossip/gossip/gossip_impl.go:326
+runtime.goexit
+        /usr/local/go/src/runtime/asm_amd64.s:1700
+2025-01-17 00:52:42.156 UTC 027e DEBU [gossip.gossip] handleMessage -> Exiting
+2025-01-17 00:52:43.256 UTC 027f DEBU [gossip.comm] func1 -> Got message: GossipMessage: Channel: , nonce: 0, tag: CHAN_OR_ORG state_info_pull_req: Channel MAC:b1ef51efe8592f8d4cbbbbec9a09e91e07ad59c25f9bdf6afdf26600be0ea156, Envelope: 39 bytes, Signature: 0 bytes
+2025-01-17 00:52:43.256 UTC 0280 DEBU [gossip.gossip] handleMessage -> Entering, 172.18.0.8:7051 772b06de0d93863e78750a73bc0cb8028ab44bef02c779b0d3a0d1281f7a7eb4 sent us GossipMessage: Channel: , nonce: 0, tag: CHAN_OR_ORG state_info_pull_req: Channel MAC:b1ef51efe8592f8d4cbbbbec9a09e91e07ad59c25f9bdf6afdf26600be0ea156, Envelope: 39 bytes, Signature: 0 bytes
+2025-01-17 00:52:43.256 UTC 0281 DEBU [gossip.gossip] handleMessage -> No such channel [] discarding message GossipMessage: Channel: , nonce: 0, tag: CHAN_OR_ORG state_info_pull_req: Channel MAC:b1ef51efe8592f8d4cbbbbec9a09e91e07ad59c25f9bdf6afdf26600be0ea156, Envelope: 39 bytes, Signature: 0 bytes
+2025-01-17 00:52:43.256 UTC 0282 DEBU [gossip.gossip] handleMessage -> Exiting
+2025-01-17 00:52:43.317 UTC 0283 INFO [nodeCmd] func1 -> Received signal: 15 (terminated)
+2025-01-17 00:52:43.317 UTC 0284 INFO [gossip.gossip] Stop -> Stopping gossip
+2025-01-17 00:52:43.317 UTC 0285 DEBU [gossip.gossip] handlePresumedDead -> Exiting
+2025-01-17 00:52:43.317 UTC 0286 DEBU [gossip.gossip] acceptMessages -> Exiting
+2025-01-17 00:52:43.317 UTC 0287 INFO [gossip.discovery] Stop -> Stopping
+2025-01-17 00:52:43.317 UTC 0288 INFO [gossip.discovery] Stop -> Stopped
+2025-01-17 00:52:43.317 UTC 0289 INFO [gossip.comm] Stop -> Stopping
+2025-01-17 00:52:43.317 UTC 028a DEBU [gossip.discovery] handleMessages -> Stopped
+2025-01-17 00:52:43.317 UTC 028c DEBU [gossip.comm] writeToStream -> Closing writing to stream
+2025-01-17 00:52:43.317 UTC 028b DEBU [grpc] InfoDepth -> [core] [Channel #7]Channel Connectivity change to SHUTDOWN
+2025-01-17 00:52:43.317 UTC 028d DEBU [gossip.comm] serviceConnection -> Closing reading from stream
+2025-01-17 00:52:43.317 UTC 028e DEBU [grpc] InfoDepth -> [core] [Channel #7]Closing the name resolver
+2025-01-17 00:52:43.317 UTC 028f DEBU [grpc] InfoDepth -> [core] [Channel #7]ccBalancerWrapper: closing
+2025-01-17 00:52:43.317 UTC 0290 DEBU [grpc] InfoDepth -> [core] [Channel #7 SubChannel #8]Subchannel Connectivity change to SHUTDOWN
+2025-01-17 00:52:43.317 UTC 0291 DEBU [grpc] InfoDepth -> [core] [Channel #7 SubChannel #8]Subchannel deleted
+2025-01-17 00:52:43.317 UTC 0292 DEBU [grpc] InfoDepth -> [transport] [client-transport 0xc0001e7688] Closing: rpc error: code = Canceled desc = grpc: the client connection is closing
+2025-01-17 00:52:43.318 UTC 0293 DEBU [grpc] InfoDepth -> [transport] [client-transport 0xc0001e7688] loopyWriter exiting with error: rpc error: code = Canceled desc = grpc: the client connection is closing
+2025-01-17 00:52:43.318 UTC 0294 DEBU [gossip.discovery] handleEvents -> Stopped
+2025-01-17 00:52:43.318 UTC 0295 DEBU [grpc] InfoDepth -> [core] [Channel #7]Channel deleted
+2025-01-17 00:52:43.318 UTC 0296 DEBU [gossip.comm] Stop -> Shut down connection store, connection count: 0
+2025-01-17 00:52:43.318 UTC 0298 DEBU [gossip.comm] func1 -> Exiting Accept() loop
+2025-01-17 00:52:43.318 UTC 0297 DEBU [gossip.comm] readFromStream -> Got error, aborting: rpc error: code = Canceled desc = grpc: the client connection is closing
+2025-01-17 00:52:43.318 UTC 0299 INFO [gossip.comm] Stop -> Stopped
