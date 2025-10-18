@@ -30,7 +30,7 @@ services:
       echo 'Running enroll-tls.sh...';
       ./enroll-tls-new.sh;
       echo 'Initializer completed.'"
-    restart: "no" # Ensure this container exits after completing its task
+    restart: "no"
 
 
   furnituresmakers-ca:

@@ -56,8 +56,9 @@ services:
       - ./Furnitures_Makers/crypto/client/ca/peer0/msp:/etc/hyperledger/msp
       - ./_shared_certs:/etc/hyperledger/_shared_certs
       - ./_config_files/chaincode/:/etc/hyperledger/chaincode/
-      - /mnt/wsl/docker-desktop/shared-sockets/guest-services/docker.sock:/var/run/docker.sock
-
+      #- /mnt/wsl/docker-desktop/shared-sockets/guest-services/docker.sock:/var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock
+    privileged: true
       #- ./_config_files/peer/:/etc/hyperledger/config
 
 
@@ -133,8 +134,8 @@ services:
       - ./Wood_Supply/crypto/client/ca/peer0/msp:/etc/hyperledger/msp
       - ./_shared_certs:/etc/hyperledger/_shared_certs
       - ./_config_files/chaincode/:/etc/hyperledger/chaincode/
-      - /mnt/wsl/docker-desktop/shared-sockets/guest-services/docker.sock:/var/run/docker.sock
-
+      #- /mnt/wsl/docker-desktop/shared-sockets/guest-services/docker.sock:/var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock
       #- ./_config_files/peer/:/etc/hyperledger/config
 
 
@@ -209,8 +210,8 @@ services:
       - ./Yacht_Sales/crypto/client/ca/peer0/msp:/etc/hyperledger/msp
       - ./_shared_certs:/etc/hyperledger/_shared_certs
       - ./_config_files/chaincode/:/etc/hyperledger/chaincode/
-      - /mnt/wsl/docker-desktop/shared-sockets/guest-services/docker.sock:/var/run/docker.sock
-
+      #- /mnt/wsl/docker-desktop/shared-sockets/guest-services/docker.sock:/var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock
       #- ./_config_files/peer/:/etc/hyperledger/config
 
 

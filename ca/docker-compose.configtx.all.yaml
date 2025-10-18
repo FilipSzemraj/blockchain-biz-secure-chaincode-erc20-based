@@ -77,7 +77,7 @@ services:
   admin.yachtsales.com:
     networks:
       - fabric-network
-    image: yfw-configtx # Wybierz wersję obrazu
+    image: yfw-configtx
     container_name: admin.yachtsales.com
     build:
       context: ./_config_files/configtx

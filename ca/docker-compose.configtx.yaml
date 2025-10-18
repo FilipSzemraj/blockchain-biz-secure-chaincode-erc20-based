@@ -7,7 +7,7 @@ services:
   -com:
     networks:
       - fabric-network
-    image: yfw-configtx # Wybierz wersję obrazu
+    image: yfw-configtx
     container_name: $CONTAINER_NAME
     build:
       context: ./_config_files/configtx

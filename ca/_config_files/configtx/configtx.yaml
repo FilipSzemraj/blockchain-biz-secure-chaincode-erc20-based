@@ -20,14 +20,13 @@ Organizations:
           Rule: "OR('FurnituresMakers.admin', 'FurnituresMakers.client', 'FurnituresMakers.peer')"
       Writers:
           Type: Signature
-        # Rule: "OR('FurnituresMakers.client')"
           Rule: "OR('FurnituresMakers.admin', 'FurnituresMakers.peer', 'FurnituresMakers.orderer', 'FurnituresMakers.client')"
       Admins:
           Type: Signature
           Rule: "OR('FurnituresMakers.admin')"
       Endorsement:
           Type: Signature
-          Rule: "OR('FurnituresMakers.peer')"
+          Rule: "OR('FurnituresMakers.peer', 'FurnituresMakers.admin')"
     AnchorPeers:
       - Host: peer0.furnituresmakers.com
         Port: 7051
@@ -50,7 +49,7 @@ Organizations:
           Rule: "OR('WoodSupply.admin')"
       Endorsement:
           Type: Signature
-          Rule: "OR('WoodSupply.peer')"
+          Rule: "OR('WoodSupply.peer', 'WoodSupply.admin')"
     AnchorPeers:
       - Host: peer0.woodsupply.com
         Port: 8051
@@ -73,7 +72,7 @@ Organizations:
           Rule: "OR('YachtSales.admin')"
       Endorsement:
           Type: Signature
-          Rule: "OR('YachtSales.peer')"
+          Rule: "OR('YachtSales.peer', 'YachtSales.admin')"
     AnchorPeers:
       - Host: peer0.yachtsales.com
         Port: 9051
@@ -171,8 +170,8 @@ Application: &ApplicationDefaults
     # approveformyorg
     LifecycleEndorsement:
         Type: ImplicitMeta
-        # Rule: "MAJORITY Endorsement"
-        Rule: "ANY Endorsement"
+        Rule: "MAJORITY Endorsement"
+        #Rule: "ANY Endorsement"
 
     # --channel-config-policy
     Endorsement:
@@ -224,43 +223,18 @@ Profiles:
         - <<: *FurnituresMakers
           Policies:
             <<: *FurnituresMakersPolicies
-            #Admins:
-            #  Type: Signature
-            #  Rule: "OR('FurnituresMakers.admin', 'FurnituresMakers.orderer')"
           OrdererEndpoints:
             - "orderer0.furnituresmakers.com:7050"
         - <<: *WoodSupply
           Policies:
             <<: *WoodSupplyPolicies
-            #Admins:
-            #  Type: Signature
-            #  Rule: "OR('WoodSupply.admin', 'WoodSupply.orderer')"
           OrdererEndpoints:
             - "orderer0.woodsupply.com:8050"
         - <<: *YachtSales
           Policies:
             <<: *YachtSalesPolicies
-            #Admins:
-            #  Type: Signature
-            #  Rule: "OR('YachtSales.admin', 'YachtSales.orderer')"
           OrdererEndpoints:
             - "orderer0.yachtsales.com:9050"
-      #Policies:
-      #  Readers:
-      #    Type: ImplicitMeta
-      #    Rule: "ANY Readers"
-      #  Writers:
-      #    Type: ImplicitMeta
-      #    Rule: "ANY Writers"
-      #  Admins:
-      #    Type: ImplicitMeta
-      #    Rule: "MAJORITY Admins"
-    #Consortiums:
-    #  YFW:
-    #    Organizations:
-    #      - <<: *FurnituresMakers
-    #      - <<: *WoodSupply
-    #      - <<: *YachtSales
     Application:
       <<: *ApplicationDefaults
       Organizations:

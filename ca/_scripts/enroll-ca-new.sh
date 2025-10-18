@@ -32,7 +32,8 @@ fabric-ca-client enroll -u https://admin:adminpw@localhost:$FABRIC_CA_SERVER_POR
   --mspdir /etc/hyperledger/client/ca/admin/msp \
   --csr.hosts "admin.$HOSTNAME.com,localhost,admin-$HOSTNAME-com" \
   --csr.cn admin \
-  --csr.names "C=PL,ST=Swietokrzyskie,L=Kielce,O=${ORG_NAME},OU=admin"
+  --csr.names "C=PL,ST=Swietokrzyskie,L=Kielce,O=${ORG_NAME},OU=admin" \
+  ----enrollment.attrs "hf.Type"
   #--csr.names "C=PL,ST=Swietokrzyskie,L=Kielce,O=${ORG_NAME},OU=admin"
 
 
@@ -72,7 +73,7 @@ for ((i=1; i<${#USERS[@]}; i++)); do
 
   # Sprawdzenie, czy nazwa użytkownika zawiera postfix "_api"
   if [[ "$USERNAME" == *_api ]]; then
-      CMD="$CMD --enrollment.attrs \"hf.iban\""
+      CMD="$CMD --enrollment.attrs \"hf.iban,hf.Type\""
   fi
 
   if [ -f "$CLIENT_CERT" ]; then
