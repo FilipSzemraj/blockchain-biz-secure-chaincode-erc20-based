@@ -1,0 +1,28 @@
+version: '3.8'
+networks:
+  fabric-network:
+    driver: bridge
+    name: fabric-network
+    external: true
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile-env
+    container_name: bankapi
+    networks:
+      - fabric-network
+    volumes:
+      - ./src:/app/src
+      - ./build.gradle:/app/build.gradle
+      - ./gradle:/app/gradle
+      - ./target:/app/target
+      - ./keys:/var/app/keys
+      - ./build:/app/build
+    command: ./gradlew bootRun
+    environment:
+      SPRING_DEVTOOLS_REMOTE_SECRET: "my-secret"
+      SERVER_PORT: 8081
+    ports:
+      - "8081:8081"

@@ -1,0 +1,73 @@
+networks:
+  fabric-network:
+    driver: bridge
+    name: fabric-network
+    external: true
+
+services:
+  postgres:
+    networks:
+      - fabric-network
+    image: postgres:15
+    container_name: postgres
+    environment:
+      POSTGRES_DB: fabric_client_db
+      POSTGRES_USER: fabric_user
+      POSTGRES_PASSWORD: fabric_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U fabric_user -d fabric_client_db" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  logistics_api.furnituresmakers.com:
+    build:
+      context: .
+      dockerfile: Dockerfile-override
+    networks:
+      - fabric-network
+    container_name: logistics_api.furnituresmakers.com
+    volumes:
+      - ./src:/app/src
+      - ./build.gradle:/app/build.gradle
+      - ./gradle:/app/gradle
+      - ./target:/app/target
+      - ./keys:/var/app/keys
+      - ./crypto:/app/crypto
+      #- ./build_logistics:/app/build
+    environment:
+      SPRING_DEVTOOLS_REMOTE_SECRET: "my-secret"
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/fabric_client_db
+      SPRING_DATASOURCE_USERNAME: fabric_user
+      SPRING_DATASOURCE_PASSWORD: fabric_password
+      FABRIC_GATEWAY_ADDRESS: peer0.furnituresmakers.com:7051
+      FABRIC_MSP_ID: FurnituresMakers
+      FABRIC_CERT_PATH: /app/crypto/cert.pem
+      FABRIC_KEY_PATH: /app/crypto/key.pem
+      FABRIC_TLS_CERT_CA_PATH: /app/crypto/tls-ca-cert.pem
+      FABRIC_TLS_CERT_PATH: /app/crypto/cert-tls.pem
+      FABRIC_TLS_KEY_PATH: /app/crypto/key-tls.pem
+      SERVER_PORT: 8080
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command:
+      - ./wait-for-it.sh
+      - postgres:5432
+      - --timeout=30
+      - --
+      #- java
+      #- -jar
+      #- /app/build/libs/client_api.jar
+      - /app/gradlew
+      - bootRun
+
+volumes:
+  postgres_data:
+    name: "postgres_data_volume"

@@ -1,0 +1,11 @@
+@use '../../../../styles/variables';
+@use '../../../../styles/mixins';
+
+.button {
+  @include mixins.button-style(variables.$primary-color, variables.$primary-color);
+  //width: 100%;
+  //min-height:4rem;
+  max-width:125px;
+  text-align: center;
+  margin:0;
+}

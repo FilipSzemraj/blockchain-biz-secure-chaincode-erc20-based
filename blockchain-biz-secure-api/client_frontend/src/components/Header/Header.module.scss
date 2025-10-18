@@ -1,0 +1,101 @@
+@use '../../styles/variables';
+@use '../../styles/mixins';
+
+.header {
+  align-self: flex-end;
+  width: 100%;
+  //height:15vh;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, auto);
+  gap: 15px;
+  padding: 0;
+  margin: 0;
+  background: linear-gradient(90deg, #1a1a40, #3a3a60);
+  transition: width 1s ease;
+  box-shadow: 0 0.8rem 0.8rem rgba(0, 0, 0, 0.2);
+
+
+  &__collapsed {
+    width: 70%;
+    @media (max-width:1080px){
+      width:62.5%;
+    }
+  }
+
+  &__expanded {
+    width: 100%;
+  }
+
+  &__userInfoSection {
+    grid-column: 1 / span 2;
+    grid-row: 1 / span 1;
+    text-align: left;
+    padding: 1rem 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  &__logout {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: flex-start;
+    //padding: 1rem 2rem;
+    width: 100%;
+    height: 100%;
+    /*grid-column: 3 / span 1;
+    grid-row: 1 / span 1;*/
+    align-self: start;
+  }
+  &__hamburger{
+    grid-column: 1 / span 1;
+    grid-row: 2 / span 2;
+    //background-color: gray;
+    padding:0 0 2rem 2rem;
+    opacity:1;
+    transition: opacity 1s ease;
+
+
+    &__closed{
+      opacity:0;
+    }
+  }
+
+  &__backendUI{
+    /*grid-column: 3 / span 1;
+    grid-row: 2 / span 1;*/
+    display:none;
+    @media (min-width: 1081px) {
+      display:block;
+    }
+  }
+  &__rightSideWrapper{
+    margin:2rem 2rem;
+    grid-column: 3 / span 1;
+    grid-row: 1 / span 3;
+    //background-color: #1a88ff;
+    display:flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-end;
+  }
+
+
+}
+
+
+
+
+.container {
+  /*height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-content: center;
+
+  background: linear-gradient(135deg, #4e4e50, #2c2c34);
+  color: variables.$text-color;*/
+}

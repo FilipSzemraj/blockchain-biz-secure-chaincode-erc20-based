@@ -1,0 +1,70 @@
+@use '../../styles/variables';
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 30%;
+    @media (max-width:1080px){
+        width:37.5%;
+    }
+    background: linear-gradient(135deg, #3a3a40, #1e1e2e);
+    //background: linear-gradient(135deg, #1a1a1a, #2e2e2e);
+
+
+    box-shadow: 0.1rem 0 0.4rem rgba(0, 0, 0, 0.15);
+    transform: translateX(-100%);
+    transition: transform 1s ease;
+    z-index: 1000;
+    overflow: hidden;
+
+    &__open {
+        transform: translateX(0);
+    }
+
+    &__content {
+        padding: 20px;
+        position: relative;
+    }
+
+    &__closeBtn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        padding: 5px;
+        color: variables.$text-color;
+
+        &:hover {
+            color: #666;
+        }
+    }
+}
+
+.sidebarOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    animation: fadeIn 1s ease;
+
+    /*@media (min-width: 768px) {
+        display: none;
+    }*/
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}

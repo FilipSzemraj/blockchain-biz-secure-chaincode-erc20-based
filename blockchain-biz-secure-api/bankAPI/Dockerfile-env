@@ -1,0 +1,22 @@
+FROM openjdk:21-slim
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y curl unzip zip bash && \
+    curl -s https://get.sdkman.io | bash && \
+    bash -c "source /root/.sdkman/bin/sdkman-init.sh && sdk install gradle"
+
+COPY settings.gradle build.gradle /app/
+
+COPY gradle /app/gradle
+
+COPY gradlew gradlew.bat /app/
+
+COPY src /app/src
+EXPOSE 8081
+
+
+RUN chmod +x gradlew
+
+
+CMD ["./gradlew", "bootRun"]

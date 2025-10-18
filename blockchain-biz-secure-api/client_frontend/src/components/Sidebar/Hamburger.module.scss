@@ -1,0 +1,34 @@
+.hamburger {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 30px;
+  height: 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+
+  &:focus {
+    outline: none;
+  }
+
+  &:hover .bar {
+    background-color: #ccc;
+  }
+}
+
+.bar {
+  width: 100%;
+  height: 3px;
+  background-color: #fff;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.hamburger:hover .bar:nth-child(1) {
+  transform: translateY(-2px);
+}
+
+.hamburger:hover .bar:nth-child(3) {
+  transform: translateY(2px);
+}

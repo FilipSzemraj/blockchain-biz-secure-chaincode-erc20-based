@@ -1,0 +1,48 @@
+@use '../../../styles/variables' as vars;
+@use '../../../styles/mixins' as mixins;
+
+.toggleContainer {
+  padding: 0.5rem;
+  border: 1px solid vars.$primary-color;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    //background-color: vars.$hover-color !default;
+  }
+}
+
+.shortHash {
+  font-family: monospace;
+  font-weight: bold;
+  color: vars.$text-color;
+}
+
+.detailsContainer {
+  padding: 0.75rem;
+  //background-color: #fff;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  //font-size: 0.9rem;
+  line-height: 1.4;
+  margin-top: 0.5rem;
+
+  div {
+    margin-bottom: 0.5rem;
+
+    strong {
+      color: vars.$text-dark;
+    }
+  }
+}
+
+.rawData {
+  margin-left: 1rem;
+  font-size: 0.85rem;
+
+  div {
+    margin-bottom: 0.3rem;
+  }
+}

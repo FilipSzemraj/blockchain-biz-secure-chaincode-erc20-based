@@ -1,0 +1,15 @@
+Komenda do uruchomienia środowiska programistycznego
+
+docker-compose -f compose.yaml -f docker-compose.override.yaml up
+
+Zatrzymanie środowiska:
+
+docker-compose -f compose.yaml -f docker-compose.override.yaml down
+
+Komenda do uruchomienia środowiska produkcyjnego
+
+docker-compose -f compose.yaml up --build
+
+Zatrzymanie środowiska:
+
+docker-compose -f compose.yaml down

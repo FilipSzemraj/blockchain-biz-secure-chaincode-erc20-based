@@ -1,0 +1,35 @@
+@use '../../../styles/variables';
+@use '../../../styles/mixins';
+
+.formsContainer{
+  @include mixins.formsContainer;
+}
+.formsWrapper{
+
+}
+.formContentWrapper {
+  overflow: hidden;
+  transition: max-height 0.5s ease;
+  max-height: 0;
+  &__open{
+    max-height: 100vh;
+  }
+}
+
+.wrapper__addContainer__open .formContentWrapper {
+  max-height: 100vh;
+}
+
+.formItem {
+  opacity: 0;
+  transition: opacity 0.3s ease, max-height 0.5s ease;
+  max-height: 0;
+  pointer-events: none;
+}
+
+.formItem.active {
+  opacity: 1;
+  max-height: 100vh;
+  pointer-events: auto;
+
+}

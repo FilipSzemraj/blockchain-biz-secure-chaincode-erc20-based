@@ -1,0 +1,27 @@
+networks:
+  fabric-network:
+    driver: bridge
+    name: fabric-network
+    external: true
+
+services:
+  postgres:
+    networks:
+      - fabric-network
+    image: postgres:15
+    container_name: postgres
+    environment:
+      POSTGRES_DB: fabric_client_db      # Nazwa tworzonej bazy
+      POSTGRES_USER: fabric_user         # Użytkownik
+      POSTGRES_PASSWORD: fabric_password # Hasło
+    ports:
+      - "5432:5432"  # Mapujemy port 5432 z kontenera na 5432 na hoście
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
+    name: "postgres_data_volume"
+
+#winpty docker exec -it postgres psql -U fabric_user -d fabric_client_db
+#\dk

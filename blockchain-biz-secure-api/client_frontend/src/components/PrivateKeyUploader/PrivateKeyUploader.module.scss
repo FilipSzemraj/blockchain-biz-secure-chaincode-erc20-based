@@ -1,0 +1,71 @@
+@use '../../styles/variables';
+@use '../../styles/mixins';
+
+.container{
+  display:flex;
+  flex-direction: column;
+  align-items: flex-end;
+  //background-color:yellow;
+  width:30%;
+  height:100%;
+  padding:1rem 2rem 1rem 2rem;
+  text-align: center;
+  color: variables.$text-color;
+  h1{
+    //background-color: black;
+    align-self:center;
+  }
+
+  &__inputField{
+    display:flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    //background-color: brown;
+    width:100%;
+    height:100%;
+
+
+    input[type="file"] {
+      display:none;
+    }
+
+    &__custom_file_upload {
+      @include mixins.button-style(variables.$button-background-color, variables.$button-hover-color);
+      width:75%;
+      max-width:300px;
+      //@include button-style;
+      //margin-top:1rem;
+      //display: inline-block;
+      //background-color: #007bff;
+      //color: variables.$text-color-second;
+      //border: 2px solid #e0e0e0;
+      //border-radius: 8px;
+      //padding: 0.5rem 1rem;
+      //font-size: 1rem;
+      //font-weight: 600;
+      //text-align: center;
+      //text-transform: uppercase;
+      //width: auto;
+      //cursor: pointer;
+      //transition: all 0.3s ease;
+      //
+      //&:hover {
+      //  background-color: #0056b3;
+      //  border-color: #ffffff;
+      //  color: variables.$text-color;
+      //}
+      //
+      //&:focus {
+      //  outline: none;
+      //  border-color: #80bdff;
+      //  box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+      //}
+      //
+      //&:active {
+      //  background-color: #004085;
+      //  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+      //}
+    }
+  }
+}

@@ -1,0 +1,61 @@
+version: '3.8'
+
+networks:
+  fabric-network:
+    driver: bridge
+    name: fabric-network
+    external: true
+
+services:
+  postgres:
+    networks:
+      - fabric-network
+    image: postgres:15
+    container_name: postgres
+    environment:
+      POSTGRES_DB: fabric_client_db
+      POSTGRES_USER: fabric_user
+      POSTGRES_PASSWORD: fabric_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U fabric_user -d fabric_client_db" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  logistics_api.furnituresmakers.com:
+    build: .
+    networks:
+      - fabric-network
+    container_name: logistics_api.furnituresmakers.com
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/fabric_client_db
+      SPRING_DATASOURCE_USERNAME: fabric_user
+      SPRING_DATASOURCE_PASSWORD: fabric_password
+      FABRIC_GATEWAY_ADDRESS: peer0.furnituresmakers.com:7051
+      FABRIC_MSP_ID: FurnituresMakers
+      FABRIC_CERT_PATH: /app/crypto/cert-tls.pem
+      FABRIC_KEY_PATH: /app/crypto/key-tls.pem
+      FABRIC_TLS_CERT_CA_PATH: /app/crypto/tls-ca-cert-tls.pem
+      FABRIC_TLS_CERT_PATH: /app/crypto/cert-tls.pem
+      FABRIC_TLS_KEY_PATH: /app/crypto/key-tls.pem
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command:
+      - ./wait-for-it.sh
+      - postgres:5432
+      - --timeout=30
+      - --
+      - java
+      - -jar
+      - /app/build/libs/client_api.jar
+
+volumes:
+  postgres_data:
+    name: "postgres_data_volume"
