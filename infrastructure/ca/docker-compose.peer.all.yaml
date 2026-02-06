@@ -55,7 +55,7 @@ services:
     volumes:
       - ./Furnitures_Makers/crypto/client/ca/peer0/msp:/etc/hyperledger/msp
       - ./_shared_certs:/etc/hyperledger/_shared_certs
-      - ./_config_files/chaincode/:/etc/hyperledger/chaincode/
+      - ../../chaincode/:/etc/hyperledger/chaincode/chaincode-java/
       #- /mnt/wsl/docker-desktop/shared-sockets/guest-services/docker.sock:/var/run/docker.sock
       - /var/run/docker.sock:/var/run/docker.sock
     privileged: true
@@ -133,7 +133,7 @@ services:
     volumes:
       - ./Wood_Supply/crypto/client/ca/peer0/msp:/etc/hyperledger/msp
       - ./_shared_certs:/etc/hyperledger/_shared_certs
-      - ./_config_files/chaincode/:/etc/hyperledger/chaincode/
+      - ../../chaincode/:/etc/hyperledger/chaincode/chaincode-java/
       #- /mnt/wsl/docker-desktop/shared-sockets/guest-services/docker.sock:/var/run/docker.sock
       - /var/run/docker.sock:/var/run/docker.sock
       #- ./_config_files/peer/:/etc/hyperledger/config
@@ -209,7 +209,7 @@ services:
     volumes:
       - ./Yacht_Sales/crypto/client/ca/peer0/msp:/etc/hyperledger/msp
       - ./_shared_certs:/etc/hyperledger/_shared_certs
-      - ./_config_files/chaincode/:/etc/hyperledger/chaincode/
+      - ../../chaincode/:/etc/hyperledger/chaincode/chaincode-java/
       #- /mnt/wsl/docker-desktop/shared-sockets/guest-services/docker.sock:/var/run/docker.sock
       - /var/run/docker.sock:/var/run/docker.sock
       #- ./_config_files/peer/:/etc/hyperledger/config

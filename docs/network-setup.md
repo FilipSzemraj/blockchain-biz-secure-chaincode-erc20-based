@@ -7,10 +7,11 @@ Step-by-step guide for deploying the Hyperledger Fabric network.
 ## Prerequisites
 
 - Docker & Docker Compose (20.10+)
-- Java JDK 11 (for chaincode) and JDK 21 (for backend APIs)
-- Gradle 8.x (or use the included wrapper)
+- Java JDK 21 (for backend APIs)
 - Node.js 18+ and npm (for frontend)
 - Python 3.8+ (for bank key generation)
+
+> **Note:** Java 11 and Gradle are only needed for [running chaincode tests locally](../README.md#testing). Chaincode is compiled inside Docker by Fabric's `fabric-javaenv` image.
 
 ## Step 1: Start Certificate Authorities
 
@@ -94,19 +95,18 @@ Starts additional peers (peer1, peer2) for each organization.
 
 Updates the channel configuration with anchor peer addresses for cross-organization gossip.
 
-## Step 10: Build and Install Chaincode
+## Step 10: Chaincode Installation (Automatic)
+
+Chaincode is installed automatically by `add-anchor-peers.sh` during anchor peer startup (Step 7). The peer Docker containers mount `chaincode/` from the repository root directly, and Fabric's `fabric-javaenv` image compiles the Java source inside Docker — no local JDK 11 or Gradle is needed.
+
+The script handles the full lifecycle: package → install → approve → commit → initialize.
+
+For reference, the manual equivalent of what the script does:
 
 ```bash
-cd ../../chaincode
-./gradlew shadowJar    # Produces chaincode.jar
-```
-
-Then use Fabric peer lifecycle commands to package, install, approve, and commit the chaincode on `yfw-channel`. Example:
-
-```bash
-# Package
+# Package (runs inside peer container, source mounted from chaincode/)
 peer lifecycle chaincode package basic.tar.gz \
-  --path . --lang java --label basic_1.0
+  --path ../chaincode/chaincode-java/ --lang java --label basic_1.0
 
 # Install on each organization's peer
 peer lifecycle chaincode install basic.tar.gz
@@ -117,7 +117,7 @@ peer lifecycle chaincode approveformyorg \
   --package-id <PACKAGE_ID> --sequence 1 \
   --tls --cafile $ORDERER_CA
 
-# Commit
+# Commit (furnituresmakers org triggers this)
 peer lifecycle chaincode commit \
   --channelID yfw-channel --name basic --version 1.0 \
   --sequence 1 --tls --cafile $ORDERER_CA \
@@ -174,4 +174,4 @@ docker-compose down
 - **CA not starting:** Check Docker logs with `docker-compose logs ca-furnituresmakers`
 - **Channel creation fails:** Ensure orderers are healthy: `./healthcheck-admin.sh`
 - **Peer can't join channel:** Verify TLS certs were shared: check `crypto/` directories
-- **Chaincode install fails:** Ensure `chaincode.jar` was built with `shadowJar` task
+- **Chaincode install fails:** Verify `chaincode/` contains `src/`, `build.gradle`, and `settings.gradle` — these are mounted into peer containers and built by `fabric-javaenv`

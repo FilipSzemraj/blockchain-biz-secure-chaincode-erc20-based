@@ -176,18 +176,11 @@ cd _scripts && ./run-anchor-peers.sh
 ./run-all-inner-peers.sh
 ```
 
-### 3. Build and Install Chaincode
+### 3. Chaincode Installation
 
-Chaincode is built automatically inside Docker during installation. You just need to stage the source:
+No manual build step is required. The peer Docker containers mount `chaincode/` directly and Fabric's `fabric-javaenv` image compiles the Java source automatically during `peer lifecycle chaincode install`.
 
-```bash
-# Stage chaincode source for peer containers
-mkdir -p infrastructure/ca/_config_files/chaincode/chaincode-java
-cp -r chaincode/src chaincode/build.gradle chaincode/settings.gradle \
-  infrastructure/ca/_config_files/chaincode/chaincode-java/
-```
-
-The anchor peer startup script (`add-anchor-peers.sh`) handles packaging, installing, approving, and committing the chaincode automatically. See [`docs/network-setup.md`](docs/network-setup.md) for the full sequence.
+The anchor peer startup script (`add-anchor-peers.sh`) handles the full lifecycle — packaging, installing, approving, and committing — automatically when anchor peers start. See [`docs/network-setup.md`](docs/network-setup.md) for the full sequence.
 
 ### 4. Start Backend Services
 
