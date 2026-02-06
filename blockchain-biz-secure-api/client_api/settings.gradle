@@ -1,2 +1,0 @@
-rootProject.name = 'app'
-include 'client_api', 'network_api'
