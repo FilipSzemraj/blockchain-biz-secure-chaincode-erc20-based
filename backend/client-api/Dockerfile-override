@@ -1,0 +1,89 @@
+## Stage 1: Build environment for Gradle and dependencies
+#FROM openjdk:21-slim AS builder
+#
+## Set working directory
+#WORKDIR /gradle-install
+#
+## Install required tools
+#RUN apt-get update && apt-get install -y curl unzip zip bash \
+#  && curl -s https://get.sdkman.io | bash \
+#  && bash -c "source /root/.sdkman/bin/sdkman-init.sh && sdk install gradle 8.11.1" \
+#  && cp -r /root/.sdkman/candidates/gradle /gradle-install/gradle
+#
+## Stage 2: Application container (reuse builder instead of pulling base image again)
+#FROM builder
+#
+## Set working directory
+#WORKDIR /app
+#
+## Ensure required tools are installed (they're already there from `builder` stage)
+#RUN apt-get update && apt-get install -y unzip zip bash
+#
+## Copy installed Gradle from the builder stage
+#COPY --from=builder /gradle-install/gradle /root/.sdkman/candidates/gradle
+#
+## Set Gradle in PATH
+#ENV PATH="/root/.sdkman/candidates/gradle/bin:$PATH"
+#
+## Copy Gradle configuration
+#COPY settings.gradle build.gradle /app/
+#
+## Copy Gradle wrapper configuration
+#COPY gradle /app/gradle
+#
+## Copy Gradle wrapper files
+#COPY gradlew gradlew.bat /app/
+#
+## Copy source code
+#COPY src /app/src
+#
+## Copy additional files
+#COPY wait-for-it.sh .
+#COPY crypto /app/crypto
+#
+## Expose application port
+#EXPOSE 8080
+#
+## Give execution permission and verify Gradle installation
+#RUN chmod +x /app/gradlew && ./gradlew --version
+#
+## Run the application
+#CMD ["./gradlew", "bootRun"]
+#
+
+# Użyj oficjalnego obrazu JDK jako bazy
+FROM openjdk:21-slim
+
+  # Ustaw katalog roboczy w kontenerze
+WORKDIR /app
+
+  # Instalacja wymaganych narzędzi: curl, zip, unzip
+RUN apt-get update && apt-get install -y curl unzip zip bash && \
+  curl -s https://get.sdkman.io | bash && \
+  bash -c "source /root/.sdkman/bin/sdkman-init.sh && sdk install gradle 8.11.1"
+
+  # Kopiowanie plików konfiguracyjnych Gradle
+COPY settings.gradle build.gradle /app/
+
+  # Kopiowanie folderu `gradle` (z konfiguracją wrappera)
+COPY gradle /app/gradle
+
+  # Kopiowanie pliku Gradle Wrapper
+COPY gradlew gradlew.bat /app/
+
+  # Kopiowanie kodu źródłowego
+COPY src /app/src
+
+COPY wait-for-it.sh .
+
+#COPY crypto /app/crypto
+
+EXPOSE 8083
+
+WORKDIR /app
+
+  # Nadanie uprawnień do uruchamiania Gradle Wrapper
+RUN chmod +x /app/gradlew && ./gradlew --version
+
+  # Komenda uruchamiająca aplikację
+CMD ["./gradlew", "bootRun"]

@@ -1,0 +1,4 @@
+include:
+  - ./docker-compose.furnituresmakers.yaml
+  - ./docker-compose.woodsupply.yaml
+  - ./docker-compose.yachtsales.yaml

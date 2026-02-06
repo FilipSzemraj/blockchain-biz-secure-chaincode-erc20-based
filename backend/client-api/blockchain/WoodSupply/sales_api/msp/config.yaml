@@ -1,0 +1,25 @@
+NodeOUs:
+  Enable: true
+  ClientOUIdentifier:
+    Certificate: cacerts/ca-cert.pem
+    OrganizationalUnitIdentifier: client
+  PeerOUIdentifier:
+    Certificate: cacerts/ca-cert.pem
+    OrganizationalUnitIdentifier: peer
+  AdminOUIdentifier:
+    Certificate: cacerts/ca-cert.pem
+    OrganizationalUnitIdentifier: admin
+  OrdererOUIdentifier:
+    Certificate: cacerts/ca-cert.pem
+    OrganizationalUnitIdentifier: orderer
+
+#Organizations:
+#  FurnituresMakers:
+#    MSPDir: /etc/hyperledger/msp       # Path to the FurnituresMakers MSP
+#    Certificate: cacerts/ca-cert.pem  # Certificate for FurnituresMakers
+#  WoodSupply:
+#    MSPDir: /etc/hyperledger/msp      # Path to the WoodSupply MSP
+#    Certificate: cacerts/woodsupply-ca-cert.pem  # Certificate for WoodSupply
+#  YachtSales:
+#    MSPDir: /etc/hyperledger/msp      # Path to the YachtSales MSP
+#    Certificate: cacerts/yachtsales-ca-cert.pem  # Certificate for YachtSales

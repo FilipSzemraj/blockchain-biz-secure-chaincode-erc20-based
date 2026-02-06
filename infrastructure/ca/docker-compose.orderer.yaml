@@ -1,0 +1,52 @@
+networks:
+  fabric-network:
+    driver: bridge
+    name: fabric-network
+
+services:
+  -com:
+    networks:
+      - fabric-network
+    build:
+      context: ./_config_files/orderer
+      dockerfile: Dockerfile
+    image: yfw-${ORDERER_GENERAL_LISTENADDRESS}:latest
+    hostname: $ORDERER_GENERAL_LISTENADDRESS
+    container_name: $ORDERER_GENERAL_LISTENADDRESS
+    environment:
+      - ORDERER_GENERAL_LISTENADDRESS=${ORDERER_GENERAL_LISTENADDRESS}
+      - ORDERER_GENERAL_LISTENPORT=${ORDERER_GENERAL_LISTENPORT}
+      - ORDERER_GENERAL_LOCALMSPID=${ORDERER_GENERAL_LOCALMSPID}
+      - ORDERER_ORG=${ORDERER_ORG}
+      - ORDERER_NAME=${ORDERER_NAME}
+      - FABRIC_CFG_PATH=/etc/hyperledger/config
+      - ORG_QUICK_NAME=${ORG_QUICK_NAME}
+      - ORDERER_ADMIN_CLIENTROOTCAS=${ORDERER_GENERAL_LISTENADDRESS}:9443
+      - ORDERER_ADMIN_TLS_CLIENTROOTCAS=/etc/hyperledger/_shared_certs/${ORG_QUICK_NAME}-msp/admin/admin/msp/tls/tlscacerts/tls-ca-cert.pem
+
+
+    ports:
+      - "${ORDERER_GENERAL_LISTENPORT}:${ORDERER_GENERAL_LISTENPORT}"
+      #- "${NEXT_PORT}:${NEXT_PORT}"
+    volumes:
+      - ./${ORDERER_ORG}/crypto/client/ca/${ORDERER_NAME}/msp:/etc/hyperledger/msp
+      - ./_shared_certs:/etc/hyperledger/_shared_certs
+      #- ./_config_files/peer/:/etc/hyperledger/config
+
+
+    command: >
+      bash -c "
+
+      
+
+      
+      
+      echo 'Starting orderer - ${ORDERER_NAME}';
+      ./start-orderer.sh;
+      find /etc/hyperledger/msp/ -type f -print | sed \"s|^\./||\";
+      echo 'CACERTS';
+      find /etc/hyperledger/_shared_certs/ -type f -print | sed \"s|^\./||\";
+
+      orderer start
+      "
+

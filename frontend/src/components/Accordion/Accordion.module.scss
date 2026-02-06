@@ -1,0 +1,57 @@
+@use '../../styles/variables';
+@use '../../styles/mixins';
+
+.container{
+  &__button{
+    @include mixins.button-style(variables.$button-background-color, variables.$button-hover-color);
+    width: 50%;
+    max-width: 125px;
+    text-align: center;
+    margin:0rem 1rem 1rem 0rem;
+  }
+
+  padding:0.5rem;
+
+  &__group{
+    transition: max-height 1s ease-in-out, color 0.25s ease-in-out, padding 0.5s ease;
+    font-weight: 700;
+    text-decoration: none;
+    margin-bottom: 0.5rem;
+    cursor:pointer;
+    &:hover{
+      text-decoration: underline;
+      color: #666;
+    }
+
+
+    &__category{
+      cursor:pointer;
+
+
+
+      transition: max-height 1s ease-in-out, padding 0.5s ease;
+
+      max-height: 0;
+      width:100%;
+      overflow: hidden;
+      //background-color: black;
+      li{
+        transition: color 0.25s ease-in-out;
+        //background-color: gray;
+        &:hover {
+          color: #666;
+        }
+      }
+
+      &__closed{
+        max-height: 0;
+      }
+      &__open{
+        max-height: 70vh;
+        padding:0 0 0 2rem;
+      }
+    }
+
+  }
+}
+

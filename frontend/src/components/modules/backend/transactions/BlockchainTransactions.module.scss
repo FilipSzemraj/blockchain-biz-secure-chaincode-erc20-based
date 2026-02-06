@@ -1,0 +1,61 @@
+@use '../../../../styles/variables';
+@use '../../../../styles/mixins';
+
+// ------------------------------------------------------------------
+// MODIFIER CLASSES (overrides ReusableWindow)
+// ------------------------------------------------------------------
+.blockchainWrapper{
+}
+.blockchainContent{
+  max-height:100vh;
+  height:fit-content;
+}
+// ------------------------------------------------------------------
+
+.wrapper {
+  @include mixins.wrapperShared;
+  &__addContainer {
+    @include mixins.wrapperShared__container;
+    &__open {
+      @include mixins.wrapperShared__container__open;
+    }
+  }
+}
+
+.container {
+  @include mixins.container;
+  box-shadow: none;
+  &__header {
+    @include mixins.container__header;
+    &__actions {
+      @include mixins.container__header__actions
+    }
+    &__filters {
+      @include mixins.container__header__filters;
+    }
+  }
+}
+
+.list{
+  @include mixins.container__list;
+  &__transactionItem{
+    @include mixins.container__transactionItem;
+    &:nth-last-child(1){
+      margin:0;
+    }
+  }
+}
+
+.error{
+  @include mixins.error;
+}
+.test{
+
+}
+
+
+
+
+
+
+

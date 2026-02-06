@@ -1,0 +1,134 @@
+networks:
+  fabric-network:
+    driver: bridge
+    name: fabric-network
+
+services:
+  orderer0.furnituresmakers.com:
+    networks:
+      - fabric-network
+    build:
+      context: ./_config_files/orderer
+      dockerfile: Dockerfile
+    image: yfw-orderer0.furnituresmakers.com:latest
+    hostname: orderer0.furnituresmakers.com
+    container_name: orderer0.furnituresmakers.com
+    environment:
+      - ORDERER_GENERAL_LISTENADDRESS=orderer0.furnituresmakers.com
+      - ORDERER_GENERAL_LISTENPORT=7050
+      - ORDERER_GENERAL_LOCALMSPID=FurnituresMakers
+      - ORDERER_ORG=Furnitures_Makers
+      - ORDERER_NAME=orderer0
+      - FABRIC_CFG_PATH=/etc/hyperledger/config
+      - ORG_QUICK_NAME=furnituresmakers
+      - ORDERER_ADMIN_TLS_CLIENTROOTCAS=/etc/hyperledger/_shared_certs/furnituresmakers-msp/admin/admin/msp/tls/tlscacerts/tls-ca-cert.pem
+      - ORDERER_ADMIN_LISTENADDRESS=0.0.0.0:9443
+
+      #- ORDERER_ADMIN_CLIENTROOTCAS=${ORDERER_GENERAL_LISTENADDRESS}:9443
+
+
+    ports:
+      - "7050:7050"
+      #- "${NEXT_PORT}:${NEXT_PORT}"
+    volumes:
+      - ./Furnitures_Makers/crypto/client/ca/orderer0/msp:/etc/hyperledger/msp
+      - ./_shared_certs:/etc/hyperledger/_shared_certs
+      #- ./_config_files/peer/:/etc/hyperledger/config
+
+
+    command: >
+      bash -c "
+      echo 'Starting orderer - orderer0';
+      ./start-orderer.sh;
+      find /etc/hyperledger/msp/ -type f -print | sed \"s|^\./||\";
+      echo 'CACERTS';
+      find /etc/hyperledger/_shared_certs/ -type f -print | sed \"s|^\./||\";
+
+      orderer start
+      "
+
+  orderer0.woodsupply.com:
+    networks:
+      - fabric-network
+    build:
+      context: ./_config_files/orderer
+      dockerfile: Dockerfile
+    image: yfw-orderer0.woodsupply.com:latest
+    hostname: orderer0.woodsupply.com
+    container_name: orderer0.woodsupply.com
+    environment:
+      - ORDERER_GENERAL_LISTENADDRESS=orderer0.woodsupply.com
+      - ORDERER_GENERAL_LISTENPORT=8050
+      - ORDERER_GENERAL_LOCALMSPID=WoodSupply
+      - ORDERER_ORG=Wood_Supply
+      - ORDERER_NAME=orderer0
+      - FABRIC_CFG_PATH=/etc/hyperledger/config
+      - ORG_QUICK_NAME=woodsupply
+      - ORDERER_ADMIN_TLS_CLIENTROOTCAS=/etc/hyperledger/_shared_certs/woodsupply-msp/admin/admin/msp/tls/tlscacerts/tls-ca-cert.pem
+      - ORDERER_ADMIN_LISTENADDRESS=0.0.0.0:9443
+
+      #- ORDERER_ADMIN_CLIENTROOTCAS=${ORDERER_GENERAL_LISTENADDRESS}:9443
+
+
+    ports:
+      - "8050:8050"
+      #- "${NEXT_PORT}:${NEXT_PORT}"
+    volumes:
+      - ./Wood_Supply/crypto/client/ca/orderer0/msp:/etc/hyperledger/msp
+      - ./_shared_certs:/etc/hyperledger/_shared_certs
+      #- ./_config_files/peer/:/etc/hyperledger/config
+
+
+    command: >
+      bash -c "
+      echo 'Starting orderer - orderer0';
+      ./start-orderer.sh;
+      find /etc/hyperledger/msp/ -type f -print | sed \"s|^\./||\";
+      echo 'CACERTS';
+      find /etc/hyperledger/_shared_certs/ -type f -print | sed \"s|^\./||\";
+
+      orderer start
+      "
+
+  orderer0.yachtsales.com:
+    networks:
+      - fabric-network
+    build:
+      context: ./_config_files/orderer
+      dockerfile: Dockerfile
+    image: yfw-orderer0.yachtsales.com:latest
+    hostname: orderer0.yachtsales.com
+    container_name: orderer0.yachtsales.com
+    environment:
+      - ORDERER_GENERAL_LISTENADDRESS=orderer0.yachtsales.com
+      - ORDERER_GENERAL_LISTENPORT=9050
+      - ORDERER_GENERAL_LOCALMSPID=YachtSales
+      - ORDERER_ORG=Yacht_Sales
+      - ORDERER_NAME=orderer0
+      - FABRIC_CFG_PATH=/etc/hyperledger/config
+      - ORG_QUICK_NAME=yachtsales
+      - ORDERER_ADMIN_TLS_CLIENTROOTCAS=/etc/hyperledger/_shared_certs/yachtsales-msp/admin/admin/msp/tls/tlscacerts/tls-ca-cert.pem
+      - ORDERER_ADMIN_LISTENADDRESS=0.0.0.0:9443
+      #- ORDERER_ADMIN_CLIENTROOTCAS=${ORDERER_GENERAL_LISTENADDRESS}:9443
+
+
+    ports:
+      - "9050:9050"
+      #- "${NEXT_PORT}:${NEXT_PORT}"
+    volumes:
+      - ./Yacht_Sales/crypto/client/ca/orderer0/msp:/etc/hyperledger/msp
+      - ./_shared_certs:/etc/hyperledger/_shared_certs
+      #- ./_config_files/peer/:/etc/hyperledger/config
+
+
+    command: >
+      bash -c "
+      echo 'Starting orderer - orderer0';
+      ./start-orderer.sh;
+      find /etc/hyperledger/msp/ -type f -print | sed \"s|^\./||\";
+      echo 'CACERTS';
+      find /etc/hyperledger/_shared_certs/ -type f -print | sed \"s|^\./||\";
+
+      orderer start
+      "
+

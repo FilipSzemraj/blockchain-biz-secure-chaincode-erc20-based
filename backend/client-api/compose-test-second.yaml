@@ -1,0 +1,74 @@
+networks:
+  fabric-network:
+    driver: bridge
+    name: fabric-network
+    external: true
+
+services:
+  postgres-next:
+    networks:
+      - fabric-network
+    image: postgres:15
+    container_name: postgres-next
+    environment:
+      POSTGRES_DB: fabric_client_db_next
+      POSTGRES_USER: fabric_user_next
+      POSTGRES_PASSWORD: fabric_password
+    ports:
+      - "5433:5433"
+    volumes:
+      - ./postgres_data_next:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U fabric_user_next -d fabric_client_db_next -p 5433" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    command: ["postgres", "-p", "5433"]
+
+
+  production_api.woodsupply.com:
+    build:
+      context: .
+      dockerfile: Dockerfile-override
+    networks:
+      - fabric-network
+    container_name: production_api.woodsupply.com
+    volumes:
+      - ./src:/app/src
+      - ./build.gradle:/app/build.gradle
+      - ./gradle:/app/gradle
+      - ./target:/app/target
+      - ./crypto_second:/app/crypto
+      #- ./build_production:/app/build
+    environment:
+      SPRING_DEVTOOLS_REMOTE_SECRET: "my-secret"
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-next:5433/fabric_client_db_next
+      SPRING_DATASOURCE_USERNAME: fabric_user_next
+      SPRING_DATASOURCE_PASSWORD: fabric_password
+      FABRIC_GATEWAY_ADDRESS: peer0.woodsupply.com:8051
+      FABRIC_MSP_ID: WoodSupply
+      FABRIC_CERT_PATH: /app/crypto/cert.pem
+      FABRIC_KEY_PATH: /app/crypto/key.pem
+      FABRIC_TLS_CERT_CA_PATH: /app/crypto/tls-ca-cert.pem
+      FABRIC_TLS_CERT_PATH: /app/crypto/cert-tls.pem
+      FABRIC_TLS_KEY_PATH: /app/crypto/key-tls.pem
+      SERVER_PORT: 8083
+    ports:
+      - "8083:8083"
+    depends_on:
+      postgres-next:
+        condition: service_healthy
+    command:
+      - ./wait-for-it.sh
+      - postgres-next:5433
+      - --timeout=30
+      - --
+      #- java
+      #- -jar
+      #- /app/build/libs/client_api.jar
+      - /app/gradlew
+      - bootRun
+
+volumes:
+  postgres_data_next:
+    name: "postgres_data_volume_next"

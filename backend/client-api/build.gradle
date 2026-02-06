@@ -1,0 +1,71 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.4.1'
+	id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.blockchainbiz.app'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-hateoas'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'jakarta.persistence:jakarta.persistence-api:3.1.0'
+	implementation 'org.hibernate.orm:hibernate-core:6.2.5.Final'
+	implementation 'io.projectreactor:reactor-core:3.7.2'
+	implementation 'org.hyperledger.fabric:fabric-gateway:1.7.0'
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+	implementation 'com.owlike:genson:1.6'
+	implementation platform('com.google.protobuf:protobuf-bom:4.29.2')
+	implementation platform('io.grpc:grpc-bom:1.69.0')
+	compileOnly 'org.projectlombok:lombok'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.security:spring-security-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+
+	compileOnly 'io.grpc:grpc-api'
+	runtimeOnly 'io.grpc:grpc-netty-shaded'
+	testImplementation platform('org.junit:junit-bom:5.9.1')
+	testImplementation 'org.junit.jupiter:junit-jupiter'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
+
+
+	runtimeOnly 'org.postgresql:postgresql:42.6.0'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+tasks.withType(JavaCompile) {
+	options.compilerArgs += "-parameters"
+}
+bootJar {
+	archiveFileName = 'client_api.jar' // If you have this set explicitly
+	// or check archiveBaseName
+	archiveBaseName = 'client_api'
+	archiveVersion = '' // Remove version if you want plain name
+}

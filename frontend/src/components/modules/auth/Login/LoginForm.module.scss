@@ -1,0 +1,51 @@
+@use '../../../../styles/variables';
+@use '../../../../styles/mixins';
+
+
+.container {
+  height:100vh;
+  width:100vw;
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  align-content: center;
+  background: linear-gradient(135deg, #4e4e50, #2c2c34);
+
+  &__form {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: variables.$padding-default;
+    border: 1px solid #ddd;
+    border-radius: variables.$border-radius;
+    background-color: #c8c8c8c8;
+    box-shadow: 0 1rem 2rem rgba(255, 255, 255, 0.4);
+    transform: translateY(-100%);
+
+    &__pair {
+      margin-bottom: 20px;
+      margin-left: 0;
+      margin-right: 0;
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: variables.$dark-background;
+      }
+
+      input {
+        @include mixins.input-style;
+      }
+    }
+
+    &__button {
+      @include mixins.button-style(variables.$button-background-color, variables.$button-hover-color);
+      width: 100%;
+      text-align: center;
+    }
+
+    &__error {
+      @include mixins.error-style;
+    }
+  }
+}

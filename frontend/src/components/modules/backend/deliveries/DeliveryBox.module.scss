@@ -1,0 +1,98 @@
+@use '../../../../styles/variables';
+@use '../../../../styles/mixins';
+
+// ------------------------------------------------------------------
+// MODIFIER CLASSES (overrides ReusableWindow)
+// ------------------------------------------------------------------
+.deliveryWrapper {
+  /* Additional styling if needed */
+}
+.deliveryContent {
+  max-height:100vh;
+  height:fit-content;
+  //height: 30vh !important; /* Example override */
+}
+// ------------------------------------------------------------------
+
+
+.button {
+  @include mixins.button-style(variables.$button-background-color, variables.$button-hover-color);
+  max-width: 7.5vw;
+  max-height: 4rem;
+  text-align: center;
+}
+
+.buttonOrder {
+  background-color: transparent;
+  border: none;
+  padding: 0.5rem;
+  font-size: 1.25rem;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+
+  &:hover {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.wrapper {
+  @include mixins.wrapperShared;
+  &__addContainer {
+    @include mixins.wrapperShared__container;
+    &__open {
+      @include mixins.wrapperShared__container__open;
+    }
+  }
+}
+
+.container{
+  @include mixins.container;
+}
+
+.list{
+  @include mixins.container__list;
+  grid-column: 1 / span 3;
+  &__transactionItem{
+    @include mixins.container__transactionItem;
+  }
+}
+
+.container {
+  @include mixins.container;
+  &__header {
+    @include mixins.container__header;
+    &__actions {
+      @include mixins.container__header__actions
+    }
+    &__filters {
+      @include mixins.container__header__filters;
+    }
+  }
+}
+
+/* Partial Deliveries */
+.partialDeliveries {
+  margin-top: 1rem;
+
+  h4 {
+    margin-bottom: 0.5rem;
+  }
+}
+
+.partialDeliveryCard {
+  //background: variables.$card-background;
+  border-radius: 4px;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+
+  p {
+    margin: 0;
+  }
+}
+
