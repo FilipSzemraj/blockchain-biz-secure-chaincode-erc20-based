@@ -36,9 +36,6 @@ java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(11)
     }
-    repositories{
-        jcenter()
-    }
 }
 
 application {
@@ -80,8 +77,6 @@ test {
         events "passed", "skipped", "failed"
     }
 }
-
-mainClassName = 'org.hyperledger.fabric.contract.ContractRouter'
 
 shadowJar {
     archiveBaseName = 'chaincode'

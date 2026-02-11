@@ -38,6 +38,8 @@ Thumbs.db
 
 # === Docker ===
 docker-compose.override.yml
+postgres_data/
+postgres_data_next/
 
 # === Logs ===
 *.log
@@ -45,3 +47,38 @@ logi.txt
 
 # === Claude Code ===
 .claude/
+
+# === Hyperledger Fabric Infrastructure ===
+# Generated crypto material (cleared by clearing-cert.sh)
+infrastructure/ca/*/crypto/client/
+infrastructure/ca/*/crypto/server/
+infrastructure/ca/_shared_certs/
+
+# Genesis block and channel artifacts
+infrastructure/ca/_config_files/configtx/output/
+
+# Temporary files
+infrastructure/ca/_temp_configs/
+
+# Generated environment files (written by share-certs.sh and run scripts)
+infrastructure/ca/*/_env/env
+infrastructure/ca/_config_files/**/*.env
+
+# Scripts copied from _scripts/ to build contexts (copied by run-*.sh helpers)
+infrastructure/ca/_config_files/configtx/creating-channel.sh
+infrastructure/ca/_config_files/configtx/creating-channel-with-retry.sh
+infrastructure/ca/_config_files/configtx/healthcheck-admin.sh
+infrastructure/ca/_config_files/configtx/healthcheck-admin-smart.sh
+infrastructure/ca/_config_files/peer/start-anchor-peer.sh
+infrastructure/ca/_config_files/peer/add-anchor-peers.sh
+infrastructure/ca/_config_files/peer/start-peer.sh
+infrastructure/ca/_config_files/peer/fetch-block-as-peer.sh
+infrastructure/ca/_config_files/orderer/start-orderer.sh
+
+# Backup files and crash dumps
+**/Dockerfile\ copy
+**/*.stackdump
+
+# Exception: Keep fabric-ca-server-config.yaml files (they're preserved by clearing-cert.sh)
+!infrastructure/ca/*/crypto/server/ca/fabric-ca-server-config.yaml
+!infrastructure/ca/*/crypto/server/tls-ca/fabric-ca-server-config.yaml

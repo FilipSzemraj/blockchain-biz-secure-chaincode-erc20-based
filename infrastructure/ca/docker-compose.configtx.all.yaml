@@ -29,17 +29,19 @@ services:
       - ./_shared_certs/:/etc/hyperledger/_shared_certs/
       - ./Furnitures_Makers/crypto/client/ca:/etc/hyperledger/clients-certs/
     healthcheck:
-      test: ["CMD", "/etc/hyperledger/scripts/healthcheck-admin.sh"]
+      test: ["CMD", "/etc/hyperledger/scripts/healthcheck-admin-smart.sh"]
       interval: 5s
       timeout: 5s
-      retries: 3
+      retries: 5
+      start_period: 10s
     working_dir: /etc/hyperledger/scripts
     command: >
       bash -c "
-      echo 'starting container with fabric-tools, for creating channel.';
+      echo 'Starting configtx admin container (with retry logic)';
       ls -l /etc/hyperledger/scripts/;
-      pwd;
-      ./creating-channel.sh &
+      ./creating-channel-with-retry.sh;
+      echo 'Genesis block creation and channel join completed (or timed out waiting for orderer)';
+      echo 'Container will stay alive for inspection. Check logs above for status.';
       exec bash;
       "
 
@@ -64,13 +66,19 @@ services:
     depends_on:
       admin.furnituresmakers.com:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD", "/etc/hyperledger/scripts/healthcheck-admin-smart.sh"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
     working_dir: /etc/hyperledger/scripts
     command: >
       bash -c "
-      echo 'starting container with fabric-tools, for creating channel.';
-      ls -l /etc/hyperledger/scripts/creating-channel.sh || (echo 'File creating-channel.sh not found!' && exit 1);
-      pwd;
-      ./creating-channel.sh &
+      echo 'Starting configtx admin container (with retry logic)';
+      ls -l /etc/hyperledger/scripts/creating-channel-with-retry.sh || (echo 'File not found!' && exit 1);
+      ./creating-channel-with-retry.sh;
+      echo 'Channel join completed (or timed out waiting for orderer)';
       exec bash;
       "
 
@@ -95,12 +103,18 @@ services:
     depends_on:
       admin.furnituresmakers.com:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD", "/etc/hyperledger/scripts/healthcheck-admin-smart.sh"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
     working_dir: /etc/hyperledger/scripts
     command: >
       bash -c "
-      echo 'starting container with fabric-tools, for creating channel.';
-      ls -l /etc/hyperledger/scripts/creating-channel.sh || (echo 'File creating-channel.sh not found!' && exit 1);
-      pwd;
-      ./creating-channel.sh &
+      echo 'Starting configtx admin container (with retry logic)';
+      ls -l /etc/hyperledger/scripts/creating-channel-with-retry.sh || (echo 'File not found!' && exit 1);
+      ./creating-channel-with-retry.sh;
+      echo 'Channel join completed (or timed out waiting for orderer)';
       exec bash;
       "

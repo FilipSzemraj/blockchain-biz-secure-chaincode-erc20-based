@@ -26,16 +26,38 @@ export FABRIC_CA_CLIENT_CANAME=$HOSTNAME-ca
 
 fabric-ca-client enroll -u https://admin:adminpw@localhost:$FABRIC_CA_SERVER_PORT \
   --caname $FABRIC_CA_CLIENT_CANAME \
-  --tls.certfiles /etc/hyperledger/server/tls-ca/msp/cacerts/ca-cert.pem \
+  --tls.certfiles $TLS_CA_CERT \
   --tls.client.certfile /etc/hyperledger/client/tls-ca/admin/msp/signcerts/cert.pem \
   --tls.client.keyfile /etc/hyperledger/client/tls-ca/admin/msp/keystore/key.pem \
   --mspdir /etc/hyperledger/client/ca/admin/msp \
   --csr.hosts "admin.$HOSTNAME.com,localhost,admin-$HOSTNAME-com" \
   --csr.cn admin \
-  --csr.names "C=PL,ST=Swietokrzyskie,L=Kielce,O=${ORG_NAME},OU=admin" \
-  ----enrollment.attrs "hf.Type"
-  #--csr.names "C=PL,ST=Swietokrzyskie,L=Kielce,O=${ORG_NAME},OU=admin"
+  --csr.names "C=PL,ST=Swietokrzyskie,L=Kielce,O=${ORG_NAME},OU=admin"
 
+
+mv /etc/hyperledger/client/ca/admin/msp/keystore/* /etc/hyperledger/client/ca/admin/msp/keystore/key.pem
+
+# Fix: bootstrap admin defaults to type=client. Change to admin for NodeOU.
+echo "Modifying admin identity type from client to admin..."
+fabric-ca-client identity modify admin --type admin \
+  -u https://localhost:$FABRIC_CA_SERVER_PORT \
+  --caname $FABRIC_CA_CLIENT_CANAME \
+  --tls.certfiles $TLS_CA_CERT \
+  --mspdir /etc/hyperledger/client/ca/admin/msp
+
+# Re-enroll admin to get cert with type=admin
+echo "Re-enrolling admin with updated type..."
+rm -rf /etc/hyperledger/client/ca/admin/msp/signcerts /etc/hyperledger/client/ca/admin/msp/keystore
+
+fabric-ca-client enroll -u https://admin:adminpw@localhost:$FABRIC_CA_SERVER_PORT \
+  --caname $FABRIC_CA_CLIENT_CANAME \
+  --tls.certfiles $TLS_CA_CERT \
+  --tls.client.certfile /etc/hyperledger/client/tls-ca/admin/msp/signcerts/cert.pem \
+  --tls.client.keyfile /etc/hyperledger/client/tls-ca/admin/msp/keystore/key.pem \
+  --mspdir /etc/hyperledger/client/ca/admin/msp \
+  --csr.hosts "admin.$HOSTNAME.com,localhost,admin-$HOSTNAME-com" \
+  --csr.cn admin \
+  --csr.names "C=PL,ST=Swietokrzyskie,L=Kielce,O=${ORG_NAME},OU=admin"
 
 mv /etc/hyperledger/client/ca/admin/msp/keystore/* /etc/hyperledger/client/ca/admin/msp/keystore/key.pem
 
@@ -61,6 +83,18 @@ for ((i=1; i<${#USERS[@]}; i++)); do
 
    echo CLIENT_KEY
    echo $CLIENT_KEY
+
+   # Rejestracja użytkownika w org CA (jako admin) - pomijamy admin bo jest bootstrapem
+   if [[ "$USERNAME" != "admin" ]]; then
+     fabric-ca-client register \
+       -u https://localhost:$FABRIC_CA_SERVER_PORT \
+       --caname $FABRIC_CA_CLIENT_CANAME \
+       --id.name "$USERNAME" \
+       --id.secret "$PASSWORD" \
+       --id.type "$ROLE" \
+       --tls.certfiles "$TLS_CA_CERT" \
+       --mspdir /etc/hyperledger/client/ca/admin/msp
+   fi
 
    # Wywołanie komendy enroll
    CMD="fabric-ca-client enroll -u https://$USERNAME:$PASSWORD@localhost:$FABRIC_CA_SERVER_PORT \
@@ -132,4 +166,4 @@ done
 
 
 
-./share-certs.sh
+bash share-certs.sh

@@ -1,5 +1,16 @@
 FROM hyperledger/fabric-peer:2.5
 
+# Install Java 11 for chaincode builds (fabric-peer:2.5 comes with Java 25)
+RUN apt-get update && \
+    apt-get install -y openjdk-11-jdk && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Configure Java 11 as the default for chaincode builds
+# Keep Java 25 for peer operations, but use Java 11 for Gradle
+ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+ENV PATH=$JAVA_HOME/bin:$PATH
+
 RUN mkdir -p /etc/hyperledger/scripts
 RUN mkdir -p /etc/hyperledger/config
 
@@ -11,7 +22,7 @@ COPY fetch-block-as-peer.sh /etc/hyperledger/scripts/fetch-block-as-peer.sh
 
 COPY config.yaml /etc/hyperledger/config/
 
-
+RUN chmod +x /etc/hyperledger/scripts/*.sh
 
 WORKDIR /etc/hyperledger/scripts
 

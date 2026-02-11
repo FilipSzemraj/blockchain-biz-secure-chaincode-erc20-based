@@ -15,7 +15,7 @@ source ./users_array.sh "$HOSTNAME"
 
 
 mkdir -p /etc/hyperledger/client/tls_root_cert
-cp -v /etc/hyperledger/server/tls-ca/msp/cacerts/ca-cert.pem /etc/hyperledger/client/tls_root_cert/tls-ca-cert.pem
+cp -v /etc/hyperledger/server/tls-ca/ca-cert.pem /etc/hyperledger/client/tls_root_cert/tls-ca-cert.pem
 
 export FABRIC_CA_CLIENT_HOME=/etc/hyperledger/client
 echo FABRIC_CA_CLIENT_HOME
@@ -41,6 +41,16 @@ for USER in "${USERS[@]}"; do
   # CSR hosts
   HOSTS="$USERNAME.$HOSTNAME.com,localhost,$USERNAME-$HOSTNAME-com"
 
+  # Rejestracja użytkownika w TLS CA (jako tlsadmin)
+  fabric-ca-client register \
+    -u https://localhost:$FABRIC_CA_SERVER_PORT \
+    --caname tls-ca \
+    --id.name "$USERNAME" \
+    --id.secret "$PASSWORD" \
+    --id.type client \
+    --tls.certfiles "$TLS_CA_CERT" \
+    --mspdir tls-ca/tlsadmin/msp
+
   # Wywołanie komendy enroll
   fabric-ca-client enroll --enrollment.profile tls \
     -u https://$USERNAME:$PASSWORD@localhost:$FABRIC_CA_SERVER_PORT \
@@ -50,7 +60,6 @@ for USER in "${USERS[@]}"; do
     --mspdir "$MSP_DIR" \
     --csr.cn "$USERNAME" \
     --csr.names "C=PL,ST=Swietokrzyskie,L=Kielce,O=${ORG_NAME}"
-    #--csr.names "C=PL,ST=Swietokrzyskie,L=Kielce,O=${ORG_NAME},OU=${ROLE}"
 
 
   # Zmiana nazwy klucza
@@ -74,6 +83,12 @@ mkdir -p /etc/hyperledger/server/ca/tls/
 
 cp /etc/hyperledger/client/tls-ca/$HOSTNAME-ca/msp/signcerts/cert.pem /etc/hyperledger/server/ca/tls/cert.pem
 cp /etc/hyperledger/client/tls-ca/$HOSTNAME-ca/msp/keystore/* /etc/hyperledger/server/ca/tls/key.pem
+
+# Validate TLS cert was created
+if [ ! -s /etc/hyperledger/server/ca/tls/cert.pem ]; then
+  echo "ERROR: TLS cert for $HOSTNAME-ca is empty or missing!"
+  exit 1
+fi
 
 #mv /etc/hyperledger/client/tls-ca/admin/msp/keystore/* /etc/hyperledger/client/tls-ca/admin/msp/keystore/key.pem
 

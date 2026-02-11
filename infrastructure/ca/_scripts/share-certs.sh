@@ -1,8 +1,26 @@
 TLS_CA_CERT="/etc/hyperledger/client/tls_root_cert/tls-ca-cert.pem"
 
-CA_CERT="/etc/hyperledger/server/ca/msp/cacerts/ca-cert.pem"
+CA_CERT="/etc/hyperledger/server/ca/ca-cert.pem"
 
+# Fabric CA server does not auto-generate NodeOU config.yaml - create it
 CONFIG_PATH="/etc/hyperledger/server/ca/msp/config.yaml"
+mkdir -p /etc/hyperledger/server/ca/msp
+cat > "$CONFIG_PATH" <<'NODEOU'
+NodeOUs:
+  Enable: true
+  ClientOUIdentifier:
+    Certificate: cacerts/ca-cert.pem
+    OrganizationalUnitIdentifier: client
+  PeerOUIdentifier:
+    Certificate: cacerts/ca-cert.pem
+    OrganizationalUnitIdentifier: peer
+  AdminOUIdentifier:
+    Certificate: cacerts/ca-cert.pem
+    OrganizationalUnitIdentifier: admin
+  OrdererOUIdentifier:
+    Certificate: cacerts/ca-cert.pem
+    OrganizationalUnitIdentifier: orderer
+NODEOU
 
 PATHS_TO_ORDERER_MSP=($(find /etc/hyperledger/client -type d -path "*/ca/orderer*/msp"))
 PATHS_TO_ADMIN_MSP=($(find /etc/hyperledger/client -type d -path "*/ca/admin*/msp"))
@@ -51,10 +69,6 @@ PATHS=$(find /etc/_shared_certs -type f -path "*/tlscacerts/*" ! -path "*$HOSTNA
 echo "FABRIC_CA_SERVER_TLS_CLIENTAUTH_CERTFILES=$PATHS" > /etc/_env/env
 echo "FABRIC_CA_SERVER_HOME=/etc/hyperledger/server/ca" >> /etc/_env/env
 echo "FABRIC_CA_SERVER_TLS_CLIENTAUTH_TYPE=RequireAndVerifyClientCert" >> /etc/_env/env
-
-
-
-
 
 echo "Restarting existing Fabric CA server..."
 pkill -f "fabric-ca-server" || echo "No running Fabric CA server found."

@@ -9,7 +9,7 @@ COPY start-orderer.sh /etc/hyperledger/scripts/start-orderer.sh
 
 COPY config.yaml /etc/hyperledger/config/
 
-
+RUN chmod +x /etc/hyperledger/scripts/*.sh
 
 WORKDIR /etc/hyperledger/scripts
 

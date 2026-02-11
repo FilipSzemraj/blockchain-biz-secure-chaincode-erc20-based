@@ -48,13 +48,13 @@ cp -f start-orderer.sh ../_config_files/orderer/start-orderer.sh
 
 echo "Copied start-orderer.sh to ../_config_files/orderer/start-orderer.sh"
 
-docker-compose --project-name "${ORDERER_NAME}-${ORG_QUICK_NAME}" --env-file ../_config_files/orderer/.env -f "../docker-compose.orderer.yaml" down
+docker compose --project-name "${ORDERER_NAME}-${ORG_QUICK_NAME}" --env-file ../_config_files/orderer/.env -f "../docker-compose.orderer.yaml" down
 
-docker-compose --project-name "${ORDERER_NAME}-${ORG_QUICK_NAME}" --env-file ../_config_files/orderer/.env -f "../docker-compose.orderer.yaml" config
+docker compose --project-name "${ORDERER_NAME}-${ORG_QUICK_NAME}" --env-file ../_config_files/orderer/.env -f "../docker-compose.orderer.yaml" config
 
-docker-compose --project-name "${ORDERER_NAME}-${ORG_QUICK_NAME}" --env-file ../_config_files/orderer/.env -f "../docker-compose.orderer.yaml" build
+docker compose --project-name "${ORDERER_NAME}-${ORG_QUICK_NAME}" --env-file ../_config_files/orderer/.env -f "../docker-compose.orderer.yaml" build
 
 
-docker-compose --project-name "${ORDERER_NAME}-${ORG_QUICK_NAME}" --env-file ../_config_files/orderer/.${ORDERER_GENERAL_LISTENADDRESS}.env -f "../docker-compose.orderer.yaml" up
+docker compose --project-name "${ORDERER_NAME}-${ORG_QUICK_NAME}" --env-file ../_config_files/orderer/.${ORDERER_GENERAL_LISTENADDRESS}.env -f "../docker-compose.orderer.yaml" up
 
 #winpty docker exec -it ${ORDERER_GENERAL_LISTENADDRESS} bash -c "echo 'Taking control of orderer...'; bash"
