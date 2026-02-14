@@ -563,15 +563,6 @@ Expected output for each orderer should include:
 
 If any orderer shows `"channels": null`, it means the channel join failed or is still in progress.
 
-**If an orderer failed to join (shows `"channels": null`):**
-
-This commonly happens due to timing issues during network startup. The admin container's `osnadmin channel join` command has a **~5 minute default timeout** when the orderer isn't ready, which can make it appear "stuck".
-
-**Understanding the timing issue:**
-- Admin containers start and immediately try to join orderers to the channel
-- If an orderer isn't fully ready (TLS not initialized, admin API not listening), `osnadmin` hangs for ~5 minutes before timing out
-- The retry logic (30 attempts × 5s = 150s) catches this, but the first attempt's long timeout can delay the whole process
-
 **To manually join an orderer:**
 
 ```bash
@@ -636,7 +627,7 @@ docker compose -f docker-compose.configtx.all.yaml down
 ```
 Note: You can leave them running - they're idle after completing their job.
 
-### Step 8: Start anchor peers (peer0 for each org)
+### Step 5: Start anchor peers (peer0 for each org)
 
 ```bash
 docker compose -f docker-compose.peer.all.yaml up --build -d
@@ -662,6 +653,71 @@ Check peer logs for success:
 docker logs peer0.furnituresmakers.com 2>&1 | tail -40
 ```
 Look for: "Joining channel..." and "Chaincode successfully installed and approved."
+
+#### Chaincode build: cold boot problem & pre-build approach
+
+**The problem:** During `peer lifecycle chaincode install`, the peer delegates compilation to a temporary `fabric-javaenv` Docker container. This container runs `gradle build` from scratch — downloading all dependencies from Maven Central every time. With `installTimeout: 300s` in core.yaml, this often times out on slower machines or networks.
+
+**Is it always a cold boot?**
+
+No. There are scenarios where the build is fast or instant:
+
+| Scenario | Build time | Why |
+|----------|-----------|-----|
+| **First install after teardown** | 5-10 min (cold) | `fabric-javaenv` container has no Gradle cache, downloads everything |
+| **Re-install same package (no teardown)** | ~instant | Docker has cached `dev-peer0.<org>-basic_1.0-<hash>` image from previous successful install — skips build entirely |
+| **`stop-network.sh` → restart** | ~instant | Chaincode stays installed in preserved containers, no reinstall needed |
+| **Install after `docker image prune`** | 5-10 min (cold) | Prune removes `dev-peer0.*` cached images, forces rebuild |
+| **Source code changed, reinstall** | 5-10 min (cold) | New package hash → no matching cached image |
+
+The cached `dev-peer0.*` images are the key. After a **successful** first install, Docker saves the built chaincode as an image like `dev-peer0.furnituresmakers.com-basic_1.0-abc123def456`. On subsequent installs of the same package, the peer finds this image and skips the build. But these images are fragile — `docker compose down -v`, `docker system prune`, or any full teardown removes them.
+
+**Pre-build approach with Dockerfile.tools (recommended for development):**
+
+The `chaincode/Dockerfile.tools` and `chaincode/docker-compose.tools.yaml` provide a pre-build environment that solves the cold boot problem by caching Gradle dependencies in a Docker volume.
+
+```bash
+# From project root — build chaincode before starting peers
+cd chaincode/
+docker compose -f docker-compose.tools.yaml run --rm chaincode-tools build
+```
+
+How Dockerfile.tools is structured for caching:
+```dockerfile
+# Layer 1: Gradle wrapper (rarely changes → cached)
+COPY gradlew gradlew.bat ./
+COPY gradle/ gradle/
+
+# Layer 2: Dependencies download (cached unless build.gradle changes)
+COPY build.gradle settings.gradle ./
+RUN ./gradlew dependencies --no-daemon
+
+# Layer 3: Source (changes most often → only this layer rebuilds)
+COPY src/ src/
+```
+
+Additionally, `docker-compose.tools.yaml` mounts a **named Docker volume** (`chaincode-gradle-cache`) at `/root/.gradle`, so Gradle's dependency cache persists between runs even if the container is removed.
+
+**Current status:** The tools image handles building and testing, but the peers still use Fabric's internal `fabric-javaenv` build pipeline during `peer lifecycle chaincode install`. To fully eliminate cold boots, the next step would be to either:
+
+1. **External chaincode builder** — configure `externalBuilders` in `core.yaml` to use a custom build/detect/release script that accepts a pre-built JAR from the tools container instead of compiling from source
+2. **Chaincode-as-a-Service (ccaas)** — run chaincode in a separate container that the peer connects to over gRPC, bypassing `fabric-javaenv` entirely
+3. **Custom `fabric-javaenv` image** — build a derived image with Gradle cache pre-warmed:
+   ```dockerfile
+   FROM hyperledger/fabric-javaenv:2.5.4
+   COPY build.gradle settings.gradle /chaincode/
+   COPY gradlew /chaincode/
+   COPY gradle/ /chaincode/gradle/
+   RUN cd /chaincode && ./gradlew dependencies --no-daemon
+   ```
+   Then reference it in `core.yaml`: `runtime: my-fabric-javaenv:2.5.4-cached`
+
+**Quickest interim fix** — increase timeouts to tolerate cold boots:
+```yaml
+# core.yaml — give Gradle enough time on first install
+installTimeout: 600s   # was 300s
+executetimeout: 300s    # was 30s
+```
 
 ### Step 9: Verify full infrastructure
 

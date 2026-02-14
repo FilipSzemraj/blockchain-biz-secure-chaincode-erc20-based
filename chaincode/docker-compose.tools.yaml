@@ -1,0 +1,15 @@
+services:
+  chaincode-tools:
+    build:
+      context: .
+      dockerfile: Dockerfile.tools
+    volumes:
+      # Mount source for live editing — rebuild picks up changes without image rebuild
+      - ./src:/chaincode/src
+      # Persist Gradle cache between runs
+      - chaincode-gradle-cache:/root/.gradle
+    # Override entrypoint args: test, build, shadowJar, checkstyleMain, etc.
+    # Example: docker compose -f docker-compose.tools.yaml run --rm chaincode-tools test
+
+volumes:
+  chaincode-gradle-cache:

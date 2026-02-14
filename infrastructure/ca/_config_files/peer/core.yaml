@@ -495,11 +495,9 @@ chaincode:
     dynamicLink: false
 
   java:
-    # This is an image based on java:openjdk-8 with addition compiler
-    # tools added for java shim layer packaging.
-    # This image is packed with shim layer libraries that are necessary
-    # for Java chaincode runtime.
-    runtime: $(DOCKER_NS)/fabric-javaenv:$(TWO_DIGIT_VERSION)
+    # Pinned to 2.5.4 (Java 11) — the floating 2.5 tag ships Java 25,
+    # which breaks Gradle 8.5: "Unsupported class file major version 69"
+    runtime: $(DOCKER_NS)/fabric-javaenv:2.5.4
 
   node:
     # This is an image based on node:$(NODE_VER)-alpine
@@ -517,7 +515,7 @@ chaincode:
 
   # The maximum duration to wait for the chaincode build and install process
   # to complete.
-  installTimeout: 300s
+  installTimeout: 1000s
 
   # Timeout duration for starting up a container and waiting for Register
   # to come through.

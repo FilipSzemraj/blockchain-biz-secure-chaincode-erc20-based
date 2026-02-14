@@ -73,27 +73,33 @@ public final class Confirmation {
     public long getAmount() {
         return amount;
     }
-    public Date getTransferDate() { return transferDate; }
-    public String getFromIBAN() { return fromIBAN; }
-    public String getToIBAN() { return toIBAN; }
+    public Date getTransferDate() {
+        return transferDate;
+    }
+    public String getFromIBAN() {
+        return fromIBAN;
+    }
+    public String getToIBAN() {
+        return toIBAN;
+    }
 
 
     public Map<String, Object> getRawData() {
         return rawData;
     }
-    public void setRawData(Map<String, Object> rawData) {
-        this.rawData = rawData;
+    public void setRawData(final Map<String, Object> newRawData) {
+        this.rawData = newRawData;
     }
 
     @Override
     public String toString() {
-        return "Confirmation{" +
-                "amount=" + amount +
-                ", fromIBAN='" + fromIBAN + '\'' +
-                ", rawData='" + rawData + '\'' +
-                ", refNumber='" + refNumber + '\'' +
-                ", toIBAN='" + toIBAN + '\'' +
-                ", transferDate='" + transferDate + '\'' +
-                '}';
+        return "Confirmation{"
+                + "amount=" + amount
+                + ", fromIBAN='" + fromIBAN + '\''
+                + ", rawData='" + rawData + '\''
+                + ", refNumber='" + refNumber + '\''
+                + ", toIBAN='" + toIBAN + '\''
+                + ", transferDate='" + transferDate + '\''
+                + '}';
     }
 }

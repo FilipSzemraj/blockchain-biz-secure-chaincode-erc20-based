@@ -6,18 +6,15 @@ import org.hyperledger.fabric.contract.annotation.Transaction;
 import org.hyperledger.fabric.shim.ChaincodeException;
 import org.hyperledger.fabric.shim.ChaincodeStub;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import static com.blockchainbiz.erc20.ContractConstants.IBAN_KEY;
 import static com.blockchainbiz.erc20.ContractConstants.VOTES_KEY_PREFIX;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Contract(name = "IBANVoteContract")
-public class IBANVoteContract {
+public final class IBANVoteContract {
 
     @Transaction(intent = Transaction.TYPE.EVALUATE)
-    public String getCurrentIBAN(Context ctx) {
+    public String getCurrentIBAN(final Context ctx) {
         ChaincodeStub stub = ctx.getStub();
         String currentIBAN = stub.getStringState(IBAN_KEY.getValue());
         if (currentIBAN == null || currentIBAN.isEmpty()) {
@@ -27,7 +24,7 @@ public class IBANVoteContract {
     }
 
     @Transaction(intent = Transaction.TYPE.SUBMIT)
-    public void proposeIBAN(Context ctx, String proposedIBAN) {
+    public void proposeIBAN(final Context ctx, final String proposedIBAN) {
         ChaincodeStub stub = ctx.getStub();
         String identity = ctx.getClientIdentity().getId();
         String voteKey = VOTES_KEY_PREFIX.getValue() + proposedIBAN;
@@ -54,7 +51,7 @@ public class IBANVoteContract {
         }
     }
     @Transaction(intent = Transaction.TYPE.SUBMIT)
-    public void Init(Context ctx, String initialIBAN) {
+    public void Init(final Context ctx, final String initialIBAN) {
         ChaincodeStub stub = ctx.getStub();
 
         // Sprawdź, czy IBAN już istnieje
@@ -69,7 +66,7 @@ public class IBANVoteContract {
         stub.setStateValidationParameter(IBAN_KEY.getValue(), policyIBAN.getBytes(UTF_8));
     }
 
-    private void clearVotes(ChaincodeStub stub, String proposedIBAN) {
+    private void clearVotes(final ChaincodeStub stub, final String proposedIBAN) {
         String voteKey = VOTES_KEY_PREFIX.getValue() + proposedIBAN;
         stub.delState(voteKey);
     }

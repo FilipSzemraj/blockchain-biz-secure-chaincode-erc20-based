@@ -29,11 +29,23 @@ if [ $? -ne 0 ]; then
 fi
 
 # Instalacja chaincode
-echo "Installing chaincode..."
-OUTPUT=$(peer lifecycle chaincode install ./basic.tar.gz 2>&1)
-if [ $? -ne 0 ]; then
-  echo "Failed to install chaincode."
-  echo "$OUTPUT"
+echo "Installing chaincode (this triggers a Gradle build inside fabric-javaenv — may take a few minutes)..."
+# Duplicate stdout to fd 5 so tee can display output live even inside $()
+exec 5>&1
+OUTPUT=$(peer lifecycle chaincode install ./basic.tar.gz 2>&1 | tee /dev/fd/5; exit ${PIPESTATUS[0]})
+INSTALL_EXIT=$?
+exec 5>&-
+
+if [ $INSTALL_EXIT -ne 0 ]; then
+  echo ""
+  echo "========================================="
+  echo "CHAINCODE INSTALL FAILED (exit code: $INSTALL_EXIT)"
+  echo "========================================="
+  echo "Common causes:"
+  echo "  - Java version mismatch in fabric-javaenv (check core.yaml java.runtime tag)"
+  echo "  - Gradle wrapper version incompatible with JDK in fabric-javaenv"
+  echo "  - Chaincode compilation errors"
+  echo "========================================="
   exit 1
 fi
 
@@ -44,6 +56,7 @@ if [ -n "$CC_PACKAGE_ID" ]; then
   echo "Chaincode package ID: $CC_PACKAGE_ID"
 else
   echo "Failed to extract the chaincode package ID."
+  echo "Full install output:"
   echo "$OUTPUT"
   exit 1
 fi

@@ -34,6 +34,18 @@ docker attach <container_name>
 # Note: Use 'exec' instead of 'attach' to avoid stopping container on exit
 ```
 
+### Checking container env variables
+
+```bash
+docker exec peer0.furnituresmakers.com env 2>/dev/null | sort
+```
+
+or from images
+
+```bash
+docker run --rm hyperledger/fabric-javaenv:2.5.4 java -version 2>&1
+```
+
 ---
 
 ## Container Logs
@@ -536,6 +548,73 @@ docker exec peer0.yachtsales.example.com nslookup orderer.example.com
 
 # Check open ports
 docker exec peer0.yachtsales.example.com netstat -tlnp
+```
+
+### DNS Resolution & Network Debugging
+
+When containers can't connect, the first step is determining whether the issue is DNS resolution, network routing, or the target service itself.
+
+```bash
+# Check what IP a hostname resolves to from inside a container
+# (nslookup may not be installed - getent is more reliable in minimal images)
+docker exec <container_name> getent hosts <target_hostname>
+
+# Example: Check if orderer resolves to Docker IP (172.x.x.x) or public IP
+docker exec admin.woodsupply.com getent hosts orderer0.woodsupply.com
+# Expected Docker IP: 172.18.0.x
+# Public IP (e.g. 76.223.54.146) = DNS fallback to internet (see below)
+```
+
+**List all containers on a Docker network with their IPs:**
+```bash
+# Quick overview: container names and IPs
+docker network inspect fabric-network \
+  --format '{{range .Containers}}{{.Name}} -> {{.IPv4Address}}{{"\n"}}{{end}}'
+
+# Full JSON details
+docker network inspect fabric-network
+```
+
+**Check which networks a container is attached to:**
+```bash
+docker inspect <container_name> \
+  --format '{{json .NetworkSettings.Networks}}' | python3 -m json.tool
+```
+
+**Docker events timeline — track container lifecycle during a time window:**
+```bash
+# See create/start/stop/die events for a specific container
+docker events \
+  --since="2026-02-14T13:10:00" \
+  --until="2026-02-14T13:25:00" \
+  --filter "container=orderer0.woodsupply.com" \
+  --format "{{.Time}} {{.Action}} {{.Actor.Attributes.name}}"
+```
+
+**Compare container creation timestamps to understand startup ordering:**
+```bash
+docker ps -a \
+  --filter "name=admin" \
+  --filter "name=orderer" \
+  --format "table {{.Names}}\t{{.Status}}\t{{.CreatedAt}}"
+```
+
+#### Known Issue: DNS Fallback to Public Internet
+
+Docker's embedded DNS resolver will fall through to public DNS when a hostname is not found on any Docker network. If the domain happens to be a real registered domain (e.g. `woodsupply.com` is real, while `furnituresmakers.com` is not), the connection attempt goes to a public IP instead of failing fast with `no such host`.
+
+**Symptoms:**
+- Container hangs for ~5 minutes on a network call (TCP timeout to unreachable public IP)
+- Other containers with non-existent domain names fail instantly with `no such host`
+- After timeout, error shows a public IP: `dial tcp 76.223.54.146:9443: connect: connection refused`
+
+**Diagnosis:**
+```bash
+# Check if a .com hostname resolves to Docker network or public internet
+docker exec <container_name> getent hosts <hostname>
+
+# Docker network IPs are typically 172.x.x.x or 10.x.x.x
+# Any other IP = public DNS fallback
 ```
 
 ### Container Differences

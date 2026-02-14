@@ -8,11 +8,14 @@ import com.owlike.genson.Genson;
 import javax.crypto.Cipher;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.security.*;
+import java.security.KeyFactory;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.security.Signature;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
@@ -21,10 +24,10 @@ import java.util.Map;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public final class ConfirmationVerifier {
-    private static final PublicKey publicKey;
+    private static final PublicKey PUBLIC_KEY;
 
-    static{
-        publicKey = loadPublicKey("public_key.pem");
+    static {
+        PUBLIC_KEY = loadPublicKey("public_key.pem");
     }
     private ConfirmationVerifier() {
     }
@@ -37,7 +40,7 @@ public final class ConfirmationVerifier {
      * @return The loaded {@link PublicKey} object.
      * @throws RuntimeException If the key file is not found or can't be parsed.
      */
-    private static PublicKey loadPublicKey(String resourcePath) {
+    private static PublicKey loadPublicKey(final String resourcePath) {
         try (InputStream inputStream = ConfirmationVerifier.class.getResourceAsStream("/" + resourcePath)) {
             if (inputStream == null) {
                 throw new RuntimeException("Public key resource not found: " + resourcePath);
@@ -74,7 +77,7 @@ public final class ConfirmationVerifier {
         System.out.println("Serialized JSON (Java): " + json);
         return json;
     }
-    public static <T> T unmarshalString(String json, Class<T> clazz) {
+    public static <T> T unmarshalString(final String json, final Class<T> clazz) {
         return new Genson().deserialize(json, clazz);
     }
 
@@ -85,7 +88,7 @@ public final class ConfirmationVerifier {
      * @return A hex string representing the SHA-256 hash.
      * @throws RuntimeException If the SHA-256 algorithm is not available.
      */
-    public static String generateSHA256Hash(byte[] data) {
+    public static String generateSHA256Hash(final byte[] data) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] hash = digest.digest(data);
@@ -101,7 +104,7 @@ public final class ConfirmationVerifier {
      * @param bytes The byte array to convert.
      * @return A hex-encoded string (lowercase).
      */
-    public static String bytesToHex(byte[] bytes) {
+    public static String bytesToHex(final byte[] bytes) {
         StringBuilder hexString = new StringBuilder();
         for (byte b : bytes) {
             String hex = Integer.toHexString(0xff & b);
@@ -122,7 +125,7 @@ public final class ConfirmationVerifier {
      * @return The constructed {@link Confirmation} object from the "data" field within the file.
      * @throws RuntimeException If the JSON file cannot be read or parsed.
      */
-    public static Confirmation loadConfirmationFromJson(String filePath) {
+    public static Confirmation loadConfirmationFromJson(final String filePath) {
         try {
             String jsonContent = new String(Files.readAllBytes(Paths.get(filePath)), UTF_8);
             System.out.println("Loaded JSON: " + jsonContent);
@@ -150,16 +153,16 @@ public final class ConfirmationVerifier {
      * @return {@code true} if the signature is valid; {@code false} otherwise
      * @throws RuntimeException if an error occurs during signature verification
      */
-    public static boolean verifySignature(String signedHashBase64, Confirmation confirmation) {
+    public static boolean verifySignature(final String signedHashBase64, final Confirmation confirmation) {
         try {
             byte[] signatureBytes = Base64.getDecoder().decode(signedHashBase64);
 
             byte[] dataToVerify = marshalBytes(confirmation);
             String localHash = generateSHA256Hash(dataToVerify);
-            byte [] transactionHashBytes = localHash.getBytes();
+            byte[] transactionHashBytes = localHash.getBytes();
 
             Signature signature = Signature.getInstance("SHA256withRSA");
-            signature.initVerify(publicKey);
+            signature.initVerify(PUBLIC_KEY);
             signature.update(transactionHashBytes);
             boolean isValid = signature.verify(signatureBytes);
 
@@ -182,7 +185,7 @@ public final class ConfirmationVerifier {
      * @see #verifySignature(String, Confirmation)
      * @see #loadConfirmationWithHash(String)
      */
-    public boolean verifySignatureFromJson(String jsonContent){
+    public boolean verifySignatureFromJson(final String jsonContent) {
         ConfirmationWithHash tuple = loadConfirmationWithHash(jsonContent);
         return verifySignature(tuple.getHash(), tuple.getConfirmation());
     }
@@ -199,7 +202,7 @@ public final class ConfirmationVerifier {
      *         {@code false} otherwise.
      * @throws RuntimeException If decryption or hash comparison fails.
      */
-    public static VerificationResult verifyHash(String signedHashBase64, Confirmation confirmation) {
+    public static VerificationResult verifyHash(final String signedHashBase64, final Confirmation confirmation) {
         try {
             byte[] encryptedHash = Base64.getDecoder().decode(signedHashBase64);
 
@@ -207,7 +210,7 @@ public final class ConfirmationVerifier {
             String localHash = generateSHA256Hash(dataToVerify);
 
             Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-            cipher.init(Cipher.DECRYPT_MODE, publicKey);
+            cipher.init(Cipher.DECRYPT_MODE, PUBLIC_KEY);
             byte[] decryptedHash = cipher.doFinal(encryptedHash);
             String decryptedHashString = new String(decryptedHash, StandardCharsets.UTF_8);
             System.out.println("localHash (hex): " + localHash);
@@ -235,7 +238,7 @@ public final class ConfirmationVerifier {
      * @see #loadConfirmationWithHash(String)
      */
 
-    public static VerificationResult verifyHashFromJson(String jsonContent) {
+    public static VerificationResult verifyHashFromJson(final String jsonContent) {
         ConfirmationWithHash tuple = loadConfirmationWithHash(jsonContent);
         // Zweryfikuj hash
         return verifyHash(tuple.getHash(), tuple.getConfirmation());
@@ -251,7 +254,7 @@ public final class ConfirmationVerifier {
      *         and the extracted Base64-encoded hash.
      * @throws RuntimeException If any error occurs while reading or parsing the file.
      */
-    public static ConfirmationWithHash loadConfirmationWithHash(String jsonContent) {
+    public static ConfirmationWithHash loadConfirmationWithHash(final String jsonContent) {
         try {
             Genson genson = new Genson();
 

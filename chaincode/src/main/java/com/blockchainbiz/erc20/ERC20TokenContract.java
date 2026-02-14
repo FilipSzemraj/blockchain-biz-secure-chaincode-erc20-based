@@ -3,20 +3,52 @@
  */
 package com.blockchainbiz.erc20;
 
-import static com.blockchainbiz.erc20.ContractConstants.*;
-import static com.blockchainbiz.erc20.ContractErrors.*;
-import static com.blockchainbiz.erc20.utils.ConfirmationVerifier.*;
+import static com.blockchainbiz.erc20.ContractConstants.ALLOWANCE_PREFIX;
+import static com.blockchainbiz.erc20.ContractConstants.APPROVAL;
+import static com.blockchainbiz.erc20.ContractConstants.BALANCE_PREFIX;
+import static com.blockchainbiz.erc20.ContractConstants.BURN_BALANCE_PREFIX;
+import static com.blockchainbiz.erc20.ContractConstants.BURN_TRANSACTIONS_PREFIX;
+import static com.blockchainbiz.erc20.ContractConstants.DECIMALS_KEY;
+import static com.blockchainbiz.erc20.ContractConstants.IBAN_KEY;
+import static com.blockchainbiz.erc20.ContractConstants.NAME_KEY;
+import static com.blockchainbiz.erc20.ContractConstants.ORG1;
+import static com.blockchainbiz.erc20.ContractConstants.ORG2;
+import static com.blockchainbiz.erc20.ContractConstants.ORG3;
+import static com.blockchainbiz.erc20.ContractConstants.SYMBOL_KEY;
+import static com.blockchainbiz.erc20.ContractConstants.TOTAL_SUPPLY_KEY;
+import static com.blockchainbiz.erc20.ContractConstants.TRANSFER_EVENT;
+import static com.blockchainbiz.erc20.ContractConstants.USED_TRANSACTIONS_PREFIX;
+import static com.blockchainbiz.erc20.ContractErrors.BALANCE_NOT_FOUND;
+import static com.blockchainbiz.erc20.ContractErrors.DUPLICATE_TRANSACTION_ID;
+import static com.blockchainbiz.erc20.ContractErrors.INSUFFICIENT_FUND;
+import static com.blockchainbiz.erc20.ContractErrors.INVALID_AMOUNT;
+import static com.blockchainbiz.erc20.ContractErrors.INVALID_ARGUMENT;
+import static com.blockchainbiz.erc20.ContractErrors.INVALID_CONFIRMATION;
+import static com.blockchainbiz.erc20.ContractErrors.INVALID_HASH;
+import static com.blockchainbiz.erc20.ContractErrors.INVALID_IBAN;
+import static com.blockchainbiz.erc20.ContractErrors.INVALID_TRANSFER;
+import static com.blockchainbiz.erc20.ContractErrors.NOT_FOUND;
+import static com.blockchainbiz.erc20.ContractErrors.NO_ALLOWANCE_FOUND;
+import static com.blockchainbiz.erc20.ContractErrors.UNAUTHORIZED_SENDER;
+import static com.blockchainbiz.erc20.utils.ConfirmationVerifier.marshalBytes;
+import static com.blockchainbiz.erc20.utils.ConfirmationVerifier.marshalString;
+import static com.blockchainbiz.erc20.utils.ConfirmationVerifier.unmarshalString;
+import static com.blockchainbiz.erc20.utils.ConfirmationVerifier.verifyHashFromJson;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static com.blockchainbiz.erc20.utils.ContractUtility.stringIsNullOrEmpty;
 
-import com.blockchainbiz.erc20.model.*;
+import com.blockchainbiz.erc20.model.Approval;
+import com.blockchainbiz.erc20.model.BurnRequest;
+import com.blockchainbiz.erc20.model.BurnRequestWithHash;
+import com.blockchainbiz.erc20.model.Confirmation;
+import com.blockchainbiz.erc20.model.Transfer;
+import com.blockchainbiz.erc20.model.VerificationResult;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Map;
 
 import com.blockchainbiz.erc20.utils.ConfirmationVerifier;
-import com.owlike.genson.Genson;
 import org.hyperledger.fabric.Logger;
 import org.hyperledger.fabric.contract.ClientIdentity;
 import org.hyperledger.fabric.contract.Context;
@@ -85,9 +117,9 @@ public final class ERC20TokenContract implements ContractInterface {
     // Check correctness of confirmation and get transaction data.
 
     VerificationResult result;
-    try{
+    try {
       result = verifyHashFromJson(jsonContent);
-    }catch(RuntimeException e){
+    } catch (RuntimeException e) {
       throw new ChaincodeException("Error during hash verification: " + e.getMessage(), INVALID_HASH.toString());
     }
 
@@ -96,7 +128,7 @@ public final class ERC20TokenContract implements ContractInterface {
     final String localHash = result.getLocalHash();
     final String sourceIBAN = confirmation.getFromIBAN();
 
-    if(!result.isMatches()){
+    if (!result.isMatches()) {
       throw new ChaincodeException("Unauthorized: Hash of transaction data isn't equal to the encrypted one", UNAUTHORIZED_SENDER.toString());
     }
 
@@ -127,11 +159,11 @@ public final class ERC20TokenContract implements ContractInterface {
     String currentIBAN = stub.getStringState(IBAN_KEY.getValue());
 
 
-    if(stringIsNullOrEmpty(currentIBAN)){
+    if (stringIsNullOrEmpty(currentIBAN)) {
       throw new ChaincodeException(
               "No IBAN number found for the consortium. Initialization or operation cannot proceed.", NOT_FOUND.toString());
     }
-    if(!currentIBAN.equalsIgnoreCase(destIBAN)){
+    if (!currentIBAN.equalsIgnoreCase(destIBAN)) {
       throw new ChaincodeException(
               "The provided recipient IBAN does not match the consortium's IBAN. Operation cannot proceed.", INVALID_CONFIRMATION.toString());
     }
@@ -267,10 +299,10 @@ public final class ERC20TokenContract implements ContractInterface {
       if (history.iterator().hasNext()) {
         throw new ChaincodeException("Burn ID already used in the past", DUPLICATE_TRANSACTION_ID.toString());
       }
-    }catch (ChaincodeException ce) {
+    } catch (ChaincodeException ce) {
       // If it's already a ChaincodeException, just rethrow it
       throw ce;
-    }catch (Exception e) {
+    } catch (Exception e) {
       throw new RuntimeException("Error while closing the iterator: " + e.getMessage(), e);
     }
 
@@ -317,20 +349,20 @@ public final class ERC20TokenContract implements ContractInterface {
     }
 
     VerificationResult result;
-    try{
+    try {
       result = verifyHashFromJson(jsonContent);
-    }catch(RuntimeException e){
+    } catch (RuntimeException e) {
       throw new ChaincodeException("Error during hash verification: " + e.getMessage(), INVALID_HASH.toString());
     }
 
-    if(!result.isMatches()){
+    if (!result.isMatches()) {
       throw new ChaincodeException("Unauthorized: Hash of transaction data isn't equal to the encrypted one", UNAUTHORIZED_SENDER.toString());
     }
 
     final Confirmation confirmation = result.getConfirmation();
     final Map<String, Object> rawData = confirmation.getRawData();
 
-    if(!rawData.containsKey("BurnRequestHash")){
+    if (!rawData.containsKey("BurnRequestHash")) {
       throw new ChaincodeException("Error while getting hash of burnRequest: ", INVALID_CONFIRMATION.toString());
     }
     Object burnRequestHashObj = rawData.get("BurnRequestHash");
@@ -339,13 +371,13 @@ public final class ERC20TokenContract implements ContractInterface {
     }
 
     if (!(burnRequestHashObj instanceof String)) {
-      throw new ChaincodeException("Error while containing hash of burnRequest: "+ INVALID_CONFIRMATION.toString()
-              + burnRequestHashObj.getClass().getName());
+      throw new ChaincodeException("Error while containing hash of burnRequest: " + INVALID_CONFIRMATION.toString()
+              + " " + burnRequestHashObj.getClass().getName());
     }
 
     String burnRequestHashConfirmation = (String) burnRequestHashObj;
 
-    System.out.println("burnRequestHashConfirmation: "+burnRequestHashConfirmation);
+    System.out.println("burnRequestHashConfirmation: " + burnRequestHashConfirmation);
 
     //CompositeKey burnKey = stub.createCompositeKey(BURN_TRANSACTIONS_PREFIX.getValue(), burnRequestHash);
 
@@ -354,8 +386,8 @@ public final class ERC20TokenContract implements ContractInterface {
 
     CompositeKey burnKey = stub.createCompositeKey(BURN_TRANSACTIONS_PREFIX.getValue(), burnRequestHashConfirmation);
 
-    System.out.println("burnRequestHashConfirmation: "+burnRequestHashConfirmation);
-    System.out.println("burnKey: "+burnKey.toString());
+    System.out.println("burnRequestHashConfirmation: " + burnRequestHashConfirmation);
+    System.out.println("burnKey: " + burnKey.toString());
     // Checking exsitance of burnId within world state.
     String existingBurnJson = stub.getStringState(burnKey.toString());
     if (stringIsNullOrEmpty(existingBurnJson)) {
@@ -369,36 +401,36 @@ public final class ERC20TokenContract implements ContractInterface {
 
     final String receiverIBAN = confirmation.getToIBAN();
     final String senderIBAN = confirmation.getFromIBAN();
-    if(!(receiverIBAN.equalsIgnoreCase(clientIBAN))){
+    if (!(receiverIBAN.equalsIgnoreCase(clientIBAN))) {
       throw new ChaincodeException("Receiver IBAN isn't the org one", "INVALID_IBAN");
     }
     final String currentConsortiumIBAN = stub.getStringState(IBAN_KEY.getValue());
-    if(stringIsNullOrEmpty(currentConsortiumIBAN)){
+    if (stringIsNullOrEmpty(currentConsortiumIBAN)) {
       throw new ChaincodeException(
               "No IBAN number found for the consortium. Initialization or operation cannot proceed.", NOT_FOUND.toString());
     }
 
-    if(!(senderIBAN.equalsIgnoreCase(currentConsortiumIBAN))){
+    if (!(senderIBAN.equalsIgnoreCase(currentConsortiumIBAN))) {
       throw new ChaincodeException("Sender IBAN isn't the consortium one", "INVALID_IBAN");
     }
 
     BurnRequestWithHash existingBurnWithHash = unmarshalString(existingBurnJson, BurnRequestWithHash.class);
     //BurnRequestWithHash existingBurnWithHash = new Genson().deserialize(existingBurnJson, BurnRequestWithHash.class);
 
-    System.out.println("existingBurnJson: "+ existingBurnJson);
-    System.out.println("existingBurnWithHash: "+ existingBurnWithHash);
+    System.out.println("existingBurnJson: " + existingBurnJson);
+    System.out.println("existingBurnWithHash: " + existingBurnWithHash);
 
     BurnRequest burnRequest = existingBurnWithHash.getBurnRequest();
     String burnRequestHashWorldState = existingBurnWithHash.getHash();
 
-    if(!(burnRequestHashWorldState.equalsIgnoreCase(burnRequestHashConfirmation))){
+    if (!(burnRequestHashWorldState.equalsIgnoreCase(burnRequestHashConfirmation))) {
       throw new ChaincodeException("Error while comparing world state and confirmation hash of burning request: ", INVALID_CONFIRMATION.toString());
     }
 
     final Long burnRequestAmount = burnRequest.getAmount();
     final Long confirmationAmount = confirmation.getAmount();
 
-    if(burnRequestAmount != confirmationAmount){
+    if (burnRequestAmount != confirmationAmount) {
       throw new ChaincodeException("Amount of request and actual transaction isn't the same.", INVALID_ARGUMENT.toString());
     }
 
@@ -415,10 +447,10 @@ public final class ERC20TokenContract implements ContractInterface {
     String burnBalanceKey = burnRequest.getBurnWallet();
     String burnBalanceStr = stub.getStringState(burnBalanceKey);
     final Long burnBalance = Long.parseLong(burnBalanceStr);
-    if(burnBalance < burnRequestAmount){
+    if (burnBalance < burnRequestAmount) {
       throw new ChaincodeException("Not sufficient amount on burn wallet", NOT_FOUND.toString());
     }
-    if(totalSupply < burnRequestAmount){
+    if (totalSupply < burnRequestAmount) {
       throw new ChaincodeException("Not sufficient amount on total supply", NOT_FOUND.toString());
     }
 
@@ -835,7 +867,7 @@ public final class ERC20TokenContract implements ContractInterface {
     String key = USED_TRANSACTIONS_PREFIX.getValue() + txId;
     stub.putStringState(key, "used");
   }
-  private void markAsUsed(final ChaincodeStub stub, final String txId, String body) {
+  private void markAsUsed(final ChaincodeStub stub, final String txId, final String body) {
     String key = USED_TRANSACTIONS_PREFIX.getValue() + txId;
     stub.putStringState(key, body);
   }
@@ -857,7 +889,7 @@ public final class ERC20TokenContract implements ContractInterface {
   /**
    * Checks that the caller is from one of the allowed MSPs and has "admin" role.
    */
-  private void validateAdminOrg(Context ctx) {
+  private void validateAdminOrg(final Context ctx) {
     String clientMSPID = ctx.getClientIdentity().getMSPID();
     if (!(clientMSPID.equalsIgnoreCase(ORG1.getValue())
             || clientMSPID.equalsIgnoreCase(ORG2.getValue())
@@ -873,14 +905,14 @@ public final class ERC20TokenContract implements ContractInterface {
   /**
    * Verifies the JSON-based transaction data, ensures the hash matches, etc.
    */
-  private VerificationResult checkAndParseConfirmation(String jsonContent) {
+  private VerificationResult checkAndParseConfirmation(final String jsonContent) {
     try {
       VerificationResult result = verifyHashFromJson(jsonContent);
-      if(!result.isMatches()) {
+      if (!result.isMatches()) {
         throw new ChaincodeException("Transaction data hash mismatch", UNAUTHORIZED_SENDER.toString());
       }
       return result;
-    } catch(RuntimeException e) {
+    } catch (RuntimeException e) {
       throw new ChaincodeException("Error during hash verification: " + e.getMessage(), INVALID_HASH.toString());
     }
   }
@@ -888,7 +920,7 @@ public final class ERC20TokenContract implements ContractInterface {
   /**
    * Increase total supply by a given amount (safe math).
    */
-  private void increaseTotalSupply(ChaincodeStub stub, long amount) {
+  private void increaseTotalSupply(final ChaincodeStub stub, final long amount) {
     String totalSupplyStr = stub.getStringState(TOTAL_SUPPLY_KEY.getValue());
     long totalSupply = 0;
     if (!stringIsNullOrEmpty(totalSupplyStr)) {
@@ -901,7 +933,7 @@ public final class ERC20TokenContract implements ContractInterface {
   /**
    * Checks if a given burn key was used or stored previously.
    */
-  private void failIfBurnKeyExists(ChaincodeStub stub, String burnKey) {
+  private void failIfBurnKeyExists(final ChaincodeStub stub, final String burnKey) {
     String existing = stub.getStringState(burnKey);
     if (!stringIsNullOrEmpty(existing)) {
       throw new ChaincodeException("Burn ID already exists", DUPLICATE_TRANSACTION_ID.toString());
@@ -916,7 +948,7 @@ public final class ERC20TokenContract implements ContractInterface {
     }
   }
 
-  private void failIfDuplicateHash(ChaincodeStub stub, String txHash) {
+  private void failIfDuplicateHash(final ChaincodeStub stub, final String txHash) {
     String key = USED_TRANSACTIONS_PREFIX.getValue() + txHash;
     String usedValue = stub.getStringState(key);
     if (usedValue != null && !usedValue.isEmpty()) {
@@ -937,7 +969,7 @@ public final class ERC20TokenContract implements ContractInterface {
    * @param confirmation The confirmation data containing IBANs.
    * @param operationType The type of operation (MINT or FINALIZE_BURN).
    */
-  private void validateIban(Context ctx, Confirmation confirmation, IbanValidationMode operationType) {
+  private void validateIban(final Context ctx, final Confirmation confirmation, final IbanValidationMode operationType) {
     ChaincodeStub stub = ctx.getStub();
     String clientIban = ctx.getClientIdentity().getAttributeValue("hf.iban");
     String consortiumIban = stub.getStringState(IBAN_KEY.getValue());

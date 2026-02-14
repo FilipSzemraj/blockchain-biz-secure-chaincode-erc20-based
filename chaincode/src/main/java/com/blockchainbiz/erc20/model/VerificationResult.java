@@ -113,11 +113,11 @@ public final class VerificationResult {
      */
     @Override
     public String toString() {
-        return "VerificationResult{" +
-                "matches=" + matches +
-                ", decryptedHash='" + decryptedHash + '\'' +
-                ", localHash='" + localHash + '\'' +
-                ", confirmation=" + (confirmation != null ? confirmation.toString() : "null") +
-                '}';
+        return "VerificationResult{"
+                + "matches=" + matches
+                + ", decryptedHash='" + decryptedHash + '\''
+                + ", localHash='" + localHash + '\''
+                + ", confirmation=" + (confirmation != null ? confirmation.toString() : "null")
+                + '}';
     }
 }
