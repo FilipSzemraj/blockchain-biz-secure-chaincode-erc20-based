@@ -6,7 +6,7 @@ echo $FABRIC_CFG_PATH
 
 echo 'Start of script creating-channel-with-retry.sh'
 
-# Step 1: Create genesis block if it doesn't exist
+# Create genesis block if it doesn't exist
 if [ ! -f ../output/genesis_block_YFW.pb ]; then
   echo 'genesis_block_YFW is not existing - creating it now'
   configtxgen -profile YFW -outputBlock ../output/genesis_block_YFW.pb -channelID yfw-channel
@@ -16,9 +16,13 @@ else
   echo 'Genesis block already exists - skipping creation'
 fi
 
-# Step 2: Try to join channel with retry logic
+# Try to join channel with retry logic
 echo ''
 echo 'Attempting osnadmin channel join with retry...'
+echo "Orderer target: orderer0.${ORG_NAME}.com:9443"
+echo "CA file: $OSN_TLS_CA_ROOT_CERT"
+echo "Client cert: $ADMIN_TLS_SIGN_CERT"
+echo "Client key: $ADMIN_TLS_PRIVATE_KEY"
 
 MAX_RETRIES=30
 RETRY_INTERVAL=5
@@ -27,6 +31,26 @@ ATTEMPT=0
 while [ $ATTEMPT -lt $MAX_RETRIES ]; do
   ATTEMPT=$((ATTEMPT + 1))
   echo "Attempt $ATTEMPT/$MAX_RETRIES: Trying to join channel on orderer0.${ORG_NAME}.com:9443"
+  echo "[$(date -u '+%Y-%m-%d %H:%M:%S UTC')] Starting osnadmin channel join command..."
+
+  # Resolve orderer IP and validate it's in the same Docker network
+  ORDERER_HOSTNAME="orderer0.${ORG_NAME}.com"
+  ORDERER_IP=$(getent hosts ${ORDERER_HOSTNAME} | awk '{ print $1 }')
+
+  # Get current container's IP to determine the Docker network subnet
+  MY_IP=$(hostname -i | awk '{print $1}')
+  MY_SUBNET=$(echo $MY_IP | cut -d. -f1-2)  # e.g., "172.20" from "172.20.0.5"
+
+  # Check if orderer IP is in the same subnet
+  if [ -n "$ORDERER_IP" ] && [[ "$ORDERER_IP" == ${MY_SUBNET}.* ]]; then
+    echo "  ✓ Resolved ${ORDERER_HOSTNAME} -> ${ORDERER_IP} (same network as ${MY_IP})"
+    ORDERER_TARGET="${ORDERER_IP}:9443"
+  else
+    echo "  ✗ Orderer IP ${ORDERER_IP:-unresolved} not in local network ${MY_SUBNET}.x.x"
+    echo "    Orderer not available yet. Waiting ${RETRY_INTERVAL}s before retry..."
+    sleep $RETRY_INTERVAL
+    continue
+  fi
 
   # Try osnadmin channel join
   osnadmin channel join \
@@ -38,6 +62,7 @@ while [ $ATTEMPT -lt $MAX_RETRIES ]; do
     --client-key $ADMIN_TLS_PRIVATE_KEY 2>&1 | tee /tmp/osnadmin_output.log
 
   EXIT_CODE=${PIPESTATUS[0]}
+  echo "[$(date -u '+%Y-%m-%d %H:%M:%S UTC')] osnadmin command returned with exit code: $EXIT_CODE"
 
   # Check exit code
   if [ $EXIT_CODE -eq 0 ]; then

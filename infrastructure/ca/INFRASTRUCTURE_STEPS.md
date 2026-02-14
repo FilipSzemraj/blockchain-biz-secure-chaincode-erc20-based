@@ -90,20 +90,42 @@ docker ps -a \
   --filter "name=peer" \
   --filter "name=orderer" \
   --filter "name=admin" \
-  --format "table {{.Names}}\t{{.Status}}"
+  --filter "name=configtx" \
+  --format "table {{.Names}}\t{{.Status}}\t{{.Image}}\t{{.Ports}}"
 ```
 
 **Comprehensive check** - All Fabric containers (useful for teardown verification):
 
 ```bash
-# List ALL Fabric-related containers with detailed info
-docker ps -a --filter "name=orderer\|peer\|admin\|ca\|initializer\|configtx" \
-  --format "table {{.Names}}\t{{.Status}}\t{{.Image}}\t{{.Ports}}"
-
 # Count containers by status
-echo "Running: $(docker ps --filter "name=orderer\|peer\|admin\|ca\|initializer\|configtx" -q | wc -l)"
-echo "Stopped: $(docker ps -a --filter "name=orderer\|peer\|admin\|ca\|initializer\|configtx" --filter "status=exited" -q | wc -l)"
-echo "Total: $(docker ps -a --filter "name=orderer\|peer\|admin\|ca\|initializer\|configtx" -q | wc -l)"
+echo "Running: $(docker ps \
+  --filter "name=initializer" \
+  --filter "name=ca" \
+  --filter "name=peer" \
+  --filter "name=orderer" \
+  --filter "name=admin" \
+  --filter "name=configtx" \ 
+  -q | wc -l)"
+  
+echo "Stopped: $(docker ps -a \
+ --filter "name=initializer" \
+  --filter "name=ca" \
+  --filter "name=peer" \
+  --filter "name=orderer" \
+  --filter "name=admin" \
+  --filter "name=configtx" \
+  --filter "status=exited" \
+  -q | wc -l)"
+  
+  
+echo "Total: $(docker ps -a 
+ --filter "name=initializer" \
+  --filter "name=ca" \
+  --filter "name=peer" \
+  --filter "name=orderer" \
+  --filter "name=admin" \
+  --filter "name=configtx" \
+  -q | wc -l)"
 ```
 
 **Expected states depending on network phase:**
@@ -160,11 +182,24 @@ docker compose down
 **Verify complete teardown:**
 ```bash
 # Check for any remaining Fabric containers (should return empty)
-docker ps -a --filter "name=orderer\|peer\|admin\|ca\|initializer\|configtx" \
+docker ps -a \
+  --filter "name=initializer" \
+  --filter "name=ca" \
+  --filter "name=peer" \
+  --filter "name=orderer" \
+  --filter "name=admin" \
+  --filter "name=configtx" \
   --format "table {{.Names}}\t{{.Status}}\t{{.Image}}"
 
 # If any remain, force remove:
-docker rm -f $(docker ps -a --filter "name=orderer\|peer\|admin\|ca\|initializer\|configtx" -q)
+docker rm -f $(docker ps -a \
+  --filter "name=initializer" \
+  --filter "name=ca" \
+  --filter "name=peer" \
+  --filter "name=orderer" \
+  --filter "name=admin" \
+  --filter "name=configtx" \
+  -q)
 ```
 
 ### Step 0: Removing Crypto Material (Complete Clean Slate)
@@ -257,6 +292,9 @@ bash _scripts/run-configtx-all.sh  # Copies scripts → builds images → runs c
 # For configtx containers
 cp -f _scripts/creating-channel.sh _config_files/configtx/
 cp -f _scripts/healthcheck-admin.sh _config_files/configtx/
+
+cp -f _scripts/creating-channel-with-retry.sh _config_files/configtx/
+cp -f _scripts/healthcheck-admin-smart.sh _config_files/configtx/
 
 # For anchor peer containers
 cp -f _scripts/start-anchor-peer.sh _config_files/peer/
@@ -385,6 +423,24 @@ This starts 3 admin containers (one per org) that run `creating-channel-with-ret
    - If orderers not started yet → retries for up to 150 seconds, then times out gracefully
 3. **Healthcheck** (`healthcheck-admin-smart.sh`) considers container healthy once genesis block exists
 
+**Fabric v3 Channel Participation API mechanism:**
+
+In Fabric v3 (no system channel), each orderer must be **explicitly joined** to a channel via the `osnadmin` REST API. This project automates the join using Docker Compose orchestration:
+
+- **Each admin container** joins **its own organization's orderer**
+- Uses `ORG_NAME` environment variable to target the correct orderer:
+  ```bash
+  # In creating-channel-with-retry.sh
+  osnadmin channel join \
+    --channelID yfw-channel \
+    --config-block genesis_block_YFW.pb \
+    -o orderer0.${ORG_NAME}.com:9443  # <-- Dynamic per-org targeting
+  ```
+- Admin containers run in parallel (WoodSupply & YachtSales wait for FurnituresMakers to be healthy)
+- Genesis block is shared via volume mount: `./_config_files/configtx/output/`
+
+Result: All 3 orderers get joined to `yfw-channel` automatically when configtx compose starts, following the official Fabric v3 Channel Participation API pattern
+
 **Container dependencies:**
 - `admin.woodsupply.com` waits for `admin.furnituresmakers.com` to be healthy
 - `admin.yachtsales.com` waits for `admin.furnituresmakers.com` to be healthy
@@ -409,7 +465,7 @@ Expected states:
 
 **Do NOT stop configtx containers yet** - they can be used later to verify channel join after orderers start.
 
-### Step 6: Start orderers
+### Step 3: Start orderers
 
 Use the helper script (recommended):
 ```bash
@@ -455,51 +511,124 @@ docker logs orderer0.woodsupply.com 2>&1 | grep "application channels"
 
 **After configtx containers complete channel join** (Step 2 or Step 7), verify orderers joined:
 ```bash
-docker exec admin.furnituresmakers.com osnadmin channel list \
+# Note: Use bash -c with single quotes to expand variables INSIDE the container
+docker exec admin.furnituresmakers.com bash -c 'osnadmin channel list \
   -o orderer0.furnituresmakers.com:9443 \
   --ca-file $OSN_TLS_CA_ROOT_CERT \
   --client-cert $ADMIN_TLS_SIGN_CERT \
-  --client-key $ADMIN_TLS_PRIVATE_KEY
+  --client-key $ADMIN_TLS_PRIVATE_KEY'
 ```
-Expected output should show `yfw-channel` with `consensusRelation: "consenter"` status.
+Expected output should show `yfw-channel` with `"url": "/participation/v1/channels/yfw-channel"` in JSON response.
 
-### Step 7: Verify orderers joined channel
+### Step 4: Verify orderers joined channel
+
+**Background:** In Fabric v3, each orderer is explicitly joined to channels via the osnadmin API (see Step 2 for mechanism details). The 3 admin containers (`docker-compose.configtx.all.yaml`) handle this automatically - each admin joins its own orderer using `orderer0.${ORG_NAME}.com:9443`.
 
 **If you started orderers BEFORE Step 2 (genesis block creation):**
-- Configtx containers automatically handled channel join with retry logic
-- Skip to verification below
+- Configtx containers automatically handled channel join within first approach (if orderers founded)
 
-**If you started orderers AFTER Step 2:**
-- Configtx containers timed out waiting for orderers (expected)
-- You can either:
-  - **Option A:** Restart configtx containers to retry channel join
-  - **Option B:** Manually verify orderers discovered the channel via Raft consensus
+**If you started orderers AFTER Step 2 (genesis block creation):**
+- Configtx containers automatically handled channel join with their internal retry logic
 
-**Option A - Restart configtx containers:**
-```bash
-docker compose -f docker-compose.configtx.all.yaml restart
-```
+**_there is implemented quick fix of resolving orderer ip and checking if its internal network, since container names ends up with .com - there could be try of reaching external network._** 
 
 Wait ~15 seconds for retry logic to complete, then verify.
 
 **Verification - Check all 3 orderers joined:**
 ```bash
+# Option 1: Check admin container logs for success messages
 docker logs admin.furnituresmakers.com 2>&1 | grep -E "(Successfully joined|already exists)"
 docker logs admin.woodsupply.com 2>&1 | grep -E "(Successfully joined|already exists)"
 docker logs admin.yachtsales.com 2>&1 | grep -E "(Successfully joined|already exists)"
 ```
 Expected: `✓ Successfully joined channel yfw-channel` or `✓ Channel already joined` for each.
 
-**Alternative - Check orderer channel list:**
+**Option 2: Query each orderer's channel list (definitive check):**
 ```bash
-# Check each orderer has yfw-channel
+# Check all three orderers at once
+for org in furnituresmakers woodsupply yachtsales; do
+  echo "=== $org ==="
+  docker exec admin.$org.com bash -c 'osnadmin channel list \
+    -o orderer0.$ORG_NAME.com:9443 \
+    --ca-file $OSN_TLS_CA_ROOT_CERT \
+    --client-cert $ADMIN_TLS_SIGN_CERT \
+    --client-key $ADMIN_TLS_PRIVATE_KEY' 2>&1 | grep -E "channels|name"
+done
+```
+Expected output for each orderer should include:
+```
+"channels": [
+    "name": "yfw-channel",
+```
+
+If any orderer shows `"channels": null`, it means the channel join failed or is still in progress.
+
+**If an orderer failed to join (shows `"channels": null`):**
+
+This commonly happens due to timing issues during network startup. The admin container's `osnadmin channel join` command has a **~5 minute default timeout** when the orderer isn't ready, which can make it appear "stuck".
+
+**Understanding the timing issue:**
+- Admin containers start and immediately try to join orderers to the channel
+- If an orderer isn't fully ready (TLS not initialized, admin API not listening), `osnadmin` hangs for ~5 minutes before timing out
+- The retry logic (30 attempts × 5s = 150s) catches this, but the first attempt's long timeout can delay the whole process
+
+**To manually join an orderer:**
+
+```bash
+# Example: Manually join WoodSupply orderer
+docker exec admin.woodsupply.com bash -c 'osnadmin channel join \
+  --channelID yfw-channel \
+  --config-block /etc/hyperledger/output/genesis_block_YFW.pb \
+  -o orderer0.woodsupply.com:9443 \
+  --ca-file $OSN_TLS_CA_ROOT_CERT \
+  --client-cert $ADMIN_TLS_SIGN_CERT \
+  --client-key $ADMIN_TLS_PRIVATE_KEY'
+```
+
+Expected output: `Status: 201` (channel joined successfully) or `Status: 405` (already joined).
+
+After joining, verify with the channel list command above. Once all orderers show the channel, the EOF errors in orderer logs will stop.
+
+**Alternative - Check orderer channel list with explicit paths:**
+```bash
+# Check each orderer has yfw-channel (using full paths instead of env vars)
 docker exec admin.furnituresmakers.com osnadmin channel list \
   -o orderer0.furnituresmakers.com:9443 \
   --ca-file /etc/hyperledger/_shared_certs/furnituresmakers-msp/orderer/orderer0/msp/tls/tlscacerts/tls-ca-cert.pem \
   --client-cert /etc/hyperledger/_shared_certs/furnituresmakers-msp/admin/admin/msp/tls/signcerts/cert.pem \
   --client-key /etc/hyperledger/_shared_certs/furnituresmakers-msp/admin/admin/msp/tls/keystore/key.pem
 ```
-Expected: JSON showing `yfw-channel` with `"consensusRelation": "consenter"`
+Expected: JSON showing `yfw-channel` with `"url": "/participation/v1/channels/yfw-channel"`
+
+**Understanding Raft consensus logging behavior:**
+
+When checking orderer logs after channel join, you'll notice **only 2 out of 3 orderers** produce regular `Store ActiveNodes [1 2 3]` logs:
+
+```bash
+# Check orderer logs
+docker logs orderer0.yachtsales.com 2>&1 | tail -20
+docker logs orderer0.woodsupply.com 2>&1 | tail -20
+docker logs orderer0.furnituresmakers.com 2>&1 | tail -20
+```
+
+**Expected pattern:**
+- **2 orderers** (Raft followers) log: `Store ActiveNodes [1 2 3]` every ~2 seconds
+- **1 orderer** (Raft leader) will NOT log this message
+
+**Why this happens:**
+- The **Raft leader** sends consensus metadata to followers but doesn't log receiving it
+- **Followers** receive and log the active node list from the leader
+- `ActiveNodes [1 2 3]` = Raft node IDs (1=FurnituresMakers, 2=WoodSupply, 3=YachtSales) currently active in the cluster
+
+**To identify the current leader:**
+```bash
+docker logs orderer0.furnituresmakers.com 2>&1 | grep "became leader"
+docker logs orderer0.woodsupply.com 2>&1 | grep "became leader"
+docker logs orderer0.yachtsales.com 2>&1 | grep "became leader"
+```
+The leader shows: `1 became leader at term X channel=yfw-channel node=1`
+
+**Health indicator:** Healthy Raft consensus = 1 quiet leader + 2 followers logging `ActiveNodes [1 2 3]`. If all 3 are silent or all 3 are logging ActiveNodes, this indicates a consensus problem.
 
 **Clean up configtx containers (optional):**
 ```bash
@@ -583,11 +712,24 @@ docker compose down
 **Verify all containers removed:**
 ```bash
 # Should return no containers
-docker ps -a --filter "name=orderer\|peer\|admin\|ca\|initializer\|configtx" \
+docker ps -a \
+  --filter "name=initializer" \
+  --filter "name=ca" \
+  --filter "name=peer" \
+  --filter "name=orderer" \
+  --filter "name=admin" \
+  --filter "name=configtx" \
   --format "table {{.Names}}\t{{.Status}}\t{{.Image}}"
 
 # If any remain, force remove them
-docker rm -f $(docker ps -a --filter "name=orderer\|peer\|admin\|ca\|initializer\|configtx" -q) 2>/dev/null
+docker rm -f $(docker ps -a \
+  --filter "name=initializer" \
+  --filter "name=ca" \
+  --filter "name=peer" \
+  --filter "name=orderer" \
+  --filter "name=admin" \
+  --filter "name=configtx" \
+  -q) 2>/dev/null
 ```
 
 **Clean all crypto** (optional - only if you want fresh certs):
