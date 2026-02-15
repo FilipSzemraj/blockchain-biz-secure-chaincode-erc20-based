@@ -1,0 +1,120 @@
+networks:
+  fabric-network:
+    driver: bridge
+    name: fabric-network
+
+services:
+  admin.furnituresmakers.com:
+    networks:
+      - fabric-network
+    image: yfw-configtx
+    container_name: admin.furnituresmakers.com
+    build:
+      context: ./_config_files/configtx
+      dockerfile: Dockerfile
+    stdin_open: true
+    tty: true
+    environment:
+      - CERT_FILE=/etc/hyperledger/clients-certs/peer0/msp/tls/signcerts/cert.pem
+      - KEY_FILE=/etc/hyperledger/clients-certs/peer0/msp/tls/keystore/key.pem
+      - CA_FILE=/etc/hyperledger/clients-certs/peer0/msp/tls/tlscacerts/tls-ca-cert.pem
+      - FABRIC_CFG_PATH
+
+      - ORG_NAME=furnituresmakers
+      - OSN_TLS_CA_ROOT_CERT=/etc/hyperledger/_shared_certs/furnituresmakers-msp/orderer/orderer0/msp/tls/tlscacerts/tls-ca-cert.pem
+      - ADMIN_TLS_SIGN_CERT=/etc/hyperledger/_shared_certs/furnituresmakers-msp/admin/admin/msp/tls/signcerts/cert.pem
+      - ADMIN_TLS_PRIVATE_KEY=/etc/hyperledger/_shared_certs/furnituresmakers-msp/admin/admin/msp/tls/keystore/key.pem
+    volumes:
+      - ./_config_files/configtx/output:/etc/hyperledger/output/
+      - ./_shared_certs/:/etc/hyperledger/_shared_certs/
+      - ./Furnitures_Makers/crypto/client/ca:/etc/hyperledger/clients-certs/
+    healthcheck:
+      test: ["CMD", "/etc/hyperledger/scripts/healthcheck-admin-smart.sh"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    working_dir: /etc/hyperledger/scripts
+    command: >
+      bash -c "
+      echo 'Starting configtx admin container (with retry logic)';
+      ls -l /etc/hyperledger/scripts/;
+      ./creating-channel-with-retry.sh;
+      echo 'Genesis block creation and channel join completed (or timed out waiting for orderer)';
+      echo 'Container will stay alive for inspection. Check logs above for status.';
+      exec bash;
+      "
+
+  admin.woodsupply.com:
+    networks:
+      - fabric-network
+    image: yfw-configtx
+    container_name: admin.woodsupply.com
+    build:
+      context: ./_config_files/configtx
+      dockerfile: Dockerfile
+    stdin_open: true
+    tty: true
+    environment:
+      - ORG_NAME=woodsupply
+      - OSN_TLS_CA_ROOT_CERT=/etc/hyperledger/_shared_certs/woodsupply-msp/orderer/orderer0/msp/tls/tlscacerts/tls-ca-cert.pem
+      - ADMIN_TLS_SIGN_CERT=/etc/hyperledger/_shared_certs/woodsupply-msp/admin/admin/msp/tls/signcerts/cert.pem
+      - ADMIN_TLS_PRIVATE_KEY=/etc/hyperledger/_shared_certs/woodsupply-msp/admin/admin/msp/tls/keystore/key.pem
+    volumes:
+      - ./_config_files/configtx/output:/etc/hyperledger/output/
+      - ./_shared_certs/:/etc/hyperledger/_shared_certs/
+    depends_on:
+      admin.furnituresmakers.com:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "/etc/hyperledger/scripts/healthcheck-admin-smart.sh"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    working_dir: /etc/hyperledger/scripts
+    command: >
+      bash -c "
+      echo 'Starting configtx admin container (with retry logic)';
+      ls -l /etc/hyperledger/scripts/creating-channel-with-retry.sh || (echo 'File not found!' && exit 1);
+      ./creating-channel-with-retry.sh;
+      echo 'Channel join completed (or timed out waiting for orderer)';
+      exec bash;
+      "
+
+  admin.yachtsales.com:
+    networks:
+      - fabric-network
+    image: yfw-configtx
+    container_name: admin.yachtsales.com
+    build:
+      context: ./_config_files/configtx
+      dockerfile: Dockerfile
+    stdin_open: true
+    tty: true
+    environment:
+      - ORG_NAME=yachtsales
+      - OSN_TLS_CA_ROOT_CERT=/etc/hyperledger/_shared_certs/yachtsales-msp/orderer/orderer0/msp/tls/tlscacerts/tls-ca-cert.pem
+      - ADMIN_TLS_SIGN_CERT=/etc/hyperledger/_shared_certs/yachtsales-msp/admin/admin/msp/tls/signcerts/cert.pem
+      - ADMIN_TLS_PRIVATE_KEY=/etc/hyperledger/_shared_certs/yachtsales-msp/admin/admin/msp/tls/keystore/key.pem
+    volumes:
+      - ./_config_files/configtx/output:/etc/hyperledger/output/
+      - ./_shared_certs/:/etc/hyperledger/_shared_certs/
+    depends_on:
+      admin.furnituresmakers.com:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "/etc/hyperledger/scripts/healthcheck-admin-smart.sh"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    working_dir: /etc/hyperledger/scripts
+    command: >
+      bash -c "
+      echo 'Starting configtx admin container (with retry logic)';
+      ls -l /etc/hyperledger/scripts/creating-channel-with-retry.sh || (echo 'File not found!' && exit 1);
+      ./creating-channel-with-retry.sh;
+      echo 'Channel join completed (or timed out waiting for orderer)';
+      exec bash;
+      "

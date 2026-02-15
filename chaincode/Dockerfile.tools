@@ -1,0 +1,30 @@
+FROM eclipse-temurin:11-jdk
+
+# Chaincode development tools image
+# Used for building, testing, and packaging chaincode locally without
+# installing Java 11 on the host system.
+#
+# Usage:
+#   docker compose -f docker-compose.tools.yaml run --rm chaincode-tools test
+#   docker compose -f docker-compose.tools.yaml run --rm chaincode-tools build
+#   docker compose -f docker-compose.tools.yaml run --rm chaincode-tools shadowJar
+
+WORKDIR /chaincode
+
+# Copy Gradle wrapper first (cacheable layer)
+COPY gradlew gradlew.bat ./
+COPY gradle/ gradle/
+RUN chmod +x gradlew && ./gradlew --version
+
+# Copy build config (cacheable unless dependencies change)
+COPY build.gradle settings.gradle ./
+COPY config/ config/
+
+# Download dependencies (cached unless build.gradle changes)
+RUN ./gradlew dependencies --no-daemon
+
+# Copy source code last (changes most often)
+COPY src/ src/
+
+ENTRYPOINT ["./gradlew", "--no-daemon"]
+CMD ["build"]

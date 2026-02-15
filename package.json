@@ -1,0 +1,16 @@
+{
+  "name": "blockchain-biz-secure",
+  "version": "1.0.0",
+  "description": "Enterprise B2B transaction security system using Hyperledger Fabric",
+  "private": true,
+  "scripts": {
+    "build:diagrams": "cd diagrams && ./build-diagrams.sh",
+    "install:diagram-tools": "npm install"
+  },
+  "devDependencies": {
+    "@mermaid-js/mermaid-cli": "^11.4.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

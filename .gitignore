@@ -1,43 +1,92 @@
-# Ignore everything in parent directories
-/*
+# === Build artifacts ===
+# Chaincode (Java/Gradle)
+chaincode/build/
+chaincode/.gradle/
+chaincode/out/
 
-# Allow this folder and its contents
-!.gitignore
-!/.
+# Backend (Java/Gradle)
+backend/*/build/
+backend/*/.gradle/
+backend/*/out/
 
-# Ignore build artifacts
-/build/
-.gradle/
-/out/
-/build.gradle.bak
+# Frontend (Node.js)
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
 
-# Ignore IDE and editor specific files
-/.idea/
-/*.iml
+# Root node_modules (diagram build tools)
+/node_modules/
+/package-lock.json
+
+# === IDE and editor files ===
+.idea/
+*.iml
 .vscode/
+*.swp
+*.swo
+*~
 
-# Ignore OS generated files
+# === OS generated files ===
 .DS_Store
 Thumbs.db
 
-# Ignore gradle wrappers
-/gradle/
-/gradlew
-/gradlew.bat
+# === Gradle wrappers (regenerable) ===
+# Keep gradle wrappers tracked for reproducible builds
+# Uncomment below to ignore them:
+# **/gradle/
+# **/gradlew
+# **/gradlew.bat
 
-# Ignore Docker build artifacts
-/docker/
-Dockerfile
+# === Environment and secrets ===
+.env
 
-# Ignore sensitive or security-related files
-#/private_key.pem
-#*.pem
+# === Docker ===
+docker-compose.override.yml
+postgres_data/
+postgres_data_next/
 
-# Allow configuration files and source code
-!config/
-!src/
-!settings.gradle
-!build.gradle
-!public_key.pem
-!blockchain-biz-secure-api/
+# === Logs ===
+*.log
+logi.txt
 
+# === Claude Code ===
+.claude/
+
+# === Hyperledger Fabric Infrastructure ===
+# Generated crypto material (cleared by clearing-cert.sh)
+infrastructure/ca/*/crypto/client/
+infrastructure/ca/*/crypto/server/
+infrastructure/ca/_shared_certs/
+
+# Genesis block and channel artifacts
+infrastructure/ca/_config_files/configtx/output/
+
+# Temporary files
+infrastructure/ca/_temp_configs/
+
+# Generated environment files (written by share-certs.sh and run scripts)
+infrastructure/ca/*/_env/env
+infrastructure/ca/_config_files/**/*.env
+
+# Scripts copied from _scripts/ to build contexts (copied by run-*.sh helpers)
+infrastructure/ca/_config_files/configtx/creating-channel.sh
+infrastructure/ca/_config_files/configtx/creating-channel-with-retry.sh
+infrastructure/ca/_config_files/configtx/healthcheck-admin.sh
+infrastructure/ca/_config_files/configtx/healthcheck-admin-smart.sh
+infrastructure/ca/_config_files/peer/start-anchor-peer.sh
+infrastructure/ca/_config_files/peer/add-anchor-peers.sh
+infrastructure/ca/_config_files/peer/start-peer.sh
+infrastructure/ca/_config_files/peer/fetch-block-as-peer.sh
+infrastructure/ca/_config_files/orderer/start-orderer.sh
+
+# Backup files and crash dumps
+**/Dockerfile\ copy
+**/*.stackdump
+
+# Exception: Keep fabric-ca-server-config.yaml files (they're preserved by clearing-cert.sh)
+!infrastructure/ca/*/crypto/server/ca/fabric-ca-server-config.yaml
+!infrastructure/ca/*/crypto/server/tls-ca/fabric-ca-server-config.yaml
+
+diagrams
+
+docs/assets/leftovers
