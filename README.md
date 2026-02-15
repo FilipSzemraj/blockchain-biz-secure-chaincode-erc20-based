@@ -14,44 +14,25 @@
 
 ## Architecture
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    FRONTEND (React + TypeScript + Vite)          │
-│  Dashboard · Token Operations · Delivery Management · Auth      │
-└───────────────────────────────┬─────────────────────────────────┘
-                                │ REST API
-                                ▼
-┌─────────────────────────────────────────────────────────────────┐
-│              BACKEND (Spring Boot 3.4.1 · Java 21)              │
-│  JWT Auth · Fabric Gateway SDK · SSE Events · PostgreSQL        │
-│  Per-org instances: logistics / sales / production              │
-└───────────────────────────────┬─────────────────────────────────┘
-                                │ gRPC + mTLS
-                                ▼
-┌─────────────────────────────────────────────────────────────────┐
-│            HYPERLEDGER FABRIC NETWORK (v2.5 · Raft)             │
-│                                                                  │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐          │
-│  │ Yacht Sales   │  │ Furnitures   │  │ Wood Supply  │          │
-│  │ Peer · CA     │  │ Makers       │  │ Peer · CA    │          │
-│  │ Orderer       │  │ Peer · CA    │  │ Orderer      │          │
-│  └──────────────┘  │ Orderer      │  └──────────────┘          │
-│                     └──────────────┘                             │
-│                                                                  │
-│  Channel: yfw-channel          Containers: ~24                   │
-│  Chaincode: ERC20TokenContract + IBANVoteContract                │
-└──────────────────────────────────────┬──────────────────────────┘
-                                       │
-                          ┌────────────┘
-                          ▼
-                ┌─────────────────────┐
-                │  Bank API           │
-                │  RSA-2048 signing   │
-                │  Transaction proof  │
-                └─────────────────────┘
-```
+![System Architecture](diagrams/architecture.svg)
 
-The system models a consortium of three organizations trading goods and settling payments via blockchain-backed tokens. Every transaction is cryptographically signed by an external bank service, verified on-chain, and recorded immutably.
+The system models a consortium of three organizations trading goods and settling payments via blockchain-backed tokens. The **Client API** acts as the central hub — it proxies signing requests to the **Bank API** and submits signed transactions to the **Fabric network** via gRPC. The chaincode verifies RSA signatures against a hardcoded public key bundled in the chaincode JAR; the Bank API itself never communicates with the blockchain directly.
+
+### Transaction Verification Flow
+
+![Mint Verification Flow](diagrams/mint-verification-flow.svg)
+
+<details>
+<summary>Flow summary (text)</summary>
+
+1. Client API proxies a confirmation to Bank API (`POST /api/transactions`)
+2. Bank API serializes the confirmation, computes SHA-256 hash, signs hash with RSA-2048 private key
+3. Bank API returns `{encryptedHash, hash, data}` — the signed confirmation JSON
+4. Client API submits signed JSON to chaincode `Mint()` via Fabric Gateway (gRPC + mTLS)
+5. Chaincode re-serializes confirmation, computes local SHA-256, decrypts signature with hardcoded `public_key.pem`
+6. Chaincode compares hashes, checks replay prevention (`USED_TRANSACTIONS_{hash}`), validates IBANs
+7. Tokens minted, `Transfer` event emitted → SSE → Frontend updates in real time
+</details>
 
 ---
 
@@ -99,32 +80,36 @@ The system models a consortium of three organizations trading goods and settling
 │   │   ├── src/                  #   Auth, blockchain integration, event streaming
 │   │   ├── compose.yaml          #   PostgreSQL + API containers
 │   │   └── Dockerfile            #   Production container image
-│   └── bank-api/                 # External bank integration service
-│       ├── src/                  #   RSA encryption, transaction validation
-│       └── Dockerfile            #   Bank service container
+│   └── bank-api/                 # RSA-2048 signing oracle (Spring Boot, Java 21)
+│       ├── src/                  #   RSA signing, transaction serialization
+│       ├── keys/                 #   RSA key pair (public_key.pem, private_key.pem)
+│       └── Dockerfile            #   Bank service container (port 8081)
 │
 ├── frontend/                     # Web application (React + TypeScript + Vite)
 │   ├── src/components/           #   Dashboard, token ops, delivery forms
 │   ├── src/redux/                #   State management (Redux Toolkit)
-│   └── src/config/               #   API client configuration
+│   └── src/config/               #   API client configuration (axios)
 │
 ├── infrastructure/
 │   └── ca/                       # Hyperledger Fabric network infrastructure
 │       ├── docker-compose*.yaml  #   13 compose files (CAs, peers, orderers)
 │       ├── _scripts/             #   Enrollment, channel creation, cert distribution
-│       └── _config_files/        #   configtx.yaml, orderer.yaml, core.yaml
+│       ├── _config_files/        #   configtx.yaml, orderer.yaml, core.yaml
+│       └── INFRASTRUCTURE_STEPS.md  # Comprehensive network deployment guide
 │
 ├── external-bank/                # Bank simulation utilities (Python)
 │   ├── generating_key_pair.py    #   RSA key generation
 │   └── encryption_decryption.py  #   Signing and verification
 │
+├── diagrams/                     # Mermaid diagram sources + generated SVGs
+│   ├── architecture.mermaid      #   System architecture diagram
+│   └── mint-verification-flow.mermaid  # RSA signing/verification sequence
+│
 ├── docs/                         # Documentation
-│   ├── network-setup.md          #   Step-by-step network deployment guide
 │   ├── architecture.md           #   Detailed system architecture
 │   └── thesis-topic.md           #   Academic context
 │
-├── .env.example                  # Environment variable template
-└── PROJECT_ANALYSIS.md           # Full project archaeology report
+└── .env.example                  # Environment variable template
 ```
 
 ---
@@ -138,73 +123,104 @@ The system models a consortium of three organizations trading goods and settling
 | Docker & Docker Compose | 20.10+ | Container orchestration for all services |
 | Java JDK | 21 | Backend APIs build and runtime |
 | Node.js & npm | 18+ | Frontend build |
-| Python 3 | 3.8+ | Bank key generation utilities |
+| Python 3 | 3.8+ | Bank RSA key generation utilities |
 
 > **Note:** Java 11 and Gradle are only needed for [running chaincode tests locally](#testing). The chaincode itself is compiled inside Docker by Fabric's `fabric-javaenv` image during `peer lifecycle chaincode install`.
 
-### 1. Clone and Set Up Environment
+### Startup Order
+
+The system has a strict startup dependency chain. Each layer requires the previous one to be fully operational:
+
+```
+1. Fabric Network        (CAs → orderers → channel → peers + chaincode)
+2. Bank API              (independent — needs only Docker network)
+3. Client API            (needs: Fabric peers + PostgreSQL + Bank API)
+4. Frontend              (needs: Client API on :8080 + Bank API on :8081)
+```
+
+### Step 1: Clone and Configure
 
 ```bash
 git clone <repository-url>
 cd blockchain-biz-secure-chaincode-erc20-based
 
-# Copy environment template and configure
 cp .env.example .env
 # Edit .env with your settings (JWT secret, database credentials, etc.)
 ```
 
-### 2. Start the Blockchain Network
+### Step 2: Start the Fabric Network
 
-Follow the detailed guide in [`docs/network-setup.md`](docs/network-setup.md). Summary:
+The blockchain infrastructure is the most complex component (~24 Docker containers). A comprehensive step-by-step guide with verification commands, troubleshooting, and architecture explanations is available in the dedicated infrastructure guide.
+
+**[`infrastructure/ca/INFRASTRUCTURE_STEPS.md`](infrastructure/ca/INFRASTRUCTURE_STEPS.md)** — Full network deployment guide
+
+Quick summary:
 
 ```bash
 cd infrastructure/ca
 
-# 1. Start Certificate Authorities
-docker-compose up -d
+# 1. Start Certificate Authorities (TLS bootstrap + org CAs)
+docker compose up --build -d
 
-# 2. Start orderers
-docker-compose -f docker-compose.orderer.all.yaml up -d
+# 2. Create genesis block and channel configuration
+bash _scripts/run-configtx-all.sh
 
-# 3. Create channel and configure
-docker-compose -f docker-compose.configtx.all.yaml up
+# 3. Start orderers (Raft consensus)
+bash _scripts/run-orderer.sh
 
-# 4. Start anchor peers
-cd _scripts && ./run-anchor-peers.sh
+# 4. Start anchor peers (auto-installs + commits chaincode)
+docker compose -f docker-compose.peer.all.yaml up --build -d
 
-# 5. Start remaining peers
-./run-all-inner-peers.sh
+# 5. (Optional) Start inner peers
+bash _scripts/run-all-inner-peers.sh
 ```
 
-### 3. Chaincode Installation
+Verify the network is healthy:
+```bash
+bash check-network-health.sh
+```
 
-No manual build step is required. The peer Docker containers mount `chaincode/` directly and Fabric's `fabric-javaenv` image compiles the Java source automatically during `peer lifecycle chaincode install`.
+### Step 3: Start Bank API
 
-The anchor peer startup script (`add-anchor-peers.sh`) handles the full lifecycle — packaging, installing, approving, and committing — automatically when anchor peers start. See [`docs/network-setup.md`](docs/network-setup.md) for the full sequence.
+<!-- TODO: detailed guide in docs/bank-api-setup.md -->
 
-### 4. Start Backend Services
+```bash
+cd backend/bank-api
+docker compose up -d    # Starts on port 8081
+```
+
+The Bank API auto-generates an RSA-2048 key pair on first start if `keys/` directory is empty. The matching `public_key.pem` must be bundled in `chaincode/src/main/resources/public_key.pem` before chaincode installation (already included in the repository).
+
+### Step 4: Start Client API
+
+<!-- TODO: detailed guide in docs/client-api-setup.md — per-org instances, crypto mounting, Fabric identity -->
 
 ```bash
 cd backend/client-api
-docker-compose up -d   # Starts PostgreSQL + API instances for all 3 orgs
+docker compose up -d    # Starts PostgreSQL + API on port 8080
 ```
 
-### 5. Start Frontend
+The Client API connects to Fabric peers via gRPC+mTLS using crypto material mounted from the infrastructure layer. Each organization runs its own API instance with a distinct Fabric identity (MSP ID, certificates).
+
+### Step 5: Start Frontend
+
+<!-- TODO: detailed guide in docs/frontend-setup.md -->
 
 ```bash
 cd frontend
 npm install
-npm run dev            # Development server at http://localhost:5173
+npm run dev             # Development server at http://localhost:5173
 ```
 
-### 6. Verify
+The frontend connects to Client API (`localhost:8080`) and Bank API (`localhost:8081`) — both URLs are currently hardcoded in `src/config/`.
+
+### Step 6: Verify End-to-End
 
 ```bash
-# Query the token symbol from chaincode
-peer chaincode query -C yfw-channel -n basic -c '{"Args":["TokenSymbol"]}' \
-  --tls --cafile $CA_FILE
-
-# Expected: status:200
+# Query token name from chaincode (via peer container)
+docker exec peer0.furnituresmakers.com peer chaincode query \
+  -C yfw-channel -n basic -c '{"function":"TokenName","Args":[]}'
+# Expected: IntrinsicCoin
 ```
 
 ---
@@ -215,15 +231,14 @@ peer chaincode query -C yfw-channel -n basic -c '{"Args":["TokenSymbol"]}' \
 
 | Function | Parameters | Access | Description |
 |----------|-----------|--------|-------------|
-| `Mint` | `to`, `amount`, `confirmationHash` | Admin | Create new tokens with bank confirmation verification |
+| `Mint` | `jsonContent` (signed confirmation JSON) | Admin | Create new tokens after RSA signature verification |
 | `Burn` | `from`, `amount` | Owner | Destroy tokens (two-phase: request → finalize) |
 | `Transfer` | `from`, `to`, `amount` | Owner | Transfer tokens between accounts |
 | `Approve` | `spender`, `amount` | Owner | Authorize third-party spending |
 | `TransferFrom` | `from`, `to`, `amount` | Approved | Execute approved transfer |
 | `BalanceOf` | `account` | Any | Query token balance |
 | `TotalSupply` | — | Any | Query total token supply |
-| `TokenName` | — | Any | Returns token name |
-| `TokenSymbol` | — | Any | Returns token symbol |
+| `TokenName` / `TokenSymbol` | — | Any | Returns `IntrinsicCoin` / `IC` |
 
 ### IBANVoteContract
 
@@ -233,63 +248,41 @@ peer chaincode query -C yfw-channel -n basic -c '{"Args":["TokenSymbol"]}' \
 | `VoteOnIBAN` | `proposalId` | Any org member | Cast organization's vote (3-of-3 required) |
 | `GetCurrentIBAN` | — | Any | Query the current active IBAN |
 
-### Transaction Verification Flow
-
-```
-1. Bank API receives transfer request
-2. Bank signs confirmation with RSA-2048 private key
-3. Client API submits signed confirmation to chaincode
-4. Chaincode verifies RSA signature against stored public key
-5. Chaincode checks transaction ID not already used (replay prevention)
-6. Tokens minted/transferred on successful verification
-7. Event emitted → SSE → Frontend updates in real time
-```
-
 ---
 
 ## Network Topology
 
 The system deploys **~24 Docker containers** across three organizations:
 
-| Organization | Peer | Orderer | CA (Identity) | CA (TLS) | API Instances |
-|-------------|------|---------|---------------|----------|---------------|
-| **Yacht Sales** | peer0:9051 | orderer0 | ca-yachtsales | tls-ca-yachtsales | sales, logistics, production |
-| **Furnitures Makers** | peer0:7051 | orderer0 | ca-furnituresmakers | tls-ca-furnituresmakers | sales, logistics, production |
-| **Wood Supply** | peer0:8051 | orderer0 | ca-woodsupply | tls-ca-woodsupply | sales, logistics, production |
+| Organization | Peer | Orderer | CA (Identity) | CA (TLS) |
+|-------------|------|---------|---------------|----------|
+| **Yacht Sales** | peer0:9051 | orderer0:9050 | ca-yachtsales:9054 | tls-ca-yachtsales |
+| **Furnitures Makers** | peer0:7051 | orderer0:7050 | ca-furnituresmakers:7054 | tls-ca-furnituresmakers |
+| **Wood Supply** | peer0:8051 | orderer0:8050 | ca-woodsupply:8054 | tls-ca-woodsupply |
 
 **Channel:** `yfw-channel` (Yacht-Furnitures-Wood)
 **Consensus:** Raft ordering service
 **Security:** Mutual TLS between all nodes, X.509 certificate-based identity
+**Docker network:** `fabric-network` (shared by all components)
 
 ---
 
 ## Testing
 
-### Chaincode Tests (Java 11 + Gradle required)
+### Chaincode Tests
 
-The chaincode requires JDK 11 and Gradle for local testing. If you don't have them installed:
-
-```bash
-# Download JDK 11 (Adoptium Temurin)
-curl -sL "https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.25%2B9/OpenJDK11U-jdk_x64_linux_hotspot_11.0.25_9.tar.gz" \
-  -o /tmp/jdk11.tar.gz
-tar xzf /tmp/jdk11.tar.gz -C /tmp/
-
-# Download Gradle
-curl -sL "https://services.gradle.org/distributions/gradle-8.5-bin.zip" -o /tmp/gradle.zip
-unzip -qo /tmp/gradle.zip -d /tmp/
-```
-
-Run tests (34 tests, 80% coverage enforced by JaCoCo):
+34 unit tests with 80% coverage enforced by JaCoCo. Requires JDK 11:
 
 ```bash
-export JAVA_HOME=/tmp/jdk-11.0.25+9
-export PATH=$JAVA_HOME/bin:/tmp/gradle-8.5/bin:$PATH
+# Option A: Use Docker tools image (no local JDK needed)
+cd chaincode
+docker compose -f docker-compose.tools.yaml run --rm chaincode-tools test
 
+# Option B: Local JDK 11 + Gradle
+export JAVA_HOME=/path/to/jdk-11
 cd chaincode
 gradle test                    # Run unit tests
-gradle jacocoTestReport        # Generate coverage report (build/reports/jacoco/)
-gradle shadowJar               # Build chaincode.jar (build/libs/chaincode.jar)
+gradle jacocoTestReport        # Coverage report → build/reports/jacoco/
 ```
 
 ### Backend API Tests
@@ -308,7 +301,8 @@ cd backend/client-api
 | **Hyperledger Fabric over Ethereum** | Permissioned network | B2B transactions require identity verification and data privacy — public blockchains expose transaction data |
 | **ERC-20 on Fabric** | Custom implementation | Fabric has no native token standard; implementing ERC-20 provides familiar semantics while leveraging Fabric's privacy features |
 | **Java for chaincode** | Java 11 | Strong typing, enterprise ecosystem familiarity, official Fabric SDK support |
-| **RSA-2048 bank verification** | External signing | Separates financial verification from blockchain logic — the bank remains an independent trust anchor |
+| **RSA-2048 bank verification** | External signing oracle | Separates financial verification from blockchain logic — the bank remains an independent trust anchor |
+| **Hardcoded bank public key** | Bundled in chaincode JAR | Simpler deployment; key rotation requires chaincode upgrade (package → install → approve → commit across all orgs) |
 | **3-of-3 IBAN voting** | Full consensus | All organizations must agree on payment routing changes — prevents unilateral financial decisions |
 | **SSE over WebSockets** | Server-Sent Events | Simpler for unidirectional event push from blockchain; no bidirectional channel needed |
 
@@ -329,6 +323,7 @@ cd backend/client-api
 - [ ] Environment variable externalization (remove hardcoded secrets)
 - [ ] Database migrations (replace Hibernate auto-DDL)
 - [ ] Integration test suite
+- [ ] Bank public key rotation via ledger governance (eliminate chaincode redeployment)
 
 ---
 

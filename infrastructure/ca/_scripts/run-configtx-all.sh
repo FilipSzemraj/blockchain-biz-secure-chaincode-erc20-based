@@ -1,6 +1,4 @@
-cp -f creating-channel.sh ../_config_files/configtx/creating-channel.sh
 cp -f creating-channel-with-retry.sh ../_config_files/configtx/creating-channel-with-retry.sh
-cp -f healthcheck-admin.sh ../_config_files/configtx/healthcheck-admin.sh
 cp -f healthcheck-admin-smart.sh ../_config_files/configtx/healthcheck-admin-smart.sh
 
 echo "Copied scripts to ../_config_files/configtx/"

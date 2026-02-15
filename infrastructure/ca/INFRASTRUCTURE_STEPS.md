@@ -719,24 +719,481 @@ installTimeout: 600s   # was 300s
 executetimeout: 300s    # was 30s
 ```
 
-### Step 9: Verify full infrastructure
+### Step 6 (optional): Start inner peers (peer1, peer2)
 
 ```bash
-docker ps --format "table {{.Names}}\t{{.Status}}" | grep -E "(ca|orderer|peer)"
+cd _scripts && bash run-all-inner-peers.sh
 ```
-
-Expected: **3 CAs + 3 orderers + 3 anchor peers = 9 containers** all `Up`.
-
-### Step 10 (optional): Start inner peers (peer1, peer2)
+or with docker compose
 
 ```bash
-cd infrastructure/ca/_scripts && bash run-all-inner-peers.sh
+
 ```
 
 This starts peer1 and peer2 for each org (6 more containers) using `docker-compose.peer.yaml` with dynamically generated `.env` files. Each inner peer:
 - Gets gossip bootstrap pointing to peer0 and other peers of the same org
 - Fetches channel block and joins `yfw-channel`
 - Sleeps 15s between each peer start
+
+**Wait ~60 seconds**, then verify all 6 inner peers are running:
+```bash
+docker ps --filter "name=peer" --format "table {{.Names}}\t{{.Status}}" | grep -E "(peer1|peer2)"
+```
+
+Expected: 6 peers `Up` (peer1 and peer2 for each of 3 orgs).
+
+Check inner peer joined channel:
+```bash
+docker logs peer1.furnituresmakers.com 2>&1 | grep -E "(Joining channel|Successfully joined)"
+```
+
+---
+
+### Step 7: Comprehensive Network Verification
+
+This section provides all verification commands and helper scripts to check network health.
+
+#### Quick Status Check
+
+**Container count:**
+```bash
+docker ps --filter "name=ca" --filter "name=orderer" --filter "name=peer" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}" | wc -l
+```
+- Expected without inner peers: **9 containers** (3 CAs + 3 orderers + 3 anchor peers)
+- Expected with inner peers: **15 containers** (3 CAs + 3 orderers + 9 peers)
+
+**Detailed status:**
+```bash
+docker ps -a \
+  --filter "name=initializer" \
+  --filter "name=ca" \
+  --filter "name=peer" \
+  --filter "name=orderer" \
+  --filter "name=admin" \
+  --filter "name=configtx" \
+  --format "table {{.Names}}\t{{.Status}}\t{{.Image}}"
+```
+
+**Expected states for fully running network:**
+
+| Component | Container | Expected Status |
+|-----------|-----------|-----------------|
+| TLS Initializers | `initializer_{org}` | `Exited (0)` (completed) |
+| Org CAs | `{org}-ca` | `Up` |
+| Orderers | `orderer0.{org}.com` | `Up` |
+| Anchor Peers | `peer0.{org}.com` | `Up` |
+| Inner Peers | `peer1.{org}.com`, `peer2.{org}.com` | `Up` (if started) |
+| Admin/Configtx | `admin.{org}.com` | `Exited (0)` or `Up` (idle) |
+
+#### Helper Scripts for Verification
+
+**1. Wait for containers (any step):**
+```bash
+# Wait for containers to reach expected state
+source _scripts/wait-for-containers.sh <timeout> <state> <name_filter>
+
+# Examples:
+source _scripts/wait-for-containers.sh 90 "exited" "initializer"  # TLS init completed
+source _scripts/wait-for-containers.sh 60 "up" "ca"                # CAs running
+source _scripts/wait-for-containers.sh 90 "up" "orderer"           # Orderers running
+source _scripts/wait-for-containers.sh 90 "up" "peer0"             # Anchor peers running
+```
+
+**2. Wait for files/directories:**
+```bash
+# Wait for crypto material or genesis block
+source _scripts/wait-for-files.sh <timeout> <path1> [path2] ...
+
+# Examples:
+source _scripts/wait-for-files.sh 30 "_shared_certs/furnituresmakers-msp"
+source _scripts/wait-for-files.sh 60 \
+    "_shared_certs/furnituresmakers-msp" \
+    "_shared_certs/woodsupply-msp" \
+    "_shared_certs/yachtsales-msp"
+source _scripts/wait-for-files.sh 60 "_config_files/configtx/output/genesis_block_YFW.pb"
+```
+
+**3. Wait for orderers to join channel:**
+```bash
+# Checks all 3 orderers joined channel + shows Raft leader
+source _scripts/wait-for-channel-join.sh <timeout> <channel_name>
+
+# Example:
+source _scripts/wait-for-channel-join.sh 90 yfw-channel
+```
+
+**4. Wait for peers complete startup:**
+```bash
+# Verifies: channel join, chaincode package, install, approve
+source _scripts/wait-for-peers.sh <timeout> <channel_name>
+
+# Example:
+source _scripts/wait-for-peers.sh 600 yfw-channel  # 10 min for chaincode install
+```
+
+#### Component-Specific Verification
+
+**Certificate Authorities (CAs):**
+```bash
+# Check CA containers are running
+docker ps --filter "name=ca" --format "table {{.Names}}\t{{.Status}}"
+
+# Verify shared certificates created
+ls -la _shared_certs/
+# Should show: furnituresmakers-msp/  woodsupply-msp/  yachtsales-msp/
+
+# Verify MSP structure
+ls _shared_certs/furnituresmakers-msp/
+# Should show: cacerts/  tlscacerts/  config.yaml
+
+# Check CA logs
+docker logs furnituresmakers-ca 2>&1 | tail -20
+
+# Test CA is responding (error without passing certificates for TLS connection)
+curl -k https://localhost:7054/cainfo  # FurnituresMakers
+curl -k https://localhost:8054/cainfo  # WoodSupply
+curl -k https://localhost:9054/cainfo  # YachtSales
+```
+
+**Orderers:**
+```bash
+# Check orderers are running
+docker ps --filter "name=orderer" --format "table {{.Names}}\t{{.Status}}"
+
+# Verify all orderers joined channel
+for org in furnituresmakers woodsupply yachtsales; do
+  echo "=== $org ==="
+  docker exec admin.$org.com bash -c 'osnadmin channel list \
+    -o orderer0.$ORG_NAME.com:9443 \
+    --ca-file $OSN_TLS_CA_ROOT_CERT \
+    --client-cert $ADMIN_TLS_SIGN_CERT \
+    --client-key $ADMIN_TLS_PRIVATE_KEY' 2>&1 | grep -E "channels|name"
+done
+
+echo
+
+# Check Raft consensus status (identify leader)
+docker logs orderer0.furnituresmakers.com 2>&1 | grep "became leader"
+echo
+
+docker logs orderer0.woodsupply.com 2>&1 | grep "became leader"
+echo
+
+docker logs orderer0.yachtsales.com 2>&1 | grep "became leader"
+echo
+
+
+# Check Raft health (followers log ActiveNodes)
+docker logs orderer0.woodsupply.com 2>&1 | tail -10 | grep "ActiveNodes"
+echo
+
+# Should show: Store ActiveNodes [1 2 3] (if follower)
+
+# Check orderer logs for errors
+docker logs orderer0.furnituresmakers.com 2>&1 | grep -i error
+echo
+
+```
+
+**Anchor Peers (peer0):**
+```bash
+# Check anchor peers are running
+docker ps --filter "name=peer0" --format "table {{.Names}}\t{{.Status}}"
+
+# Verify peers joined channel
+docker exec peer0.furnituresmakers.com peer channel list
+# Should output: Channels peers has joined: yfw-channel
+
+# Check all 3 anchor peers
+for org in furnituresmakers woodsupply yachtsales; do
+  echo "=== peer0.$org.com ==="
+  docker exec peer0.$org.com peer channel list
+done
+
+# Verify chaincode installed
+# need to do it from admin peer
+#docker exec peer0.furnituresmakers.com peer lifecycle chaincode queryinstalled
+
+# Check chaincode approval
+docker exec peer0.furnituresmakers.com peer lifecycle chaincode queryapproved \
+  -C yfw-channel -n basic
+
+# Check chaincode commit status (channel-level)
+docker exec peer0.furnituresmakers.com peer lifecycle chaincode querycommitted \
+  -C yfw-channel -n basic
+
+# Check peer logs
+docker logs peer0.furnituresmakers.com 2>&1 | tail -40
+# Look for: "Chaincode successfully installed and approved"
+```
+
+**Inner Peers (peer1, peer2):**
+```bash
+# Check inner peers are running
+docker ps --filter "name=peer" --format "table {{.Names}}\t{{.Status}}" | grep -E "(peer1|peer2)"
+
+# Verify inner peer joined channel
+docker exec peer1.furnituresmakers.com peer channel list
+
+# Check gossip connectivity
+docker logs peer1.furnituresmakers.com 2>&1 | grep -i "gossip"
+```
+
+**Chaincode:**
+```bash
+# Test chaincode is responsive (invoke query for token name)
+# These queries run as the peer's identity (not admin)
+docker exec peer0.furnituresmakers.com peer chaincode query \
+  -C yfw-channel \
+  -n basic \
+  -c '{"function":"TokenName","Args":[]}'
+
+# Expected output: IntrinsicCoin
+
+# Test other simple queries
+docker exec peer0.furnituresmakers.com peer chaincode query \
+  -C yfw-channel \
+  -n basic \
+  -c '{"function":"TokenSymbol","Args":[]}'
+
+docker exec peer0.furnituresmakers.com peer chaincode query \
+  -C yfw-channel \
+  -n basic \
+  -c '{"function":"TotalSupply","Args":[]}'
+
+# Check chaincode containers are running (all 3 orgs)
+docker ps --filter "name=basic_1.0" --format "table {{.Names}}\t{{.Status}}"
+# Should show chaincode containers like:
+# peer0.furnituresmakers.com-peer0.furnituresmakers.com-basic_1.0-<hash>
+# peer0.woodsupply.com-peer0.woodsupply.com-basic_1.0-<hash>
+# peer0.yachtsales.com-peer0.yachtsales.com-basic_1.0-<hash>
+
+# For admin operations (lifecycle queries), use admin MSP:
+docker exec -e CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/_shared_certs/furnituresmakers-msp/admin/admin/msp \
+  peer0.furnituresmakers.com peer lifecycle chaincode queryinstalled
+
+docker exec -e CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/_shared_certs/furnituresmakers-msp/admin/admin/msp \
+  peer0.furnituresmakers.com peer lifecycle chaincode querycommitted -C yfw-channel
+
+# Note: ClientAccountBalance() requires an account to exist first
+# To test it, you need to Mint tokens or use an initialized account
+```
+
+#### Network Health Summary Script
+
+Save this as `infrastructure/ca/check-network-health.sh`:
+
+```bash
+#!/bin/bash
+
+echo "════════════════════════════════════════════════════════════"
+echo " Hyperledger Fabric Network Health Check"
+echo "════════════════════════════════════════════════════════════"
+echo ""
+
+# Count containers
+CA_COUNT=$(docker ps --filter "name=ca" -q | wc -l)
+ORDERER_COUNT=$(docker ps --filter "name=orderer" -q | wc -l)
+PEER_COUNT=$(docker ps --filter "name=peer" -q | wc -l)
+
+echo "Container Status:"
+echo "  CAs:      $CA_COUNT / 3 expected"
+echo "  Orderers: $ORDERER_COUNT / 3 expected"
+echo "  Peers:    $PEER_COUNT / 3 (anchor) or 9 (with inner peers) expected"
+echo ""
+
+# Check CAs
+echo "Certificate Authorities:"
+for org in furnituresmakers woodsupply yachtsales; do
+  STATUS=$(docker inspect --format='{{.State.Status}}' ${org}-ca 2>/dev/null || echo "not found")
+  if [ "$STATUS" = "running" ]; then
+    echo "  ✓ $org CA: running"
+  else
+    echo "  ✗ $org CA: $STATUS"
+  fi
+done
+echo ""
+
+# Check shared certs
+echo "Shared Certificates:"
+if [ -d "_shared_certs" ]; then
+  CERT_COUNT=$(find _shared_certs -name "config.yaml" 2>/dev/null | wc -l)
+  echo "  Found $CERT_COUNT / 3 MSP configurations"
+  for org in furnituresmakers woodsupply yachtsales; do
+    if [ -f "_shared_certs/${org}-msp/config.yaml" ]; then
+      echo "    ✓ ${org}-msp"
+    else
+      echo "    ✗ ${org}-msp (missing)"
+    fi
+  done
+else
+  echo "  ✗ _shared_certs directory not found"
+fi
+echo ""
+
+# Check orderers + channel membership
+echo "Orderers:"
+for org in furnituresmakers woodsupply yachtsales; do
+  STATUS=$(docker inspect --format='{{.State.Status}}' orderer0.${org}.com 2>/dev/null || echo "not found")
+  if [ "$STATUS" = "running" ]; then
+    # Check if joined channel
+    CHANNEL_CHECK=$(docker exec admin.${org}.com bash -c "osnadmin channel list \
+      -o orderer0.\$ORG_NAME.com:9443 \
+      --ca-file \$OSN_TLS_CA_ROOT_CERT \
+      --client-cert \$ADMIN_TLS_SIGN_CERT \
+      --client-key \$ADMIN_TLS_PRIVATE_KEY" 2>&1 | grep -c "yfw-channel" || echo "0")
+
+    if [ "$CHANNEL_CHECK" -gt 0 ]; then
+      echo "  ✓ orderer0.$org.com: running + joined yfw-channel"
+    else
+      echo "  ⚠ orderer0.$org.com: running but NOT joined to channel"
+    fi
+  else
+    echo "  ✗ orderer0.$org.com: $STATUS"
+  fi
+done
+echo ""
+
+# Check Raft leader
+echo "Raft Consensus:"
+LEADER_FOUND=false
+for org in furnituresmakers woodsupply yachtsales; do
+  LEADER_LOG=$(docker logs orderer0.${org}.com 2>&1 | grep "became leader" | tail -1 || echo "")
+  if [ -n "$LEADER_LOG" ]; then
+    echo "  ★ $org is Raft leader"
+    LEADER_FOUND=true
+  fi
+done
+if ! $LEADER_FOUND; then
+  echo "  ⚠ No Raft leader detected (consensus may be initializing)"
+fi
+echo ""
+
+# Check anchor peers
+echo "Anchor Peers:"
+for org in furnituresmakers woodsupply yachtsales; do
+  STATUS=$(docker inspect --format='{{.State.Status}}' peer0.${org}.com 2>/dev/null || echo "not found")
+  if [ "$STATUS" = "running" ]; then
+    # Check channel membership
+    CHANNEL_LIST=$(docker exec peer0.${org}.com peer channel list 2>&1 | grep -c "yfw-channel" || echo "0")
+    if [ "$CHANNEL_LIST" -gt 0 ]; then
+      echo "  ✓ peer0.$org.com: running + joined yfw-channel"
+    else
+      echo "  ⚠ peer0.$org.com: running but NOT joined to channel"
+    fi
+  else
+    echo "  ✗ peer0.$org.com: $STATUS"
+  fi
+done
+echo ""
+
+# Check chaincode
+echo "Chaincode Status:"
+CHAINCODE_COMMITTED=$(docker exec peer0.furnituresmakers.com peer lifecycle chaincode querycommitted \
+  -C yfw-channel -n basic 2>&1 | grep -c "Version: 1.0" || echo "0")
+
+if [ "$CHAINCODE_COMMITTED" -gt 0 ]; then
+  echo "  ✓ Chaincode 'basic' v1.0 committed to yfw-channel"
+
+  # Check chaincode containers
+  CC_CONTAINERS=$(docker ps --filter "name=dev-peer0" -q | wc -l)
+  echo "  ✓ Chaincode containers running: $CC_CONTAINERS / 3 expected"
+else
+  echo "  ✗ Chaincode 'basic' NOT committed to channel"
+fi
+echo ""
+
+# Genesis block
+echo "Channel Configuration:"
+if [ -f "_config_files/configtx/output/genesis_block_YFW.pb" ]; then
+  BLOCK_SIZE=$(du -h "_config_files/configtx/output/genesis_block_YFW.pb" | cut -f1)
+  echo "  ✓ Genesis block exists ($BLOCK_SIZE)"
+else
+  echo "  ✗ Genesis block not found"
+fi
+echo ""
+
+echo "════════════════════════════════════════════════════════════"
+echo " Summary"
+echo "════════════════════════════════════════════════════════════"
+if [ $CA_COUNT -eq 3 ] && [ $ORDERER_COUNT -eq 3 ] && [ $PEER_COUNT -ge 3 ]; then
+  echo " ✓ Network is running"
+  echo ""
+  echo " Quick tests:"
+  echo "   - Test chaincode query:"
+  echo "     docker exec peer0.furnituresmakers.com peer chaincode query \\"
+  echo "       -C yfw-channel -n basic -c '{\"function\":\"ClientAccountBalance\",\"Args\":[]}'"
+else
+  echo " ✗ Network is NOT fully running"
+  echo ""
+  echo " Missing components - run these commands to start:"
+  [ $CA_COUNT -lt 3 ] && echo "   docker compose up --build -d"
+  [ $ORDERER_COUNT -lt 3 ] && echo "   bash _scripts/run-orderer.sh"
+  [ $PEER_COUNT -lt 3 ] && echo "   bash _scripts/run-anchor-peers.sh"
+fi
+echo ""
+```
+
+Make it executable:
+```bash
+chmod +x check-network-health.sh
+```
+
+**Run health check:**
+```bash
+bash check-network-health.sh
+```
+
+#### Common Verification Patterns
+
+**Pattern 1: Check if component is ready after starting**
+```bash
+# Start component
+docker compose -f docker-compose.orderer.all.yaml up --build -d
+
+# Wait for ready state
+source _scripts/wait-for-containers.sh 90 "up" "orderer"
+
+# Verify specific functionality
+source _scripts/wait-for-channel-join.sh 90 yfw-channel
+```
+
+**Pattern 2: Debug failed component**
+```bash
+# Check container status
+docker ps -a --filter "name=orderer0.furnituresmakers.com"
+
+# View recent logs
+docker logs orderer0.furnituresmakers.com 2>&1 | tail -50
+
+# Search for errors
+docker logs orderer0.furnituresmakers.com 2>&1 | grep -i error
+
+# Follow logs in real-time
+docker logs -f orderer0.furnituresmakers.com
+```
+
+**Pattern 3: Verify end-to-end flow**
+```bash
+# 1. CAs created crypto
+ls _shared_certs/*/config.yaml
+
+# 2. Genesis block created
+ls -lh _config_files/configtx/output/genesis_block_YFW.pb
+
+# 3. Orderers joined channel
+source _scripts/wait-for-channel-join.sh 30 yfw-channel
+
+# 4. Peers joined and installed chaincode
+docker exec peer0.furnituresmakers.com peer lifecycle chaincode queryinstalled
+
+# 5. Chaincode committed
+docker exec peer0.furnituresmakers.com peer lifecycle chaincode querycommitted -C yfw-channel
+
+# 6. Chaincode is invokable
+docker exec peer0.furnituresmakers.com peer chaincode query \
+  -C yfw-channel -n basic -c '{"function":"ClientAccountBalance","Args":[]}'
+```
 
 ---
 

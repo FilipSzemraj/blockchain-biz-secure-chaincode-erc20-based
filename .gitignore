@@ -14,6 +14,10 @@ frontend/node_modules/
 frontend/dist/
 frontend/.vite/
 
+# Root node_modules (diagram build tools)
+/node_modules/
+/package-lock.json
+
 # === IDE and editor files ===
 .idea/
 *.iml
@@ -82,3 +86,5 @@ infrastructure/ca/_config_files/orderer/start-orderer.sh
 # Exception: Keep fabric-ca-server-config.yaml files (they're preserved by clearing-cert.sh)
 !infrastructure/ca/*/crypto/server/ca/fabric-ca-server-config.yaml
 !infrastructure/ca/*/crypto/server/tls-ca/fabric-ca-server-config.yaml
+
+diagrams

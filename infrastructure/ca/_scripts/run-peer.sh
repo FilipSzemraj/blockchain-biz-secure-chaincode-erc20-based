@@ -85,14 +85,14 @@ echo "Copied fetch-block-as-peer.sh to ../_config_files/peer/fetch-block-as-peer
 docker stop "${CORE_PEER_ID}"
 docker rm "${CORE_PEER_ID}"
 
-docker-compose -p "${PEER_NAME}-${ORG_QUICK_NAME}-" --env-file ../_config_files/peer/.env -f "../docker-compose.peer.yaml" down
+docker compose -p "${PEER_NAME}-${ORG_QUICK_NAME}-" --env-file ../_config_files/peer/.env -f "../docker-compose.peer.yaml" down
 
-docker-compose -p "${PEER_NAME}-${ORG_QUICK_NAME}-" --env-file ../_config_files/peer/.env -f "../docker-compose.peer.yaml" config
+docker compose -p "${PEER_NAME}-${ORG_QUICK_NAME}-" --env-file ../_config_files/peer/.env -f "../docker-compose.peer.yaml" config
 
-docker-compose -p "${PEER_NAME}-${ORG_QUICK_NAME}-" --env-file ../_config_files/peer/.env -f "../docker-compose.peer.yaml" build
+docker compose -p "${PEER_NAME}-${ORG_QUICK_NAME}-" --env-file ../_config_files/peer/.env -f "../docker-compose.peer.yaml" build
 
 
-docker-compose -p "${PEER_NAME}-${ORG_QUICK_NAME}-" --env-file ../_config_files/peer/.env -f "../docker-compose.peer.yaml" up
+docker compose -p "${PEER_NAME}-${ORG_QUICK_NAME}-" --env-file ../_config_files/peer/.env -f "../docker-compose.peer.yaml" up
 
 
 
