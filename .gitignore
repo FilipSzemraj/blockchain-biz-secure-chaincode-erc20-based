@@ -88,3 +88,5 @@ infrastructure/ca/_config_files/orderer/start-orderer.sh
 !infrastructure/ca/*/crypto/server/tls-ca/fabric-ca-server-config.yaml
 
 diagrams
+
+docs/assets/leftovers

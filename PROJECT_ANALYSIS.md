@@ -290,8 +290,10 @@ blockchain-biz-secure/
 │   └── scripts/                ← Startup/deployment scripts
 ├── external-bank/              ← From external_bank/
 ├── docs/
-│   ├── network-setup.md        ← Converted from "Kroki do uruchomienia sieci.docx"
-│   └── architecture.md
+│   ├── architecture.md
+│   └── thesis-topic.md
+├── infrastructure/ca/
+│   └── INFRASTRUCTURE_STEPS.md  ← Comprehensive network deployment guide (replaced old network-setup.md)
 ├── docker-compose.yml          ← Root-level full-system compose
 ├── Makefile                    ← Build targets for all modules
 └── README.md

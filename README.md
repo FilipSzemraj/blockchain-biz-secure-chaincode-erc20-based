@@ -2,6 +2,7 @@
 
 [![Hyperledger Fabric](https://img.shields.io/badge/Hyperledger%20Fabric-2.5-blue?logo=hyperledger)](https://www.hyperledger.org/projects/fabric)
 [![Java](https://img.shields.io/badge/Chaincode-Java%2011-orange?logo=openjdk)](https://openjdk.org/)
+[![Java](https://img.shields.io/badge/Backend_APIs-Java%2021-007396?logo=openjdk)](https://openjdk.org/)
 [![Spring Boot](https://img.shields.io/badge/Backend-Spring%20Boot%203.4-green?logo=springboot)](https://spring.io/projects/spring-boot)
 [![React](https://img.shields.io/badge/Frontend-React%2018-61DAFB?logo=react)](https://react.dev/)
 [![PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL%2015-336791?logo=postgresql)](https://www.postgresql.org/)
@@ -9,6 +10,27 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-brightgreen)](LICENSE)
 
 > A permissioned blockchain system for securing B2B transactions between enterprise organizations, built on Hyperledger Fabric with ERC-20 token management, multi-organization consensus, and cryptographic transaction verification.
+
+[Project Screenshots](#How-it-works)
+
+---
+
+## Project Background
+
+This project was developed in 2025 as my [Bahelor's thesis](https://www.linkedin.com/in/filip-szemraj/details/projects/1769274898483/single-media-viewer/?profileId=ACoAAEySZEQBye78VkRnrj3tITY_u8VZbq4ulZk) and defended in February of that year.
+It implements a theoretical 3-organization Hyperledger Fabric consortium with token management, cryptographic transaction verification, and a web-based frontend.
+
+The system was completed and functional from an academic perspective, but it should be treated as a thesis-grade implementation — not a production-ready solution.
+
+Since I started my first full-stack job right after my defense, I didn’t have much time back then. Naturally, the priority at that time was adapting to the new role and responsibilities rather than polishing project documentation.
+
+Recently, I revisited the project and decided to properly consolidate and organize it:
+ - Three previously separate repositories were merged into this monorepo
+ - Additional infrastructure automation scripts and health checks were added to simplify setup
+ - Additional Markdown documentation was introduced (architecture, network setup, Docker workflow)
+ - The README and supporting documentation were expanded with assistance from Claude Code
+
+[The roadmap](#Roadmap) outlines the remaining documentation work and potential technical improvements.
 
 ---
 
@@ -51,18 +73,18 @@ The system models a consortium of three organizations trading goods and settling
 
 ## Tech Stack
 
-| Layer | Technology | Version |
-|-------|-----------|---------|
-| **Smart Contracts** | Java · Hyperledger Fabric Chaincode Shim | 11 · 2.5 |
-| **Backend** | Spring Boot · Spring Security · Fabric Gateway SDK | 3.4.1 · 1.7.0 |
-| **Frontend** | React · TypeScript · Vite · Redux Toolkit | 18.3 · 5.6 · 6.0 |
-| **Database** | PostgreSQL | 15 |
-| **Auth** | JWT (access + refresh tokens) | — |
+| Layer | Technology                                              | Version |
+|-------|---------------------------------------------------------|---------|
+| **Smart Contracts** | Java · Hyperledger Fabric Chaincode Shim                | 11 · 2.5 |
+| **Backend** | Spring Boot · Spring Security · Fabric Gateway SDK      | 3.4.1 · 1.7.0 |
+| **Frontend** | React · TypeScript · Vite · Redux Toolkit               | 18.3 · 5.6 · 6.0 |
+| **Database** | PostgreSQL                                              | 15 |
+| **Auth** | JWT (access + refresh tokens)                           | — |
 | **Crypto** | RSA-2048 (bank confirmations) · X.509 (Fabric identity) | — |
-| **Infrastructure** | Docker · Docker Compose · Fabric CA | — |
-| **Consensus** | Raft (ordering service) | — |
+| **Infrastructure** | Docker · Docker Compose · Fabric CA                     | — |
+| **Consensus** | Raft (ordering service)                                 | — |
 | **Build** | Gradle (Shadow JAR for chaincode, Spring Boot for APIs) | — |
-| **Testing** | JUnit 5 · Mockito · JaCoCo (80% coverage) | — |
+| **Testing** | JUnit 5 · Mockito · JaCoCo (60 tests)                   | — |
 
 ---
 
@@ -92,10 +114,9 @@ The system models a consortium of three organizations trading goods and settling
 │
 ├── infrastructure/
 │   └── ca/                       # Hyperledger Fabric network infrastructure
-│       ├── docker-compose*.yaml  #   13 compose files (CAs, peers, orderers)
+│       ├── docker-compose*.yaml  #   11 compose files (CAs, peers, orderers)
 │       ├── _scripts/             #   Enrollment, channel creation, cert distribution
 │       ├── _config_files/        #   configtx.yaml, orderer.yaml, core.yaml
-│       └── INFRASTRUCTURE_STEPS.md  # Comprehensive network deployment guide
 │
 ├── external-bank/                # Bank simulation utilities (Python)
 │   ├── generating_key_pair.py    #   RSA key generation
@@ -107,6 +128,7 @@ The system models a consortium of three organizations trading goods and settling
 │
 ├── docs/                         # Documentation
 │   ├── architecture.md           #   Detailed system architecture
+│   ├── INFRASTRUCTURE_STEPS.md   #   Comprehensive network deployment guide
 │   └── thesis-topic.md           #   Academic context
 │
 └── .env.example                  # Environment variable template
@@ -150,9 +172,9 @@ cp .env.example .env
 
 ### Step 2: Start the Fabric Network
 
-The blockchain infrastructure is the most complex component (~24 Docker containers). A comprehensive step-by-step guide with verification commands, troubleshooting, and architecture explanations is available in the dedicated infrastructure guide.
+The blockchain infrastructure is the most complex component (~18-24 Docker containers depending on configuration). A comprehensive step-by-step guide with verification commands, troubleshooting, and architecture explanations is available in the dedicated infrastructure guide.
 
-**[`infrastructure/ca/INFRASTRUCTURE_STEPS.md`](infrastructure/ca/INFRASTRUCTURE_STEPS.md)** — Full network deployment guide
+**[`infrastructure/ca/INFRASTRUCTURE_STEPS.md`](docs/INFRASTRUCTURE_STEPS.md)** — Full network deployment guide
 
 Quick summary:
 
@@ -182,6 +204,7 @@ bash check-network-health.sh
 
 ### Step 3: Start Bank API
 
+Detailed setup documentation is not yet available.
 <!-- TODO: detailed guide in docs/bank-api-setup.md -->
 
 ```bash
@@ -193,6 +216,7 @@ The Bank API auto-generates an RSA-2048 key pair on first start if `keys/` direc
 
 ### Step 4: Start Client API
 
+Detailed setup documentation is not yet available.
 <!-- TODO: detailed guide in docs/client-api-setup.md — per-org instances, crypto mounting, Fabric identity -->
 
 ```bash
@@ -204,6 +228,7 @@ The Client API connects to Fabric peers via gRPC+mTLS using crypto material moun
 
 ### Step 5: Start Frontend
 
+Detailed setup documentation is not yet available.
 <!-- TODO: detailed guide in docs/frontend-setup.md -->
 
 ```bash
@@ -231,28 +256,34 @@ docker exec peer0.furnituresmakers.com peer chaincode query \
 
 | Function | Parameters | Access | Description |
 |----------|-----------|--------|-------------|
+| `Initialize` | `name`, `symbol`, `decimals` | Admin | Initialize token contract metadata |
 | `Mint` | `jsonContent` (signed confirmation JSON) | Admin | Create new tokens after RSA signature verification |
-| `Burn` | `from`, `amount` | Owner | Destroy tokens (two-phase: request → finalize) |
-| `Transfer` | `from`, `to`, `amount` | Owner | Transfer tokens between accounts |
-| `Approve` | `spender`, `amount` | Owner | Authorize third-party spending |
-| `TransferFrom` | `from`, `to`, `amount` | Approved | Execute approved transfer |
-| `BalanceOf` | `account` | Any | Query token balance |
+| `Burn` | `amount` | Owner | Request token burn (two-phase: request → finalize) |
+| `FinalizeBurn` | `jsonContent` (signed confirmation JSON) | Admin | Finalize burn after RSA signature verification |
+| `Transfer` | `to`, `value` | Owner | Transfer tokens between accounts |
+| `Approve` | `spender`, `value` | Owner | Authorize third-party spending |
+| `TransferFrom` | `from`, `to`, `value` | Approved | Execute approved transfer |
+| `Allowance` | `owner`, `spender` | Any | Query approved spending amount |
+| `BalanceOf` | `owner` | Any | Query token balance |
+| `ClientAccountBalance` | — | Caller | Query caller's own balance |
+| `ClientAccountID` | — | Caller | Query caller's account ID |
 | `TotalSupply` | — | Any | Query total token supply |
 | `TokenName` / `TokenSymbol` | — | Any | Returns `IntrinsicCoin` / `IC` |
+| `Decimals` | — | Any | Query token decimal places |
 
 ### IBANVoteContract
 
 | Function | Parameters | Access | Description |
 |----------|-----------|--------|-------------|
-| `ProposeIBAN` | `iban` | Any org member | Propose a new IBAN for the consortium |
-| `VoteOnIBAN` | `proposalId` | Any org member | Cast organization's vote (3-of-3 required) |
-| `GetCurrentIBAN` | — | Any | Query the current active IBAN |
+| `Init` | `initialIBAN` | Admin | Initialize the contract with a starting IBAN |
+| `proposeIBAN` | `proposedIBAN` | Any org member | Propose a new IBAN and cast vote (3-of-3 consensus required to activate) |
+| `getCurrentIBAN` | — | Any | Query the current active IBAN |
 
 ---
 
 ## Network Topology
 
-The system deploys **~24 Docker containers** across three organizations:
+The system deploys **~18-24 Docker containers** (depending on configuration) across three organizations:
 
 | Organization | Peer | Orderer | CA (Identity) | CA (TLS) |
 |-------------|------|---------|---------------|----------|
@@ -271,7 +302,7 @@ The system deploys **~24 Docker containers** across three organizations:
 
 ### Chaincode Tests
 
-34 unit tests with 80% coverage enforced by JaCoCo. Requires JDK 11:
+60 unit tests enforced by JaCoCo. Requires JDK 11:
 
 ```bash
 # Option A: Use Docker tools image (no local JDK needed)
@@ -335,6 +366,9 @@ This system was developed as a bachelor's thesis project:
 
 The thesis explores how permissioned blockchain networks can provide transaction integrity, non-repudiation, and automated dispute resolution for B2B commerce, with a practical implementation demonstrating these concepts in a multi-organization supply chain scenario.
 
+
+- [Bahelor Thesis](https://www.linkedin.com/in/filip-szemraj/details/projects/1769274898483/single-media-viewer/?profileId=ACoAAEySZEQBye78VkRnrj3tITY_u8VZbq4ulZk) hosted on LinkedIn
+
 ---
 
 ## License
@@ -355,3 +389,66 @@ Distributed under the Apache License 2.0. See [`LICENSE`](LICENSE) for more info
 - [Hyperledger Fabric Documentation](https://hyperledger-fabric.readthedocs.io/)
 - [Hyperledger Fabric Samples](https://github.com/hyperledger/fabric-samples)
 - [OpenZeppelin ERC-20 Standard](https://docs.openzeppelin.com/contracts/erc20)
+
+
+## How it works
+
+These screens are described in detail in the thesis. The theoretical part of the project is available on my LinkedIn profile in the Resources section of the relevant project.
+
+
+### Infrastructure run in tmux - followed INFRASTRUCTURE_STEPS
+![System Architecture](docs/assets/infrastructure_in_tmux.png)
+
+### Burn Transaction
+![Burn Transaction](docs/assets/how_it_looks_like_running/burn_transaction.jpg)
+
+### Delivery Creating 1
+![Delivery Creating 1](docs/assets/how_it_looks_like_running/delivery_creating_1.jpg)
+
+### Delivery Delivered With Partial Deliveries As Seller
+![Delivery Delivered With Partial Deliveries As Seller](docs/assets/how_it_looks_like_running/delivery_delivered_with_partial_deliveries_as_seller.jpg)
+
+### Delivery Delivered With Partial Deliveries
+![Delivery Delivered With Partial Deliveries](docs/assets/how_it_looks_like_running/delivery_delivered_with_partial_deliveries.jpg)
+
+### Delivery Filter As Seller
+![Delivery Filter As Seller](docs/assets/how_it_looks_like_running/delivery_filter_as_seller.jpg)
+
+### Finalize Burn 1
+![Finalize Burn 1](docs/assets/how_it_looks_like_running/finalize_burn_1.jpg)
+
+### Finalize Burn 2
+![Finalize Burn 2](docs/assets/how_it_looks_like_running/finalize_burn_2.jpg)
+
+### Login
+![Login](docs/assets/how_it_looks_like_running/login.jpg)
+
+### Minting Tokens 1
+![Minting Tokens 1](docs/assets/how_it_looks_like_running/minting_tokens_1.jpg)
+
+### Minting Tokens 2
+![Minting Tokens 2](docs/assets/how_it_looks_like_running/minting_tokens_2.jpg)
+
+### Send Tokens 1
+![Send Tokens 1](docs/assets/how_it_looks_like_running/send_tokens_1.jpg)
+
+### Send Tokens 2
+![Send Tokens 2](docs/assets/how_it_looks_like_running/send_tokens_2.jpg)
+
+### Sidebar Collapsed
+![Sidebar Collapsed](docs/assets/how_it_looks_like_running/sidebar_collapsed.jpg)
+
+### Sidebar
+![Sidebar](docs/assets/how_it_looks_like_running/sidebar.jpg)
+
+### Sidebar Narrow
+![Sidebar Narrow](docs/assets/how_it_looks_like_running/sidebar_narrow.jpg)
+
+### UI
+![UI](docs/assets/how_it_looks_like_running/UI.jpg)
+
+### UI Narrow
+![UI Narrow](docs/assets/how_it_looks_like_running/UI_narrow.jpg)
+
+
+

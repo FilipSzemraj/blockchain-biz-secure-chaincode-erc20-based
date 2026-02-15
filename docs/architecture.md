@@ -20,7 +20,7 @@ The **Client API** is the central integration point — it proxies signing reque
 
 ### Chaincode (Java 11)
 
-Located in `chaincode/`. Two smart contracts deployed to `yfw-channel`:
+Located in `chaincode/`. Two smart contracts deployed to `yfw-channel`. Built with Gradle Shadow JAR plugin, targeting Java 11 for Hyperledger Fabric compatibility.
 
 - **ERC20TokenContract** — Token lifecycle: mint (with bank verification), burn (two-phase), transfer, approve/transferFrom. Implements replay attack prevention via transaction ID deduplication.
 - **IBANVoteContract** — Governance: propose IBAN changes, vote with 3-of-3 consensus required.
@@ -29,8 +29,8 @@ Located in `chaincode/`. Two smart contracts deployed to `yfw-channel`:
 
 Located in `backend/`. Two services:
 
-- **client-api** — Main REST API. JWT authentication, Fabric Gateway SDK integration, Server-Sent Events for real-time blockchain event streaming. Runs per-organization instances (logistics, sales, production) each with their own Fabric identity. Proxies Bank API requests via `/api/bank/*` endpoints.
-- **bank-api** — RSA-2048 signing oracle (port 8081). Receives transaction confirmations, serializes them to JSON, computes SHA-256 hash, and signs the hash with an RSA private key. Stateless — no database, no Fabric connection. The matching public key is bundled in the chaincode JAR for on-chain verification.
+- **client-api** — Main REST API. JWT authentication (access: 5 min, refresh: 7 days), Fabric Gateway SDK integration, Server-Sent Events for real-time blockchain event streaming. Designed to run per-organization instances with separate Fabric identities (each organization deploys with its own connection profile and wallet). Proxies Bank API requests via `/api/bank/*` endpoints.
+- **bank-api** — RSA-2048 signing oracle (port 8081). Receives transaction confirmations, serializes them to JSON, computes SHA-256 hash, and signs the hash with an RSA private key. Includes a REST client to fetch burn request confirmations from Client API. Stateless — no persistent database (uses in-memory ConcurrentHashMap for active transactions), no direct Fabric connection. The matching public key is bundled in the chaincode JAR for on-chain verification.
 
 ### Frontend (React 18, TypeScript, Vite)
 
@@ -48,13 +48,30 @@ Located in `infrastructure/ca/`. Docker Compose files for:
 - Orderer nodes (Raft consensus)
 - Channel creation and configuration
 
-See [`infrastructure/ca/INFRASTRUCTURE_STEPS.md`](../infrastructure/ca/INFRASTRUCTURE_STEPS.md) for the comprehensive deployment guide.
+See [`infrastructure/ca/INFRASTRUCTURE_STEPS.md`](INFRASTRUCTURE_STEPS.md) for the comprehensive deployment guide.
 
-### External Bank (Python)
+## Communication Paths
 
-Located in `external-bank/`. Utilities for:
-- RSA key pair generation
-- Transaction confirmation signing/verification
+The system uses multiple communication channels between components:
+
+1. **Frontend → Client API** — REST calls for token operations, delivery management
+2. **Frontend → Bank API** — Direct calls for transaction signing (minting, burn finalization)
+3. **Client API → Bank API** — Proxied signing requests via `/api/bank/*` endpoints
+4. **Bank API → Client API** — Fetch burn request confirmations for two-phase burn verification
+5. **Client API → Fabric Network** — Fabric Gateway SDK (gRPC+mTLS) for chaincode invocation
+6. **Fabric Network → Client API** — Chaincode events streamed via gRPC
+7. **Client API → Frontend** — Real-time event delivery via Server-Sent Events (SSE)
+
+This bi-directional communication between Bank API and Client API enables the two-phase burn process, where the Bank API needs to verify burn requests before signing the finalization.
+
+### External Bank Utilities (Python)
+
+Located in `external-bank/`. Standalone Python scripts for local development and testing:
+- RSA key pair generation (`generating_key_pair.py`)
+- Transaction confirmation signing/verification (`encryption_decryption.py`)
+- JSON serialization helpers (`serializing_confirmation.py`)
+
+These utilities are primarily used for generating the RSA key pairs deployed to the Bank API service and for testing cryptographic operations locally. In production, the Bank API (Spring Boot service) handles all signing operations.
 
 ## Bank Verification Flow
 
@@ -87,7 +104,7 @@ The mint transaction is the only operation that requires bank verification. The 
 
 ## Network Topology
 
-~24 Docker containers across three organizations:
+~18-24 Docker containers (depending on configuration) across three organizations:
 
 | Organization | Peer | Orderer | CA (Identity) | CA (TLS) |
 |-------------|------|---------|---------------|----------|
