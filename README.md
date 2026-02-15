@@ -14,13 +14,13 @@
 
 ## Architecture
 
-![System Architecture](diagrams/architecture.svg)
+![System Architecture](docs/assets/architecture.svg)
 
 The system models a consortium of three organizations trading goods and settling payments via blockchain-backed tokens. The **Client API** acts as the central hub — it proxies signing requests to the **Bank API** and submits signed transactions to the **Fabric network** via gRPC. The chaincode verifies RSA signatures against a hardcoded public key bundled in the chaincode JAR; the Bank API itself never communicates with the blockchain directly.
 
 ### Transaction Verification Flow
 
-![Mint Verification Flow](diagrams/mint-verification-flow.svg)
+![Mint Verification Flow](docs/assets/mint-verification-flow.svg)
 
 <details>
 <summary>Flow summary (text)</summary>
